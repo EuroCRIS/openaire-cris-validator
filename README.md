@@ -13,12 +13,12 @@ in compliance to the OpenAIRE Guidelines for CRIS Managers 1.1 <https://github.c
 The meaning of the SHALL keyword is specified in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
 (0) Any XML response returned by the endpoint to the requests specified below SHALL validate with respect to the following XML Schemas:    
-<http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd> for the namespace <http://www.openarchives.org/OAI/2.0/>,
+<http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd> for the namespace <http://www.openarchives.org/OAI/2.0/>,   
 <http://www.openarchives.org/OAI/2.0/oai-identifier.xsd> for the namespace <http://www.openarchives.org/OAI/2.0/oai-identifier> and       
 <https://raw.githubusercontent.com/openaire/guidelines-cris-managers/master/schemas/openaire-cerif-profile.xsd> for the namespace <https://www.openaire.eu/cerif-profile/1.1/>.
 
-(1) The response to an `Identify` request SHALL include:
-exactly one `description` element that contains an `oai-identifier` from namespace <http://www.openarchives.org/OAI/2.0/oai-identifier> and
+(1) The response to an `Identify` request SHALL include:  
+exactly one `description` element that contains an `oai-identifier` from namespace <http://www.openarchives.org/OAI/2.0/oai-identifier> and   
 exactly one `description` element that contains a `Service` element from namespace <https://www.openaire.eu/cerif-profile/1.1/>.
 The `oai-identifier/repositoryIdentifier` will be refered to as `{CRIS_identifier}` in the sequel.
 
@@ -34,14 +34,14 @@ exactly one record; this record is identical to the one returned within the `Ide
 
 (5) When all objects from the 10 sets as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets)
 are retrieved and put together, the following statements SHALL hold:    
-(a) Any `id` attribute in the CERIF XML markup points at an OAI record with identifier constructed as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#oai-identifiers).
+(a) Any `id` attribute in the CERIF XML markup points at an OAI record with identifier constructed as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#oai-identifiers).   
 (b) CERIF XML markup contains contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
 
 
 
 ## License
 
-Copyright 2018 Jan Dvořák (https://orcid.org/0000-0001-8985-152X)
+Copyright 2018 Jan Dvořák <a href="https://orcid.org/0000-0001-8985-152X" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon">https://orcid.org/0000-0001-8985-152X</a>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
