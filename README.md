@@ -38,6 +38,10 @@ are retrieved and put together, the following statements SHALL hold:
 (b) CERIF XML markup contains contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
 
 
+## Feedback
+
+I'll be grateful for your feedback.  
+Please submit a [github issue](./issues) or email me at [jan.dvorak@ff.cuni.cz](mailto:jan.dvorak@ff.cuni.cz).
 
 ## License
 
