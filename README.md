@@ -28,12 +28,12 @@ The `oai-identifier/repositoryIdentifier` will be refered to as `{CRIS_identifie
 as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#metadata-format-and-prefix).
 
 (3) The list of supported sets returned by the `ListSets` request SHALL include
-all of the 10 sets as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).
+all of the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).
 
 (4) The request for Service records (the `ListRecords` request with `metadataPrefix=oai_cerif_openaire` and `set=openaire_cris_services` parameters) SHALL retrieve
 exactly one record; this record is identical to the one returned within the `Identify` request, see above.
 
-(5) When all objects from the 10 sets as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets)
+(5) When all objects from the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets)
 are retrieved and put together, the following statements SHALL hold:    
 (a) Any `id` attribute in the CERIF XML markup points at an OAI record with identifier constructed as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#oai-identifiers).   
 (b) CERIF XML markup contains contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
