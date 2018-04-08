@@ -21,8 +21,6 @@ import org.openarchives.oai._2.MetadataFormatType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 
-import junit.framework.AssertionFailedError;
-
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
 	
@@ -103,7 +101,7 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionFailedError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present" ) );
+		return parent.checkContains( predicate, new AssertionError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present" ) );
 	}
 	
 	@Test
@@ -135,7 +133,7 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionFailedError( "Set '" + expectedSetSpec + "' not present" ) );
+		return parent.checkContains( predicate, new AssertionError( "Set '" + expectedSetSpec + "' not present" ) );
 	}
 
 }
