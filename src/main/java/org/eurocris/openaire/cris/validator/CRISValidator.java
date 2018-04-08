@@ -82,6 +82,9 @@ public class CRISValidator {
 	@Test
 	public void check010_MetadataFormats() throws Exception {
 		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
+		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
+		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
+		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
 		checker = checkMetadataFormatPresent( checker, "oai_cerif_openaire", "https://www.openaire.eu/cerif-profile/1.1/" );
 		checker.run();
 	}
@@ -106,6 +109,7 @@ public class CRISValidator {
 	@Test
 	public void check020_Sets() throws Exception {
 		CheckingIterable<SetType> checker = CheckingIterable.over( endpoint.callListSets() );
+		checker = checker.checkUnique( SetType::getSetSpec, "setSpec not unique" );
 		checker = checkSetPresent( checker, "openaire_cris_publications", "OpenAIRE_CRIS_publications" );
 		checker = checkSetPresent( checker, "openaire_cris_products", "OpenAIRE_CRIS_products" );
 		checker = checkSetPresent( checker, "openaire_cris_patents", "OpenAIRE_CRIS_patents" );
