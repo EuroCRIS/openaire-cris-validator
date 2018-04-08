@@ -1,10 +1,12 @@
 package org.eurocris.openaire.cris.validator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.cli.MissingArgumentException;
@@ -49,6 +51,9 @@ public class CRISValidator {
 		return endpoint.getBaseUrl();
 	}
 	
+	private Optional<String> sampleIdentifier = Optional.empty();
+	private Optional<String> repoIdentifier = Optional.empty();
+	
 	@Test
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
@@ -56,7 +61,7 @@ public class CRISValidator {
 		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
 		
 		final List<DescriptionType> descriptions = identify.getDescription();
-		boolean serviceSeen = false;
+		// boolean serviceSeen = false;
 		boolean oaiIdentifierSeen = false;
 		for ( final DescriptionType description : descriptions ) {
 			final Object obj = description.getAny();
@@ -64,12 +69,13 @@ public class CRISValidator {
 			if ( obj instanceof OaiIdentifierType ) {
 				oaiIdentifierSeen = true;
 				final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj;
-				// TODO
+				sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
+				repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
 			}
 
 			// TODO
 		}
-		// assertTrue( "No 'description' contains an 'oai-identifier' element", oaiIdentifierSeen );
+		assertTrue( "No 'description' contains an 'oai-identifier' element", oaiIdentifierSeen );
 		// assertTrue( "No 'description' contains a 'Service' element", serviceSeen );
 	}
 	
