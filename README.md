@@ -4,12 +4,7 @@ A tool to assess whether an OAI-PMH endpoint can provide research information
 in compliance to the OpenAIRE Guidelines for CRIS Managers 1.1 <https://github.com/openaire/guidelines-cris-managers>.
 
 
-## Usage
-
-	./openaire-cris-validator.py *endpoint-url*
-
-
-## Checks
+## The checks
 
 The meaning of the SHALL keyword is specified in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
 
@@ -37,6 +32,28 @@ exactly one record; this record is identical to the one returned within the `Ide
 are retrieved and put together, the following statements SHALL hold:    
 (a) Any `id` attribute in the CERIF XML markup points at an OAI record with identifier constructed as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#oai-identifiers).   
 (b) CERIF XML markup contains contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
+
+
+## Usage
+
+### Build
+
+Please make sure you have checked out the `guidelines-cris-managers` project in a parallel directory.
+Then do:
+
+	mvn clean compile package
+
+### Run
+
+#### From command line
+
+	java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar {endpoint-url}
+
+#### From Eclipse
+
+Set up a JUnit launcher for the `CRISValidator` class.
+Pass the OAI-PMH endpoint URL as the value of the system property `endpoint.to.validate`.
+Add the parallel `guidelines-cris-managers` project to the classpath of the launcher (in order to access the XML Schemas).
 
 
 ## Feedback
