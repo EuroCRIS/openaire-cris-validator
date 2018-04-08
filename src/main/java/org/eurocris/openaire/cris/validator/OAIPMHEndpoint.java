@@ -9,7 +9,11 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
@@ -147,13 +151,16 @@ public class OAIPMHEndpoint {
 	/**
 	 * Sends the ListRecords request and returns the result. Repeats until all
 	 * records have been listed.
-	 * 
-	 * @param params
-	 *            the parameters of the query
+	 *
+	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
+	 * @param setSpec only fetch records from this set (optional)
+	 * @param from only fetch records at least this young (optional)
+	 * @param until only fetch records older than this (optional)
 	 * @return a virtual collection that will use OAI-PMH resumption tokens to
 	 *         get further elements; iterable just once
 	 */
-	public Iterable<RecordType> callListRecords( final String... params ) {
+	public Iterable<RecordType> callListRecords( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
+		final String[] params = collectHarvestingParameters( metadataFormatPrefix, setSpec, from, until );
 		return new ResumptionTokenIterable<RecordType, ListRecordsType>( "ListRecords", params, OAIPMHtype::getListRecords, ListRecordsType::getRecord, ListRecordsType::getResumptionToken );
 	}
 
@@ -161,13 +168,49 @@ public class OAIPMHEndpoint {
 	 * Sends the ListIdentfiers request and returns the result. Repeats until
 	 * all identifiers have been listed.
 	 * 
-	 * @param params
-	 *            the parameters of the query
+	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
+	 * @param setSpec only fetch records from this set (optional)
+	 * @param from only fetch records at least this young (optional)
+	 * @param until only fetch records older than this (optional)
 	 * @return a virtual collection that will use OAI-PMH resumption tokens to
 	 *         get further elements; iterable just once
 	 */
-	public Iterable<HeaderType> callListIdentifiers( final String... params ) {
+	public Iterable<HeaderType> callListIdentifiers( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
+		final String[] params = collectHarvestingParameters( metadataFormatPrefix, setSpec, from, until );
 		return new ResumptionTokenIterable<HeaderType, ListIdentifiersType>( "ListIdentifiers", params, OAIPMHtype::getListIdentifiers, ListIdentifiersType::getHeader, ListIdentifiersType::getResumptionToken );
+	}
+
+	/**
+	 * Constructs the parameters array to express the query.
+	 * 
+	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
+	 * @param setSpec only fetch records from this set (optional)
+	 * @param from only fetch records at least this young (optional)
+	 * @param until only fetch records older than this (optional)
+	 * @return the query as an array of keys and values (alternating)
+	 */
+	protected String[] collectHarvestingParameters( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
+		final List<String> params = new ArrayList<>();
+		if ( metadataFormatPrefix != null ) {
+			params.add( "metadataPrefix" );
+			params.add( metadataFormatPrefix );
+		} else {
+			throw new NullPointerException( "The metadataFormat must be specified" );
+		}
+		if ( setSpec != null ) {
+			params.add( "set" );
+			params.add( setSpec );
+		}
+		final DateTimeFormatter formatter = DateTimeFormatter.ISO_INSTANT;
+		if ( from != null ) {
+			params.add( "from" );
+			params.add( from.format( formatter ) );
+		}
+		if ( until != null ) {
+			params.add( "until" );
+			params.add( until.format( formatter ) );
+		}
+		return params.toArray( new String[params.size()] );
 	}
 
 	/**
