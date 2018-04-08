@@ -67,7 +67,7 @@ public class CheckingIterable<T> implements Iterable<T> {
 					public T next() {
 						final T obj = parentIterator.next();
 						final U val = function.apply( obj );
-						if ( !seenValues.add( val ) ) {
+						if ( val != null && !seenValues.add( val ) ) {
 							throw new AssertionFailedError( message + "; value: " + val );
 						}
 						return obj;
