@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.commons.cli.MissingArgumentException;
@@ -16,14 +17,28 @@ import org.junit.Test;
 import org.junit.runner.JUnitCore;
 import org.junit.runners.MethodSorters;
 import org.openarchives.oai._2.DescriptionType;
+import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.MetadataFormatType;
+import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
 	
+	public static final String OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC = "openaire_cris_equipments";
+	public static final String OPENAIRE_CRIS_EVENTS__SET_SPEC = "openaire_cris_events";
+	public static final String OPENAIRE_CRIS_FUNDING__SET_SPEC = "openaire_cris_funding";
+	public static final String OPENAIRE_CRIS_PROJECTS__SET_SPEC = "openaire_cris_projects";
+	public static final String OPENAIRE_CRIS_ORGUNITS__SET_SPEC = "openaire_cris_orgunits";
+	public static final String OPENAIRE_CRIS_PERSONS__SET_SPEC = "openaire_cris_persons";
+	public static final String OPENAIRE_CRIS_PATENTS__SET_SPEC = "openaire_cris_patents";
+	public static final String OPENAIRE_CRIS_PRODUCTS__SET_SPEC = "openaire_cris_products";
+	public static final String OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC = "openaire_cris_publications";
+	
+	public static final String OAI_CERIF_OPENAIRE__METADATA_PREFIX = "oai_cerif_openaire";
+
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
@@ -49,7 +64,9 @@ public class CRISValidator {
 		return endpoint.getBaseUrl();
 	}
 	
+	@SuppressWarnings( "unused")
 	private Optional<String> sampleIdentifier = Optional.empty();
+	@SuppressWarnings( "unused")
 	private Optional<String> repoIdentifier = Optional.empty();
 	
 	@Test
@@ -83,7 +100,7 @@ public class CRISValidator {
 		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
-		checker = checkMetadataFormatPresent( checker, "oai_cerif_openaire", "https://www.openaire.eu/cerif-profile/1.1/" );
+		checker = checkMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, "https://www.openaire.eu/cerif-profile/1.1/" );
 		checker.run();
 	}
 	
@@ -108,15 +125,15 @@ public class CRISValidator {
 	public void check020_Sets() throws Exception {
 		CheckingIterable<SetType> checker = CheckingIterable.over( endpoint.callListSets() );
 		checker = checker.checkUnique( SetType::getSetSpec, "setSpec not unique" );
-		checker = checkSetPresent( checker, "openaire_cris_publications", "OpenAIRE_CRIS_publications" );
-		checker = checkSetPresent( checker, "openaire_cris_products", "OpenAIRE_CRIS_products" );
-		checker = checkSetPresent( checker, "openaire_cris_patents", "OpenAIRE_CRIS_patents" );
-		checker = checkSetPresent( checker, "openaire_cris_persons", "OpenAIRE_CRIS_persons" );
-		checker = checkSetPresent( checker, "openaire_cris_orgunits", "OpenAIRE_CRIS_orgunits" );
-		checker = checkSetPresent( checker, "openaire_cris_projects", "OpenAIRE_CRIS_projects" );
-		checker = checkSetPresent( checker, "openaire_cris_funding", "OpenAIRE_CRIS_funding" );
-		checker = checkSetPresent( checker, "openaire_cris_events", "OpenAIRE_CRIS_events" );
-		checker = checkSetPresent( checker, "openaire_cris_equipments", "OpenAIRE_CRIS_equipments" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, "OpenAIRE_CRIS_publications" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, "OpenAIRE_CRIS_products" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_PATENTS__SET_SPEC, "OpenAIRE_CRIS_patents" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_PERSONS__SET_SPEC, "OpenAIRE_CRIS_persons" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, "OpenAIRE_CRIS_orgunits" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_PROJECTS__SET_SPEC, "OpenAIRE_CRIS_projects" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_FUNDING__SET_SPEC, "OpenAIRE_CRIS_funding" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_EVENTS__SET_SPEC, "OpenAIRE_CRIS_events" );
+		checker = checkSetPresent( checker, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, "OpenAIRE_CRIS_equipments" );
 		checker.run();
 	}
 	
@@ -136,4 +153,12 @@ public class CRISValidator {
 		return parent.checkContains( predicate, new AssertionError( "Set '" + expectedSetSpec + "' not present" ) );
 	}
 
+	@Test
+	public void check100_CheckPublications() throws Exception {
+		CheckingIterable<RecordType> checker = CheckingIterable.over( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null ) );
+		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
+		checker = checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
+		checker.run();
+	}
+	
 }
