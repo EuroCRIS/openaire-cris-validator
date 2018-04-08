@@ -8,10 +8,10 @@ import java.util.function.Predicate;
 
 import junit.framework.AssertionFailedError;
 
-public class ContainsChecker<T> implements Iterable<T> {
+public class CheckingIterable<T> implements Iterable<T> {
 
-	public static <T> ContainsChecker<T> over( final Iterable<T> list ) {
-		return new ContainsChecker<T>() {
+	public static <T> CheckingIterable<T> over( final Iterable<T> list ) {
+		return new CheckingIterable<T>() {
 
 			@Override
 			public Iterator<T> iterator() {
@@ -26,9 +26,9 @@ public class ContainsChecker<T> implements Iterable<T> {
 		};
 	}
 
-	public ContainsChecker<T> checkContains( final Predicate<T> predicate, final Error error ) {
-		final ContainsChecker<T> parentChecker = (ContainsChecker<T>) this;
-		return new ContainsChecker<T>() {
+	public CheckingIterable<T> checkContains( final Predicate<T> predicate, final Error error ) {
+		final CheckingIterable<T> parentChecker = (CheckingIterable<T>) this;
+		return new CheckingIterable<T>() {
 
 			MatchCountingIterator<T> mci;
 
@@ -48,10 +48,10 @@ public class ContainsChecker<T> implements Iterable<T> {
 		};
 	}
 
-	public <U> ContainsChecker<T> checkUnique( final Function<T, U> function, final String message ) {
-		final ContainsChecker<T> parentChecker = (ContainsChecker<T>) this;
+	public <U> CheckingIterable<T> checkUnique( final Function<T, U> function, final String message ) {
+		final CheckingIterable<T> parentChecker = (CheckingIterable<T>) this;
 		final Set<U> seenValues = new HashSet<>();
-		return new ContainsChecker<T>() {
+		return new CheckingIterable<T>() {
 
 			@Override
 			public Iterator<T> iterator() {

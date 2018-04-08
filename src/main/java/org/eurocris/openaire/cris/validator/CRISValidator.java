@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.apache.commons.cli.MissingArgumentException;
-import org.eurocris.openaire.cris.validator.util.ContainsChecker;
+import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -81,12 +81,12 @@ public class CRISValidator {
 	
 	@Test
 	public void check010_MetadataFormats() throws Exception {
-		ContainsChecker<MetadataFormatType> checker = ContainsChecker.over( endpoint.callListMetadataFormats().getMetadataFormat() );
+		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
 		checker = checkMetadataFormatPresent( checker, "oai_cerif_openaire", "https://www.openaire.eu/cerif-profile/1.1/" );
 		checker.run();
 	}
 	
-	private ContainsChecker<MetadataFormatType> checkMetadataFormatPresent( final ContainsChecker<MetadataFormatType> parent, final String expectedMetadataFormatPrefix, final String expectedMetadataFormatNamespace ) {
+	private CheckingIterable<MetadataFormatType> checkMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent, final String expectedMetadataFormatPrefix, final String expectedMetadataFormatNamespace ) {
 		final Predicate<MetadataFormatType> predicate = new Predicate<MetadataFormatType>() {
 
 			@Override
@@ -105,7 +105,7 @@ public class CRISValidator {
 	
 	@Test
 	public void check020_Sets() throws Exception {
-		ContainsChecker<SetType> checker = ContainsChecker.over( endpoint.callListSets() );
+		CheckingIterable<SetType> checker = CheckingIterable.over( endpoint.callListSets() );
 		checker = checkSetPresent( checker, "openaire_cris_publications", "OpenAIRE_CRIS_publications" );
 		checker = checkSetPresent( checker, "openaire_cris_products", "OpenAIRE_CRIS_products" );
 		checker = checkSetPresent( checker, "openaire_cris_patents", "OpenAIRE_CRIS_patents" );
@@ -118,7 +118,7 @@ public class CRISValidator {
 		checker.run();
 	}
 	
-	private ContainsChecker<SetType> checkSetPresent( final ContainsChecker<SetType> parent, final String expectedSetSpec, final String expectedSetName ) {
+	private CheckingIterable<SetType> checkSetPresent( final CheckingIterable<SetType> parent, final String expectedSetSpec, final String expectedSetName ) {
 		final Predicate<SetType> predicate = new Predicate<SetType>() {
 
 			@Override
