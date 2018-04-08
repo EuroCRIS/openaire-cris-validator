@@ -103,3 +103,5 @@ ENV/
 # Eclipse PyDev files
 /.project
 /.pydevproject
+/.classpath
+/.settings/
