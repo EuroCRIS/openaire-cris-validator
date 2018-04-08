@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<jaxb:bindings version="2.0" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:annox="http://annox.dev.java.net" xmlns:tns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://www.oracle.com/webfolder/technetwork/jsc/xml/ns/jaxb/bindingschema_2_0.xsd" jaxb:extensionBindingPrefixes="annox">
+    <jaxb:bindings schemaLocation="../../../../guidelines-cris-managers/schemas/cached/OAI-PMH.xsd" node="//xs:complexType[ @name = 'OAI-PMHtype' ]">
+    	<annox:annotateClass>
+	    	<annox:annotate annox:class="javax.xml.bind.annotation.XmlRootElement"/>
+	    </annox:annotateClass>
+    </jaxb:bindings>
+</jaxb:bindings>
