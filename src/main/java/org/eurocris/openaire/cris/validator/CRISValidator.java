@@ -155,10 +155,62 @@ public class CRISValidator {
 
 	@Test
 	public void check100_CheckPublications() throws Exception {
-		CheckingIterable<RecordType> checker = CheckingIterable.over( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null ) );
-		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
-		checker = checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null ) );
 		checker.run();
+	}
+
+	@Test
+	public void check200_CheckProducts() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check300_CheckPatents() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check400_CheckPersons() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check500_CheckOrgUnits() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check600_CheckProjects() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check700_CheckFundings() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check800_CheckEquipment() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	@Test
+	public void check900_CheckEvents() throws Exception {
+		CheckingIterable<RecordType> checker = uniquenessChecker( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null ) );
+		checker.run();
+	}
+
+	private CheckingIterable<RecordType> uniquenessChecker( final Iterable<RecordType> records ) {
+		final CheckingIterable<RecordType> checker = CheckingIterable.over( records );
+		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
+		return checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
 	}
 	
 }
