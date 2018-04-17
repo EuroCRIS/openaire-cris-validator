@@ -102,12 +102,12 @@
 				<configuration>
 					<resources>
 						<resource>
-							<directory>${guidelines.project.dir}/schemas/</directory>
+							<directory>src/main/resources/schemas/</directory>
 							<include>**/*.xsd</include>
 							<targetPath>schemas</targetPath>
 						</resource>
 						<resource>
-							<directory>src/main/resources/schemas/</directory>
+							<directory>${guidelines.project.dir}/schemas/</directory>
 							<include>**/*.xsd</include>
 							<targetPath>schemas</targetPath>
 						</resource>
