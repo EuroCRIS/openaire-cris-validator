@@ -38,11 +38,13 @@ public class CRISValidator {
 	public static final String OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC = "openaire_cris_publications";
 	
 	public static final String OAI_CERIF_OPENAIRE__METADATA_PREFIX = "oai_cerif_openaire";
+	
+	public static final String LOG_DIR = "data";
 
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
-		endpoint = new OAIPMHEndpoint( endpointBaseUrl );
+		endpoint = new OAIPMHEndpoint( endpointBaseUrl, LOG_DIR );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
 	
@@ -56,7 +58,7 @@ public class CRISValidator {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
 			final URL endpointBaseUrl = new URL( endpointUrl );
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl );			
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, LOG_DIR );			
 		}
 	}
 	
