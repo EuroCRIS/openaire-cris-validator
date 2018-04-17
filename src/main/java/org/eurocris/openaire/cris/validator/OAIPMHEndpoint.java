@@ -3,12 +3,17 @@ package org.eurocris.openaire.cris.validator;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -27,6 +32,7 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.ListIdentifiersType;
@@ -45,6 +51,8 @@ import org.xml.sax.SAXException;
  * @author jdvorak
  */
 public class OAIPMHEndpoint {
+	
+	private final String logDir;
 
 	private final String baseUrl;
 
@@ -52,13 +60,14 @@ public class OAIPMHEndpoint {
 
 	private static final String URL_ENCODING = "UTF-8";
 
-	public OAIPMHEndpoint( final URL endpointBaseUrl ) {
-		this( endpointBaseUrl, OAIPMHtype.class.getName() );
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir ) {
+		this( endpointBaseUrl, logDir, OAIPMHtype.class.getName() );
 	}
 
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final String userAgent ) {
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir, final String userAgent ) {
 		this.baseUrl = endpointBaseUrl.toExternalForm();
 		this.userAgent = userAgent;
+		this.logDir = logDir;
 	}
 
 	public String getBaseUrl() {
@@ -87,7 +96,14 @@ public class OAIPMHEndpoint {
 		assert conn.getContentType().startsWith( "text/xml" );
 
 		final Unmarshaller u = createUnmarshaller();
-		final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( conn.getInputStream() );
+		InputStream inputStream = conn.getInputStream();
+		if ( logDir != null ) {
+			final Path logDirPath = Paths.get( logDir );
+			Files.createDirectories( logDirPath );
+			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( "oai-pmh--" + dtf.format( LocalDateTime.now() ) + ".xml" ) );
+		}
+		final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 		return x.getValue();
 	}
 
