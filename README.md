@@ -34,6 +34,14 @@ are retrieved using the `ListRecords` requests and put together, the following s
 (b) CERIF XML markup contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
 
 
+## Current status (as of 2018-04-17)
+
+The software currently covers checks (0), (1b), (2) and (3) above.
+For (5), it tries to call `ListRecords` on all the sets and validates what comes, but does not do the more specific checks yet.
+
+The validator copies the responses to the requests it makes in files in the `data/` subdirectory.
+
+
 ## Usage
 
 ### Build
