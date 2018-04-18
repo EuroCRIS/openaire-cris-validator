@@ -1,7 +1,5 @@
 package org.eurocris.openaire.cris.validator.util;
 
-import static org.junit.Assert.*;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -15,21 +13,21 @@ public class CheckingIterableTest {
 	public void testEmptyRun() {
 		final List<String> list = Collections.emptyList();
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
-		assertEquals( list.size(), c0.run() );
+		runChecker( list, c0 );
 	}
 
 	@Test
 	public void testSingletonRun() {
 		final List<String> list = Collections.singletonList( "hello" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
-		assertEquals( list.size(), c0.run() );
+		runChecker( list, c0 );
 	}
 
 	@Test
 	public void testTwoEntriesRun() {
 		final List<String> list = Arrays.asList( "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
-		assertEquals( list.size(), c0.run() );
+		runChecker( list, c0 );
 	}
 
 	@Test( expected = MyException.class)
@@ -37,7 +35,7 @@ public class CheckingIterableTest {
 		final List<String> list = Collections.emptyList();
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "goodbye".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test
@@ -45,7 +43,7 @@ public class CheckingIterableTest {
 		final List<String> list = Collections.singletonList( "goodbye" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "goodbye".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test( expected = MyException.class)
@@ -53,7 +51,7 @@ public class CheckingIterableTest {
 		final List<String> list = Collections.singletonList( "hello" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "goodbye".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test
@@ -61,7 +59,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "hello".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test
@@ -69,7 +67,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "world".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test( expected = MyException.class)
@@ -77,7 +75,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "goodbye".equals( s ), new MyException1() );
-		assertEquals( list.size(), c1.run() );
+		runChecker( list, c1 );
 	}
 
 	@Test
@@ -86,7 +84,7 @@ public class CheckingIterableTest {
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "hello".equals( s ), new MyException1() );
 		final CheckingIterable<String> c2 = c1.checkContains( ( s ) -> "world".equals( s ), new MyException2() );
-		assertEquals( list.size(), c2.run() );
+		runChecker( list, c2 );
 	}
 
 	@Test( expected = MyException3.class)
@@ -96,7 +94,7 @@ public class CheckingIterableTest {
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "hello".equals( s ), new MyException1() );
 		final CheckingIterable<String> c2 = c1.checkContains( ( s ) -> "world".equals( s ), new MyException2() );
 		final CheckingIterable<String> c3 = c2.checkContains( ( s ) -> "magical".equals( s ), new MyException3() );
-		assertEquals( list.size(), c3.run() );
+		runChecker( list, c3 );
 	}
 
 	@Test( expected = MyException1.class)
@@ -106,7 +104,7 @@ public class CheckingIterableTest {
 		final CheckingIterable<String> c1 = c0.checkContains( ( s ) -> "magical".equals( s ), new MyException1() );
 		final CheckingIterable<String> c2 = c1.checkContains( ( s ) -> "hello".equals( s ), new MyException2() );
 		final CheckingIterable<String> c3 = c2.checkContains( ( s ) -> "world".equals( s ), new MyException3() );
-		assertEquals( list.size(), c3.run() );
+		runChecker( list, c3 );
 	}
 
 	@Test
@@ -114,7 +112,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", "beautiful", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkUnique( Function.identity(), "Non unique word" );
-		assertEquals( list.size(), c1.run() );		
+		runChecker( list, c1 );		
 	}
 	
 	@Test( expected = AssertionError.class)
@@ -122,7 +120,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkUnique( Function.identity(), "Non unique word" );
-		assertEquals( list.size(), c1.run() );		
+		runChecker( list, c1 );		
 	}
 	
 	@Test
@@ -130,7 +128,7 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", null, null, "beautiful", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkUnique( Function.identity(), "Non unique word" );
-		assertEquals( list.size(), c1.run() );		
+		runChecker( list, c1 );		
 	}
 	
 	@Test( expected = AssertionError.class)
@@ -138,7 +136,15 @@ public class CheckingIterableTest {
 		final List<String> list = Arrays.asList( "hello", null, null, "hello", "world" );
 		final CheckingIterable<String> c0 = CheckingIterable.over( list );
 		final CheckingIterable<String> c1 = c0.checkUnique( Function.identity(), "Non unique word" );
-		assertEquals( list.size(), c1.run() );		
+		runChecker( list, c1 );		
+	}
+	
+	protected void runChecker( final List<String> list, final CheckingIterable<String> c1 ) {
+		final long expected = list.size();
+		final long actual = c1.run();
+		if ( expected != actual ) {
+			throw new IllegalStateException( "Checker run saw " + actual + " entries, but " + expected + " were expected" );
+		}
 	}
 	
 }
