@@ -48,6 +48,36 @@ public class CheckingIterable<T> implements Iterable<T> {
 		};
 	}
 
+	public CheckingIterable<T> checkForAll( final Predicate<T> predicate, final String message ) {
+		final CheckingIterable<T> parentChecker = (CheckingIterable<T>) this;
+		return new CheckingIterable<T>() {
+
+			@Override
+			public Iterator<T> iterator() {
+				final Iterator<T> parentIterator = parentChecker.iterator();
+				return new Iterator<T>() {
+
+					@Override
+					public boolean hasNext() {
+						return parentIterator.hasNext();
+					}
+
+					@Override
+					public T next() {
+						final T obj = parentIterator.next();
+						final boolean match = predicate.test( obj );
+						if ( ! match ) {
+							throw new AssertionFailedError( message + "; object: " + obj );
+						}
+						return obj;
+					}
+
+				};
+			}
+
+		};
+	}
+
 	public <U> CheckingIterable<T> checkUnique( final Function<T, U> function, final String message ) {
 		final CheckingIterable<T> parentChecker = (CheckingIterable<T>) this;
 		final Set<U> seenValues = new HashSet<>();
