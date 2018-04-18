@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.xml.bind.JAXBElement;
+
 import org.apache.commons.cli.MissingArgumentException;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.junit.FixMethodOrder;
@@ -68,7 +70,7 @@ public class CRISValidator {
 	
 	@SuppressWarnings( "unused")
 	private Optional<String> sampleIdentifier = Optional.empty();
-	@SuppressWarnings( "unused")
+
 	private Optional<String> repoIdentifier = Optional.empty();
 	
 	@Test
@@ -210,7 +212,7 @@ public class CRISValidator {
 	}
 
 	private CheckingIterable<RecordType> checkersChain( final Iterable<RecordType> records ) {
-		return uniquenessChecker( records );
+		return uniquenessChecker( oaiIdentifierChecker( records ) );
 	}
 	
 	private CheckingIterable<RecordType> uniquenessChecker( final Iterable<RecordType> records ) {
@@ -218,5 +220,25 @@ public class CRISValidator {
 		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
 		return checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
 	}
+	
+	private CheckingIterable<RecordType> oaiIdentifierChecker( final Iterable<RecordType> records ) {
+		final CheckingIterable<RecordType> checker = CheckingIterable.over( records );
+		final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
+			
+			@Override
+			public String apply( final RecordType x ) {
+				@SuppressWarnings( "unchecked")
+				final JAXBElement<Object> metadataRecord = (JAXBElement<Object>) x.getMetadata().getAny();
+				// TODO
+				return "oai:" + repoIdentifier.get() + ":"; // TODO
+			}
 
+		};
+		if ( repoIdentifier.isPresent() ) {
+			return checker.checkForAllEquals( expectedFunction, ( final RecordType record ) -> ( record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
+		} else {
+			return checker;
+		}
+	}
+	
 }
