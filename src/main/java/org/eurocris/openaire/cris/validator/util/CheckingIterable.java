@@ -1,5 +1,7 @@
 package org.eurocris.openaire.cris.validator.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -69,6 +71,35 @@ public class CheckingIterable<T> implements Iterable<T> {
 						if ( ! match ) {
 							throw new AssertionFailedError( message + "; object: " + obj );
 						}
+						return obj;
+					}
+
+				};
+			}
+
+		};
+	}
+
+	public <U> CheckingIterable<T> checkForAllEquals( final Function<T, U> expectedFunction, final Function<T, U> realFunction, final String message ) {
+		final CheckingIterable<T> parentChecker = (CheckingIterable<T>) this;
+		return new CheckingIterable<T>() {
+
+			@Override
+			public Iterator<T> iterator() {
+				final Iterator<T> parentIterator = parentChecker.iterator();
+				return new Iterator<T>() {
+
+					@Override
+					public boolean hasNext() {
+						return parentIterator.hasNext();
+					}
+
+					@Override
+					public T next() {
+						final T obj = parentIterator.next();
+						final U expectedValue = expectedFunction.apply( obj );
+						final U realValue = realFunction.apply( obj );
+						assertEquals( message, expectedValue, realValue );
 						return obj;
 					}
 

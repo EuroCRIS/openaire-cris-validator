@@ -139,6 +139,22 @@ public class CheckingIterableTest {
 		runChecker( list, c1 );		
 	}
 	
+	@Test
+	public void testForAllEqualsOk() {
+		final List<String> list = Collections.singletonList( "beautiful" );
+		final CheckingIterable<String> c0 = CheckingIterable.over( list );
+		final CheckingIterable<String> c1 = c0.checkForAllEquals( String::toLowerCase, String::toString, "Entries should be lowercased" );
+		runChecker( list, c1 );		
+	}
+
+	@Test( expected = AssertionError.class)
+	public void testForAllEqualsFail() {
+		final List<String> list = Collections.singletonList( "BeautiFul" );
+		final CheckingIterable<String> c0 = CheckingIterable.over( list );
+		final CheckingIterable<String> c1 = c0.checkForAllEquals( String::toLowerCase, String::toString, "Entries should be lowercased" );
+		runChecker( list, c1 );		
+	}
+	
 	protected void runChecker( final List<String> list, final CheckingIterable<String> c1 ) {
 		final long expected = list.size();
 		final long actual = c1.run();
