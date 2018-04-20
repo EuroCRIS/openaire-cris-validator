@@ -58,12 +58,13 @@ Then do:
 
 	java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar {endpoint-url}
 
+With Java 9 you'll need the additional command-line option `--add-modules=java.xml.bind` to run the code (as per [https://stackoverflow.com/a/43574427/7739289](this answer on StackOverflow)).
+
 #### From Eclipse
 
 Set up a JUnit launcher for the `CRISValidator` class.
 Pass the OAI-PMH endpoint URL as the value of the system property `endpoint.to.validate`.
 Add the parallel `guidelines-cris-managers` project to the classpath of the launcher (in order to access the XML Schemas).
-
 
 ## Feedback
 
