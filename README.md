@@ -58,7 +58,7 @@ Then do:
 
 	java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar {endpoint-url}
 
-With Java 9 you'll need the additional command-line option `--add-modules=java.xml.bind` to run the code (as per [https://stackoverflow.com/a/43574427/7739289](this answer on StackOverflow)).
+With Java 9 you'll need the additional command-line option `--add-modules=java.xml.bind` to run the code (as per [this answer on StackOverflow](https://stackoverflow.com/a/43574427/7739289)).
 
 #### From Eclipse
 
