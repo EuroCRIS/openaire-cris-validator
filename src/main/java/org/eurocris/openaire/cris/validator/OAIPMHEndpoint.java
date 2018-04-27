@@ -95,7 +95,6 @@ public class OAIPMHEndpoint {
 		// TODO check the status and the response headers
 		assert conn.getContentType().startsWith( "text/xml" );
 
-		final Unmarshaller u = createUnmarshaller();
 		InputStream inputStream = conn.getInputStream();
 		if ( logDir != null ) {
 			final Path logDirPath = Paths.get( logDir );
@@ -103,8 +102,13 @@ public class OAIPMHEndpoint {
 			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
 			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + verb + ".xml" ) );
 		}
-		final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
-		return x.getValue();
+		try {
+			final Unmarshaller u = createUnmarshaller();
+			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
+			return x.getValue();
+		} finally {
+			inputStream.close();
+		}
 	}
 
 	protected static Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
