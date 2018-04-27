@@ -51,8 +51,18 @@ public class TeeInputStream extends FilterInputStream {
 
 	public void close() throws IOException {
 		try {
-			out.close();
+			try {
+				// read (and copy) the rest of the stream
+				final byte[] buffer = new byte[ 4096 ];
+				while ( -1 != read( buffer ) );
+			} catch ( final IOException e ) {
+				// o.k., we tried
+			} finally {
+				// then close the output
+				out.close();
+			}
 		} finally {
+			// close the input in any case
 			super.close();
 		}
 	}
