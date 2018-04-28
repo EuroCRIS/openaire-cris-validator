@@ -121,15 +121,34 @@ public class OAIPMHEndpoint {
 
 	protected static Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class.getPackage().getName() );
-		final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
-		final Source[] schemas = { schema( "/openaire-cerif-profile.xsd" ), schema( "/cached/oai-identifier.xsd" ), schema( "/cached/OAI-PMH.xsd" ), schema( "/cached/oai_dc.xsd" ), };
-		final Schema schema = sf.newSchema( schemas );
+		final Schema schema = createParserSchema();
 		final Unmarshaller u = jc.createUnmarshaller();
 		u.setSchema( schema );
 		return u;
 	}
 
+	private static Schema schema = null;
+	
+	protected static synchronized Schema createParserSchema() throws SAXException {
+		if ( schema == null ) {
+			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
+			final Source[] schemas = { 
+					schema( "/openaire-cerif-profile.xsd" ), 
+					schema( "/cached/oai-identifier.xsd" ), 
+					schema( "/cached/OAI-PMH.xsd" ), 
+					schema( "/cached/oai_dc.xsd" ), 
+					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
+				};
+			schema = sf.newSchema( schemas );
+		}
+		return schema;
+	}
+
 	private static Source schema( final String path ) {
+		return schema( path, null );
+	}
+	
+	private static Source schema( final String path, final String externalUrl ) {
 		final String path1 = "/schemas" + path;
 		final URL url = OAIPMHEndpoint.class.getResource( path1 );
 		if ( url == null ) {
@@ -137,7 +156,7 @@ public class OAIPMHEndpoint {
 		}
 		final StreamSource src = new StreamSource();
 		src.setInputStream( OAIPMHEndpoint.class.getResourceAsStream( path1 ) );
-		src.setSystemId( url.toExternalForm() );
+		src.setSystemId( ( externalUrl != null ) ? externalUrl : url.toExternalForm() );
 		return src;
 	}
 
