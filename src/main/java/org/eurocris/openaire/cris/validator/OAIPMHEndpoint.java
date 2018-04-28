@@ -41,6 +41,8 @@ import org.openarchives.oai._2.ListIdentifiersType;
 import org.openarchives.oai._2.ListMetadataFormatsType;
 import org.openarchives.oai._2.ListRecordsType;
 import org.openarchives.oai._2.ListSetsType;
+import org.openarchives.oai._2.OAIPMHerrorType;
+import org.openarchives.oai._2.OAIPMHerrorcodeType;
 import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.ResumptionTokenType;
@@ -117,7 +119,21 @@ public class OAIPMHEndpoint {
 		try {
 			final Unmarshaller u = createUnmarshaller();
 			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
-			return x.getValue();
+			final OAIPMHtype response = x.getValue();
+			final StringBuilder sb = new StringBuilder();
+			for ( final OAIPMHerrorType error : response.getError() ) {
+				if (! OAIPMHerrorcodeType.NO_RECORDS_MATCH.equals( error.getCode() ) ) {
+					sb.append( error.getCode().name() );
+					sb.append( ": " );
+					sb.append( error.getValue() );
+					sb.append( "; " );
+				}
+			}
+			if ( sb.length() > 0 ) {
+				final String errors = sb.substring( 0, sb.length() - 2 );
+				throw new IllegalStateException( errors );
+			}
+			return response;
 		} finally {
 			inputStream.close();
 		}
@@ -318,7 +334,7 @@ public class OAIPMHEndpoint {
 				final Iterator<ItemType> i = new Iterator<ItemType>() {
 
 					private ListType currentChunk = funcGetList.apply( makeConnection( verb, params ) );
-					private Iterator<ItemType> innerIterator = functGetIterable.apply( currentChunk ).iterator();
+					private Iterator<ItemType> innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
 
 					@Override
 					public synchronized ItemType next() {
@@ -330,7 +346,7 @@ public class OAIPMHEndpoint {
 
 					@Override
 					public synchronized boolean hasNext() {
-						return innerIterator.hasNext() || advance();
+						return ( innerIterator != null ) && ( innerIterator.hasNext() || advance() );
 					}
 
 					private boolean advance() {
