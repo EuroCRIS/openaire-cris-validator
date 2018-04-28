@@ -120,7 +120,7 @@ public class OAIPMHEndpoint {
 	}
 
 	protected static Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
-		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class.getPackage().getName() );
+		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
 		final Schema schema = createParserSchema();
 		final Unmarshaller u = jc.createUnmarshaller();
 		u.setSchema( schema );

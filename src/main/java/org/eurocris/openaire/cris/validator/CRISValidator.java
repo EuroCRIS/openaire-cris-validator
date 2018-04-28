@@ -77,25 +77,28 @@ public class CRISValidator {
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
 		
-		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
-		
 		final List<DescriptionType> descriptions = identify.getDescription();
 		// boolean serviceSeen = false;
 		boolean oaiIdentifierSeen = false;
 		for ( final DescriptionType description : descriptions ) {
 			final Object obj = description.getAny();
+			if ( obj instanceof JAXBElement<?> ) {
+				final JAXBElement<?> jaxbEl = (JAXBElement<?>) obj;
+				final Object obj1 = jaxbEl.getValue();
 
-			if ( obj instanceof OaiIdentifierType ) {
-				oaiIdentifierSeen = true;
-				final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj;
-				sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
-				repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+				if ( obj1 instanceof OaiIdentifierType ) {
+					oaiIdentifierSeen = true;
+					final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
+					sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
+					repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+				}
+	
+				// TODO
 			}
-
-			// TODO
 		}
 		assertTrue( "No 'description' contains an 'oai-identifier' element", oaiIdentifierSeen );
 		// assertTrue( "No 'description' contains a 'Service' element", serviceSeen );
+		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );		
 	}
 	
 	@Test
