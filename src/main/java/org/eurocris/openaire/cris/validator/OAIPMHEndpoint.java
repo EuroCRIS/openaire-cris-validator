@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -59,6 +61,8 @@ public class OAIPMHEndpoint {
 	private final String userAgent;
 
 	private static final String URL_ENCODING = "UTF-8";
+	
+	private static final Pattern p1 = Pattern.compile( ".*\\W(set=\\w+).*" );
 
 	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir ) {
 		this( endpointBaseUrl, logDir, OAIPMHtype.class.getName() );
@@ -88,7 +92,8 @@ public class OAIPMHEndpoint {
 
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
-		final URLConnection conn = makeUrl( verb, params ).openConnection();
+		final URL url = makeUrl( verb, params );
+		final URLConnection conn = url.openConnection();
 		conn.setRequestProperty( "User-Agent", userAgent );
 		// TODO set other request headers if needed
 		conn.connect();
@@ -100,8 +105,15 @@ public class OAIPMHEndpoint {
 		if ( logDir != null ) {
 			final Path logDirPath = Paths.get( logDir );
 			Files.createDirectories( logDirPath );
+			final StringBuilder sb = new StringBuilder( verb );
+			final Matcher m1 = p1.matcher( url.toExternalForm() );
+ 			if ( m1.matches() ) {
+ 				sb.append( "__" );
+ 				sb.append( m1.group( 1 ) );
+ 			}
 			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + verb + ".xml" ) );
+			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
 		}
 		final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 		return x.getValue();
