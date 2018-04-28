@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -59,6 +61,8 @@ public class OAIPMHEndpoint {
 	private final String userAgent;
 
 	private static final String URL_ENCODING = "UTF-8";
+	
+	private static final Pattern p1 = Pattern.compile( ".*\\W(set=\\w+).*" );
 
 	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir ) {
 		this( endpointBaseUrl, logDir, OAIPMHtype.class.getName() );
@@ -88,7 +92,8 @@ public class OAIPMHEndpoint {
 
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
-		final URLConnection conn = makeUrl( verb, params ).openConnection();
+		final URL url = makeUrl( verb, params );
+		final URLConnection conn = url.openConnection();
 		conn.setRequestProperty( "User-Agent", userAgent );
 		// TODO set other request headers if needed
 		conn.connect();
@@ -99,8 +104,15 @@ public class OAIPMHEndpoint {
 		if ( logDir != null ) {
 			final Path logDirPath = Paths.get( logDir );
 			Files.createDirectories( logDirPath );
+			final StringBuilder sb = new StringBuilder( verb );
+			final Matcher m1 = p1.matcher( url.toExternalForm() );
+ 			if ( m1.matches() ) {
+ 				sb.append( "__" );
+ 				sb.append( m1.group( 1 ) );
+ 			}
 			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + verb + ".xml" ) );
+			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
 		}
 		try {
 			final Unmarshaller u = createUnmarshaller();
@@ -112,16 +124,35 @@ public class OAIPMHEndpoint {
 	}
 
 	protected static Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
-		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class.getPackage().getName() );
-		final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
-		final Source[] schemas = { schema( "/openaire-cerif-profile.xsd" ), schema( "/cached/oai-identifier.xsd" ), schema( "/cached/OAI-PMH.xsd" ), schema( "/cached/oai_dc.xsd" ), };
-		final Schema schema = sf.newSchema( schemas );
+		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
+		final Schema schema = createParserSchema();
 		final Unmarshaller u = jc.createUnmarshaller();
 		u.setSchema( schema );
 		return u;
 	}
 
+	private static Schema schema = null;
+	
+	protected static synchronized Schema createParserSchema() throws SAXException {
+		if ( schema == null ) {
+			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
+			final Source[] schemas = { 
+					schema( "/openaire-cerif-profile.xsd" ), 
+					schema( "/cached/oai-identifier.xsd" ), 
+					schema( "/cached/OAI-PMH.xsd" ), 
+					schema( "/cached/oai_dc.xsd" ), 
+					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
+				};
+			schema = sf.newSchema( schemas );
+		}
+		return schema;
+	}
+
 	private static Source schema( final String path ) {
+		return schema( path, null );
+	}
+	
+	private static Source schema( final String path, final String externalUrl ) {
 		final String path1 = "/schemas" + path;
 		final URL url = OAIPMHEndpoint.class.getResource( path1 );
 		if ( url == null ) {
@@ -129,7 +160,7 @@ public class OAIPMHEndpoint {
 		}
 		final StreamSource src = new StreamSource();
 		src.setInputStream( OAIPMHEndpoint.class.getResourceAsStream( path1 ) );
-		src.setSystemId( url.toExternalForm() );
+		src.setSystemId( ( externalUrl != null ) ? externalUrl : url.toExternalForm() );
 		return src;
 	}
 

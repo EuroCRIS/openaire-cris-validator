@@ -10,6 +10,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import javax.xml.bind.JAXBElement;
+
 import org.apache.commons.cli.MissingArgumentException;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.junit.FixMethodOrder;
@@ -23,6 +25,7 @@ import org.openarchives.oai._2.MetadataFormatType;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+import org.w3c.dom.Element;
 
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
@@ -67,33 +70,36 @@ public class CRISValidator {
 	}
 	
 	@SuppressWarnings( "unused")
-	private Optional<String> sampleIdentifier = Optional.empty();
-	@SuppressWarnings( "unused")
-	private Optional<String> repoIdentifier = Optional.empty();
+	private static Optional<String> sampleIdentifier = Optional.empty();
+
+	private static Optional<String> repoIdentifier = Optional.empty();
 	
 	@Test
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
-		
-		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
 		
 		final List<DescriptionType> descriptions = identify.getDescription();
 		// boolean serviceSeen = false;
 		boolean oaiIdentifierSeen = false;
 		for ( final DescriptionType description : descriptions ) {
 			final Object obj = description.getAny();
+			if ( obj instanceof JAXBElement<?> ) {
+				final JAXBElement<?> jaxbEl = (JAXBElement<?>) obj;
+				final Object obj1 = jaxbEl.getValue();
 
-			if ( obj instanceof OaiIdentifierType ) {
-				oaiIdentifierSeen = true;
-				final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj;
-				sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
-				repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+				if ( obj1 instanceof OaiIdentifierType ) {
+					oaiIdentifierSeen = true;
+					final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
+					sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
+					repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+				}
+	
+				// TODO
 			}
-
-			// TODO
 		}
 		assertTrue( "No 'description' contains an 'oai-identifier' element", oaiIdentifierSeen );
 		// assertTrue( "No 'description' contains a 'Service' element", serviceSeen );
+		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );		
 	}
 	
 	@Test
@@ -210,7 +216,7 @@ public class CRISValidator {
 	}
 
 	private CheckingIterable<RecordType> checkersChain( final Iterable<RecordType> records ) {
-		return uniquenessChecker( records );
+		return uniquenessChecker( oaiIdentifierChecker( records ) );
 	}
 	
 	private CheckingIterable<RecordType> uniquenessChecker( final Iterable<RecordType> records ) {
@@ -218,5 +224,23 @@ public class CRISValidator {
 		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
 		return checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
 	}
+	
+	private CheckingIterable<RecordType> oaiIdentifierChecker( final Iterable<RecordType> records ) {
+		final CheckingIterable<RecordType> checker = CheckingIterable.over( records );
+		final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
+			
+			@Override
+			public String apply( final RecordType x ) {
+				final Element el = (Element) x.getMetadata().getAny();
+				return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+			}
 
+		};
+		if ( repoIdentifier.isPresent() ) {
+			return checker.checkForAllEquals( expectedFunction, ( final RecordType record ) -> ( record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
+		} else {
+			return checker;
+		}
+	}
+	
 }
