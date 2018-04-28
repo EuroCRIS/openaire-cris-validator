@@ -25,6 +25,7 @@ import org.openarchives.oai._2.MetadataFormatType;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+import org.w3c.dom.Element;
 
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
@@ -69,9 +70,9 @@ public class CRISValidator {
 	}
 	
 	@SuppressWarnings( "unused")
-	private Optional<String> sampleIdentifier = Optional.empty();
+	private static Optional<String> sampleIdentifier = Optional.empty();
 
-	private Optional<String> repoIdentifier = Optional.empty();
+	private static Optional<String> repoIdentifier = Optional.empty();
 	
 	@Test
 	public void check000_Identify() throws Exception {
@@ -230,10 +231,8 @@ public class CRISValidator {
 			
 			@Override
 			public String apply( final RecordType x ) {
-				@SuppressWarnings( "unchecked")
-				final JAXBElement<Object> metadataRecord = (JAXBElement<Object>) x.getMetadata().getAny();
-				// TODO
-				return "oai:" + repoIdentifier.get() + ":"; // TODO
+				final Element el = (Element) x.getMetadata().getAny();
+				return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
 			}
 
 		};
