@@ -1,7 +1,7 @@
 # OpenAIRE CRIS validator
 
 A tool to assess whether an OAI-PMH endpoint can provide research information
-in compliance to the OpenAIRE Guidelines for CRIS Managers 1.1 <https://github.com/openaire/guidelines-cris-managers>.
+in compliance with the [OpenAIRE Guidelines for CRIS Managers 1.1](https://github.com/openaire/guidelines-cris-managers).
 
 
 ## The checks
