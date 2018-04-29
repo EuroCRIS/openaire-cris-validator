@@ -35,12 +35,11 @@ are retrieved using the `ListRecords` requests and put together, the following s
 
 
 ## Current status 
-(as of 2018-04-17)
+(as of 2018-04-30)
 
-The software currently covers checks (0), (1b), (2) and (3) above.
-For (5), it tries to call `ListRecords` on all the sets and validates what comes, but does not do the more specific checks yet.
+The software currently covers checks (0), (1b), (2), (3) and (5a) above.
 
-The validator copies the responses to the requests it makes in files in the `data/` subdirectory.
+The validator copies the responses to the requests it makes into files in the `data/` subdirectory.
 
 
 ## Usage
