@@ -352,14 +352,17 @@ public class OAIPMHEndpoint {
 					private boolean advance() {
 						final ResumptionTokenType resumptionToken = funcGetResumptionToken.apply( currentChunk );
 						if ( resumptionToken != null ) {
-							try {
-								currentChunk = funcGetList.apply( makeConnection( verb, "resumptionToken", resumptionToken.getValue() ) );
-								innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
-								return ( innerIterator != null );
-							} catch ( final RuntimeException e ) {
-								throw e;
-							} catch ( final Throwable t ) {
-								throw new IllegalStateException( t );
+							final String resumptionTokenValue = resumptionToken.getValue();
+							if ( ! resumptionTokenValue.isEmpty() ) {
+								try {
+									currentChunk = funcGetList.apply( makeConnection( verb, "resumptionToken", resumptionTokenValue ) );
+									innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
+									return ( innerIterator != null );
+								} catch ( final RuntimeException e ) {
+									throw e;
+								} catch ( final Throwable t ) {
+									throw new IllegalStateException( t );
+								}
 							}
 						}
 						return false;
