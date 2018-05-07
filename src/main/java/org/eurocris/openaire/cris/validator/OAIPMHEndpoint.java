@@ -354,8 +354,8 @@ public class OAIPMHEndpoint {
 						if ( resumptionToken != null ) {
 							try {
 								currentChunk = funcGetList.apply( makeConnection( verb, "resumptionToken", resumptionToken.getValue() ) );
-								innerIterator = functGetIterable.apply( currentChunk ).iterator();
-								return true;
+								innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
+								return ( innerIterator != null );
 							} catch ( final RuntimeException e ) {
 								throw e;
 							} catch ( final Throwable t ) {
