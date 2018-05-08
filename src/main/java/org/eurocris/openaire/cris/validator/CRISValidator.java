@@ -1,16 +1,19 @@
 package org.eurocris.openaire.cris.validator;
 
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
@@ -26,6 +29,7 @@ import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
@@ -47,13 +51,13 @@ public class CRISValidator {
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
-		endpoint = new OAIPMHEndpoint( endpointBaseUrl, LOG_DIR );
+		endpoint = new OAIPMHEndpoint( endpointBaseUrl, createParserSchema(), LOG_DIR );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
 	
 	private static OAIPMHEndpoint endpoint;
 
-	public CRISValidator() throws MalformedURLException, MissingArgumentException {
+	public CRISValidator() throws MalformedURLException, MissingArgumentException, SAXException {
 		if ( endpoint == null ) {
 			final String endpointPropertyKey = "endpoint.to.validate";
 			final String endpointUrl = System.getProperty( endpointPropertyKey );
@@ -61,7 +65,7 @@ public class CRISValidator {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
 			final URL endpointBaseUrl = new URL( endpointUrl );
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl, LOG_DIR );			
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, createParserSchema(), LOG_DIR );			
 		}
 	}
 	
@@ -69,6 +73,39 @@ public class CRISValidator {
 		return endpoint.getBaseUrl();
 	}
 	
+	private static Schema schema = null;
+	
+	protected static synchronized Schema createParserSchema() throws SAXException {
+		if ( schema == null ) {
+			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
+			final Source[] schemas = { 
+					schema( "/openaire-cerif-profile.xsd" ), 
+					schema( "/cached/oai-identifier.xsd" ), 
+					schema( "/cached/OAI-PMH.xsd" ), 
+					schema( "/cached/oai_dc.xsd" ), 
+					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
+				};
+			schema = sf.newSchema( schemas );
+		}
+		return schema;
+	}
+
+	private static Source schema( final String path ) {
+		return schema( path, null );
+	}
+	
+	private static Source schema( final String path, final String externalUrl ) {
+		final String path1 = "/schemas" + path;
+		final URL url = OAIPMHEndpoint.class.getResource( path1 );
+		if ( url == null ) {
+			throw new IllegalArgumentException( "Resource " + path1 + " not found" );
+		}
+		final StreamSource src = new StreamSource();
+		src.setInputStream( OAIPMHEndpoint.class.getResourceAsStream( path1 ) );
+		src.setSystemId( ( externalUrl != null ) ? externalUrl : url.toExternalForm() );
+		return src;
+	}
+
 	@SuppressWarnings( "unused")
 	private static Optional<String> sampleIdentifier = Optional.empty();
 
@@ -77,28 +114,28 @@ public class CRISValidator {
 	@Test
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
-		
-		final List<DescriptionType> descriptions = identify.getDescription();
-		// boolean serviceSeen = false;
-		boolean oaiIdentifierSeen = false;
-		for ( final DescriptionType description : descriptions ) {
-			final Object obj = description.getAny();
-			if ( obj instanceof JAXBElement<?> ) {
-				final JAXBElement<?> jaxbEl = (JAXBElement<?>) obj;
-				final Object obj1 = jaxbEl.getValue();
+		CheckingIterable<DescriptionType> checker = CheckingIterable.over( identify.getDescription() );
+		checker = checker.checkContains( new Predicate<DescriptionType>() {
 
-				if ( obj1 instanceof OaiIdentifierType ) {
-					oaiIdentifierSeen = true;
-					final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
-					sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
-					repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+			@Override
+			public boolean test( final DescriptionType description ) {
+				final Object obj = description.getAny();
+				if ( obj instanceof JAXBElement<?> ) {
+					final JAXBElement<?> jaxbEl = (JAXBElement<?>) obj;
+					final Object obj1 = jaxbEl.getValue();
+					if ( obj1 instanceof OaiIdentifierType ) {
+						final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
+						sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
+						repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+						return true;
+					}
 				}
-	
-				// TODO
+				return false;
 			}
-		}
-		assertTrue( "No 'description' contains an 'oai-identifier' element", oaiIdentifierSeen );
+			
+		}, "No 'description' contains an 'oai-identifier' element" );
 		// assertTrue( "No 'description' contains a 'Service' element", serviceSeen );
+		checker.run();
 		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );		
 	}
 	
@@ -108,11 +145,11 @@ public class CRISValidator {
 		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
-		checker = checkMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, "https://www.openaire.eu/cerif-profile/1.1/" );
+		checker = wrapCheckMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, "https://www.openaire.eu/cerif-profile/1.1/" );
 		checker.run();
 	}
 	
-	private CheckingIterable<MetadataFormatType> checkMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent, final String expectedMetadataFormatPrefix, final String expectedMetadataFormatNamespace ) {
+	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent, final String expectedMetadataFormatPrefix, final String expectedMetadataFormatNamespace ) {
 		final Predicate<MetadataFormatType> predicate = new Predicate<MetadataFormatType>() {
 
 			@Override
@@ -133,19 +170,19 @@ public class CRISValidator {
 	public void check020_Sets() throws Exception {
 		CheckingIterable<SetType> checker = CheckingIterable.over( endpoint.callListSets() );
 		checker = checker.checkUnique( SetType::getSetSpec, "setSpec not unique" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, "OpenAIRE_CRIS_publications" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, "OpenAIRE_CRIS_products" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_PATENTS__SET_SPEC, "OpenAIRE_CRIS_patents" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_PERSONS__SET_SPEC, "OpenAIRE_CRIS_persons" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, "OpenAIRE_CRIS_orgunits" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_PROJECTS__SET_SPEC, "OpenAIRE_CRIS_projects" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_FUNDING__SET_SPEC, "OpenAIRE_CRIS_funding" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_EVENTS__SET_SPEC, "OpenAIRE_CRIS_events" );
-		checker = checkSetPresent( checker, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, "OpenAIRE_CRIS_equipments" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, "OpenAIRE_CRIS_publications" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, "OpenAIRE_CRIS_products" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_PATENTS__SET_SPEC, "OpenAIRE_CRIS_patents" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_PERSONS__SET_SPEC, "OpenAIRE_CRIS_persons" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, "OpenAIRE_CRIS_orgunits" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_PROJECTS__SET_SPEC, "OpenAIRE_CRIS_projects" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_FUNDING__SET_SPEC, "OpenAIRE_CRIS_funding" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_EVENTS__SET_SPEC, "OpenAIRE_CRIS_events" );
+		checker = wrapCheckSetPresent( checker, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, "OpenAIRE_CRIS_equipments" );
 		checker.run();
 	}
 	
-	private CheckingIterable<SetType> checkSetPresent( final CheckingIterable<SetType> parent, final String expectedSetSpec, final String expectedSetName ) {
+	private CheckingIterable<SetType> wrapCheckSetPresent( final CheckingIterable<SetType> parent, final String expectedSetSpec, final String expectedSetName ) {
 		final Predicate<SetType> predicate = new Predicate<SetType>() {
 
 			@Override
@@ -163,80 +200,92 @@ public class CRISValidator {
 
 	@Test
 	public void check100_CheckPublications() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check200_CheckProducts() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check300_CheckPatents() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check400_CheckPersons() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check500_CheckOrgUnits() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check600_CheckProjects() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check700_CheckFundings() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check800_CheckEquipment() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
 	@Test
 	public void check900_CheckEvents() throws Exception {
-		final CheckingIterable<RecordType> checker = checkersChain( endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null ) );
+		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
 		checker.run();
 	}
 
-	private CheckingIterable<RecordType> checkersChain( final Iterable<RecordType> records ) {
-		return uniquenessChecker( oaiIdentifierChecker( records ) );
+	/**
+	 * Prepare the checks to run on all CERIF records. 
+	 * @param records
+	 * @return
+	 */
+	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records ) {
+		return wrapCheckUniqueness( wrapCheckOAIIdentifier( CheckingIterable.over( records ) ) );
 	}
 	
-	private CheckingIterable<RecordType> uniquenessChecker( final Iterable<RecordType> records ) {
-		final CheckingIterable<RecordType> checker = CheckingIterable.over( records );
+	private CheckingIterable<RecordType> wrapCheckUniqueness( final CheckingIterable<RecordType> checker ) {
 		final Function<RecordType, HeaderType> f1 = RecordType::getHeader;
 		return checker.checkUnique( f1.andThen( HeaderType::getIdentifier ), "record identifier not unique" );
 	}
 	
-	private CheckingIterable<RecordType> oaiIdentifierChecker( final Iterable<RecordType> records ) {
-		final CheckingIterable<RecordType> checker = CheckingIterable.over( records );
-		final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
-			
-			@Override
-			public String apply( final RecordType x ) {
-				final Element el = (Element) x.getMetadata().getAny();
-				return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
-			}
-
-		};
+	private CheckingIterable<RecordType> wrapCheckOAIIdentifier( final CheckingIterable<RecordType> checker ) {
 		if ( repoIdentifier.isPresent() ) {
+			final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
+				
+				@Override
+				public String apply( final RecordType x ) {
+					final Element el = (Element) x.getMetadata().getAny();
+					return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+				}
+
+			};
 			return checker.checkForAllEquals( expectedFunction, ( final RecordType record ) -> ( record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
 		} else {
 			return checker;

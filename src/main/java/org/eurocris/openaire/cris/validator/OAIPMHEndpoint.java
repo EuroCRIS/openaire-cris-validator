@@ -1,7 +1,5 @@
 package org.eurocris.openaire.cris.validator;
 
-import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -29,10 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
 
 import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
 import org.openarchives.oai._2.HeaderType;
@@ -50,48 +45,66 @@ import org.openarchives.oai._2.SetType;
 import org.xml.sax.SAXException;
 
 /**
- * An OAI-PMH 2.0 endpoint.
+ * An OAI-PMH 2.0 endpoint client.
  * 
  * @author jdvorak
  */
 public class OAIPMHEndpoint {
 	
-	private final String logDir;
-
 	private final String baseUrl;
 
+	private final Schema schema;
+	
 	private final String userAgent;
+
+	private final String logDir;
 
 	private static final String URL_ENCODING = "UTF-8";
 	
 	private static final Pattern p1 = Pattern.compile( ".*\\W(set=\\w+).*" );
 
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir ) {
-		this( endpointBaseUrl, logDir, OAIPMHtype.class.getName() );
+	/**
+	 * New endpoint client.
+	 * @param endpointBaseUrl the base URL of the endpoint
+	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
+	 * @param logDir the optional logging directory name
+	 */
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final String logDir ) {
+		this( endpointBaseUrl, schema, logDir, OAIPMHtype.class.getName() );
 	}
 
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final String logDir, final String userAgent ) {
+	/**
+	 * New endpoint client.
+	 * @param endpointBaseUrl the base URL of the endpoint
+	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
+	 * @param logDir the optional logging directory name
+	 * @param userAgent the designation of the client program to send in the 'User-Agent' HTTP header
+	 */
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final String logDir, final String userAgent ) {
 		this.baseUrl = endpointBaseUrl.toExternalForm();
 		this.userAgent = userAgent;
+		this.schema = schema;
 		this.logDir = logDir;
 	}
 
+	/**
+	 * Get the base URL of the endpoint.
+	 * @return
+	 */
 	public String getBaseUrl() {
 		return baseUrl;
 	}
 
-	private URL makeUrl( final String verb, final String... params ) throws UnsupportedEncodingException, MalformedURLException {
-		final StringBuilder b = new StringBuilder( baseUrl );
-		b.append( "?verb=" + verb );
-		char sep = '&';
-		for ( final String param : params ) {
-			b.append( sep );
-			b.append( URLEncoder.encode( param, URL_ENCODING ) );
-			sep = ( sep == '&' ) ? '=' : '&';
-		}
-		return URI.create( b.toString() ).toURL();
-	}
-
+	/**
+	 * Contact the data provider with a request and return the parsed response.
+	 * The response must be schema-valid.
+	 * @param verb the verb of the request
+	 * @param params parameters of the request: pairs of ( name, value )
+	 * @return the unmarshalled response
+	 * @throws IOException
+	 * @throws JAXBException
+	 * @throws SAXException
+	 */
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
 		final URL url = makeUrl( verb, params );
@@ -139,45 +152,17 @@ public class OAIPMHEndpoint {
 		}
 	}
 
-	protected static Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
+	/**
+	 * Creates the unmarshaller to use internally and set the schema for validation.
+	 * @return
+	 * @throws JAXBException
+	 * @throws SAXException
+	 */
+	protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
-		final Schema schema = createParserSchema();
 		final Unmarshaller u = jc.createUnmarshaller();
 		u.setSchema( schema );
 		return u;
-	}
-
-	private static Schema schema = null;
-	
-	protected static synchronized Schema createParserSchema() throws SAXException {
-		if ( schema == null ) {
-			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
-			final Source[] schemas = { 
-					schema( "/openaire-cerif-profile.xsd" ), 
-					schema( "/cached/oai-identifier.xsd" ), 
-					schema( "/cached/OAI-PMH.xsd" ), 
-					schema( "/cached/oai_dc.xsd" ), 
-					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
-				};
-			schema = sf.newSchema( schemas );
-		}
-		return schema;
-	}
-
-	private static Source schema( final String path ) {
-		return schema( path, null );
-	}
-	
-	private static Source schema( final String path, final String externalUrl ) {
-		final String path1 = "/schemas" + path;
-		final URL url = OAIPMHEndpoint.class.getResource( path1 );
-		if ( url == null ) {
-			throw new IllegalArgumentException( "Resource " + path1 + " not found" );
-		}
-		final StreamSource src = new StreamSource();
-		src.setInputStream( OAIPMHEndpoint.class.getResourceAsStream( path1 ) );
-		src.setSystemId( ( externalUrl != null ) ? externalUrl : url.toExternalForm() );
-		return src;
 	}
 
 	/**
@@ -205,8 +190,8 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Sends the ListSets request and returns the result. Repeats until all sets
-	 * have been listed.
+	 * Sends the ListSets request and returns the result. 
+	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all sets are listed.
 	 * 
 	 * @return a virtual collection that will use OAI-PMH resumption tokens to
 	 *         get further elements; iterable just once
@@ -216,8 +201,8 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Sends the ListRecords request and returns the result. Repeats until all
-	 * records have been listed.
+	 * Sends the ListRecords request and returns the result. 
+	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all records are listed.
 	 *
 	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
 	 * @param setSpec only fetch records from this set (optional)
@@ -232,8 +217,8 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Sends the ListIdentfiers request and returns the result. Repeats until
-	 * all identifiers have been listed.
+	 * Sends the ListIdentfiers request and returns the result. 
+	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all identifiers are listed.
 	 * 
 	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
 	 * @param setSpec only fetch records from this set (optional)
@@ -278,6 +263,18 @@ public class OAIPMHEndpoint {
 			params.add( until.format( formatter ) );
 		}
 		return params.toArray( new String[params.size()] );
+	}
+
+	private URL makeUrl( final String verb, final String... params ) throws UnsupportedEncodingException, MalformedURLException {
+		final StringBuilder b = new StringBuilder( baseUrl );
+		b.append( "?verb=" + verb );
+		char sep = '&';
+		for ( final String param : params ) {
+			b.append( sep );
+			b.append( URLEncoder.encode( param, URL_ENCODING ) );
+			sep = ( sep == '&' ) ? '=' : '&';
+		}
+		return URI.create( b.toString() ).toURL();
 	}
 
 	/**
