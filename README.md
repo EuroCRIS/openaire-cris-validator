@@ -37,7 +37,8 @@ are retrieved using the `ListRecords` requests and put together, the following s
 ## Current status 
 (as of 2018-04-30)
 
-The software currently covers checks (0), (1b), (2), (3) and (5a) above.
+The software currently covers checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5a) above.  
+Remaining to implement is (5b).
 
 The validator copies the responses to the requests it makes into files in the `data/` subdirectory.
 
