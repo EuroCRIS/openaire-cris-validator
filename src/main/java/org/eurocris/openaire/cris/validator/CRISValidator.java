@@ -17,6 +17,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
+import org.eurocris.openaire.cris.validator.util.XmlUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -45,6 +46,8 @@ public class CRISValidator {
 	public static final String OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC = "openaire_cris_publications";
 	
 	public static final String OAI_CERIF_OPENAIRE__METADATA_PREFIX = "oai_cerif_openaire";
+	
+	public static final String OPENAIRE_CERIF_XMLNS = "https://www.openaire.eu/cerif-profile/1.1/";
 	
 	public static final String LOG_DIR = "data";
 
@@ -111,6 +114,8 @@ public class CRISValidator {
 
 	private static Optional<String> repoIdentifier = Optional.empty();
 	
+	private static Optional<String> serviceAcronym = Optional.empty();
+	
 	@Test
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
@@ -134,9 +139,27 @@ public class CRISValidator {
 			}
 			
 		}, "No 'description' contains an 'oai-identifier' element" );
-		// assertTrue( "No 'description' contains a 'Service' element", serviceSeen );
+		checker = checker.checkContains( new Predicate<DescriptionType>() {
+
+			@Override
+			public boolean test( final DescriptionType description ) {
+				final Object obj = description.getAny();
+				if ( obj instanceof Element ) {
+					final Element el = (Element) obj;
+					if ( "Service".equals( el.getLocalName() ) && OPENAIRE_CERIF_XMLNS.equals( el.getNamespaceURI() ) ) {
+						serviceAcronym = XmlUtils.getTextContents( XmlUtils.getFirstMatchingChild( el, "Acronym", el.getNamespaceURI() ) );
+						return true;
+					}
+				}
+				return false;
+			}
+			
+		}, "No 'description' contains a 'Service' element" );
 		checker.run();
-		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );		
+		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
+		if ( serviceAcronym.isPresent() && repoIdentifier.isPresent() ) {
+			assertEquals( "Service identifier is not the same as the repository identifier", serviceAcronym.get(), repoIdentifier.get() );
+		}
 	}
 	
 	@Test
