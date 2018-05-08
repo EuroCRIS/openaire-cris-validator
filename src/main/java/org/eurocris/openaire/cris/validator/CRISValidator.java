@@ -120,7 +120,7 @@ public class CRISValidator {
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
 		CheckingIterable<DescriptionType> checker = CheckingIterable.over( identify.getDescription() );
-		checker = checker.checkContains( new Predicate<DescriptionType>() {
+		checker = checker.checkContainsOne( new Predicate<DescriptionType>() {
 
 			@Override
 			public boolean test( final DescriptionType description ) {
@@ -138,8 +138,8 @@ public class CRISValidator {
 				return false;
 			}
 			
-		}, "No 'description' contains an 'oai-identifier' element" );
-		checker = checker.checkContains( new Predicate<DescriptionType>() {
+		}, "the Identify descriptions list", "an 'oai-identifier' element" );
+		checker = checker.checkContainsOne( new Predicate<DescriptionType>() {
 
 			@Override
 			public boolean test( final DescriptionType description ) {
@@ -154,7 +154,7 @@ public class CRISValidator {
 				return false;
 			}
 			
-		}, "No 'description' contains a 'Service' element" );
+		}, "the Identify descriptions list", "a 'Service' element" );
 		checker.run();
 		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
 		if ( serviceAcronym.isPresent() && repoIdentifier.isPresent() ) {
