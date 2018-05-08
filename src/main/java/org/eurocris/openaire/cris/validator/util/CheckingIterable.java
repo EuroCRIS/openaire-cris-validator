@@ -99,6 +99,38 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 		};
 	}
 
+	/**
+	 * Build a CheckingIterable which checks that the collection contains at least one element for which the given predicate is true.
+	 * @param predicate
+	 * @param error
+	 * @return
+	 */
+	public CheckingIterable<T> checkContainsOne( final Predicate<T> predicate, final String collectionSpec, final String matchingObjectSpec ) {
+		final CheckingIterable<T> parentChecker = this;
+		return new CheckingIterable<T>() {
+
+			MatchCountingIterator<T> mci;
+
+			@Override
+			public Iterator<T> iterator() {
+				return mci = new MatchCountingIterator<T>( parentChecker.iterator(), predicate );
+			}
+
+			@Override
+			protected void close() {
+				parentChecker.close();
+				final long cnt = mci.getCount();
+				if ( cnt == 0L ) {
+					throw new AssertionError( collectionSpec + " does not contain " + matchingObjectSpec );
+				}
+				if ( cnt > 1L ) {
+					throw new AssertionError( collectionSpec + " contains " + cnt + " instances of " + matchingObjectSpec );
+				}
+			}
+
+		};
+	}
+
 	private static class MatchCountingIterator<T> implements Iterator<T> {
 		private final Predicate<T> predicate;
 		private final Iterator<T> parent;
