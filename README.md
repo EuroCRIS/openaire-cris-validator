@@ -66,6 +66,11 @@ Set up a JUnit launcher for the `CRISValidator` class.
 Pass the OAI-PMH endpoint URL as the value of the system property `endpoint.to.validate`.
 Add the parallel `guidelines-cris-managers` project to the classpath of the launcher (in order to access the XML Schemas).
 
+### Checking the examples from OpenAIRE Guidelines for CRIS Managers
+
+Use `file:samples/` as your endpoint-url.
+
+
 ## Feedback
 
 I'll be grateful for your feedback.  
