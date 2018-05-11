@@ -156,9 +156,11 @@ public class CRISValidator {
 			
 		}, "the Identify descriptions list", "a 'Service' element" );
 		checker.run();
-		assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
+		if ( ! endpoint.getBaseUrl().startsWith( "file:" ) ) {
+			assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
+		}
 		if ( serviceAcronym.isPresent() && repoIdentifier.isPresent() ) {
-			assertEquals( "Service identifier is not the same as the repository identifier", serviceAcronym.get(), repoIdentifier.get() );
+			assertEquals( "Service acronym is not the same as the repository identifier", serviceAcronym.get(), repoIdentifier.get() );
 		}
 	}
 	
