@@ -2,9 +2,14 @@ package org.eurocris.openaire.cris.validator;
 
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -16,6 +21,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
+import org.eurocris.openaire.cris.validator.tree.CERIFCompoundNode;
+import org.eurocris.openaire.cris.validator.tree.CERIFNode;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.eurocris.openaire.cris.validator.util.XmlUtils;
 import org.junit.FixMethodOrder;
@@ -26,6 +33,7 @@ import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.MetadataFormatType;
+import org.openarchives.oai._2.MetadataType;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
@@ -292,7 +300,7 @@ public class CRISValidator {
 	 * @return
 	 */
 	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records ) {
-		return wrapCheckUniqueness( wrapCheckOAIIdentifier( CheckingIterable.over( records ) ) );
+		return wrapCheckPayloadNamespaceAndAccummulate( wrapCheckUniqueness( wrapCheckOAIIdentifier( CheckingIterable.over( records ) ) ) );
 	}
 	
 	private CheckingIterable<RecordType> wrapCheckUniqueness( final CheckingIterable<RecordType> checker ) {
@@ -315,6 +323,65 @@ public class CRISValidator {
 		} else {
 			return checker;
 		}
+	}
+
+	private static Map<String, CERIFNode> recordsByName = new HashMap<>();
+	
+	private CheckingIterable<RecordType> wrapCheckPayloadNamespaceAndAccummulate( final CheckingIterable<RecordType> checker ) {
+		return checker.checkForAll( new Predicate<RecordType>() {
+
+			@Override
+			public boolean test( final RecordType t ) {
+				final MetadataType recordMetadata = t.getMetadata();
+				if ( recordMetadata != null ) {
+					final Object obj = recordMetadata.getAny();
+					if ( obj instanceof Element ) {
+						final Element el = (Element) obj;
+						assertEquals( "The payload element not in the right namespace", OPENAIRE_CERIF_XMLNS, el.getNamespaceURI() );
+						final CERIFNode node = CERIFNode.buildTree( el );
+						recordsByName.put( node.getName(), node );
+						return true;
+					}
+				}
+				return false;
+			}
+			
+		}, null );
+	}
+	
+	private static final String[] types = new String[] { "Publication", "Product", "Patent", "Person", "OrgUnit", "Project", "Funding", "Event", "Equipment" };
+	static {
+		Arrays.sort( types );
+	}
+	
+	@Test
+	public void check990_CheckFunctionalDependency() {
+		for ( final CERIFNode node : recordsByName.values() ) {
+			final CERIFCompoundNode node2 = (CERIFCompoundNode) node;
+			for ( final CERIFNode node3 : node2.getChildren() ) {
+				lookForCERIFObjectsAndCheckFunctionalDependency( node3 );
+			}
+		}
+	}
+
+	private void lookForCERIFObjectsAndCheckFunctionalDependency( final CERIFNode node ) {
+		final String type = node.getType();
+		if ( Arrays.binarySearch( types, type ) >= 0 ) {
+			doCheckFunctionalDependency( node );
+		}
+		if ( node instanceof CERIFCompoundNode ) {
+			for ( final CERIFNode node2 : ( (CERIFCompoundNode) node ).getChildren() ) {
+				lookForCERIFObjectsAndCheckFunctionalDependency( node2 );
+			}
+		}
+	}
+
+	private void doCheckFunctionalDependency( final CERIFNode node ) {
+		final String name = node.getName();
+		final CERIFNode baseNode = recordsByName.get( name );
+		assertNotNull( "Record for " + name + " not found", baseNode );
+		final boolean subsetFlag = node.isSubsetOf( baseNode );
+		assertTrue( node + "is not subset of\n" + baseNode, subsetFlag );
 	}
 	
 }

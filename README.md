@@ -35,10 +35,10 @@ are retrieved using the `ListRecords` requests and put together, the following s
 
 
 ## Current status 
-(as of 2018-04-30)
+(as of 2018-05-11)
 
-The software currently covers checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5a) above.  
-Remaining to implement is (5b).
+The software currently covers checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5) incl. (5a) and (5b) above.  
+Remaining to implement is a better diagnostics for (5b).
 
 The validator copies the responses to the requests it makes into files in the `data/` subdirectory.
 
