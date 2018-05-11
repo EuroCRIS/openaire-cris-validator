@@ -108,6 +108,7 @@ public class OAIPMHEndpoint {
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
 		final URL url = makeUrl( verb, params );
+		System.out.println( "Fetching " + url.toExternalForm() );
 		final URLConnection conn = url.openConnection();
 		conn.setRequestProperty( "User-Agent", userAgent );
 		// TODO set other request headers if needed
@@ -267,12 +268,18 @@ public class OAIPMHEndpoint {
 
 	private URL makeUrl( final String verb, final String... params ) throws UnsupportedEncodingException, MalformedURLException {
 		final StringBuilder b = new StringBuilder( baseUrl );
-		b.append( "?verb=" + verb );
-		char sep = '&';
+		final boolean local = baseUrl.startsWith( "file:" );
+		b.append( ( local ) ? '_' : '?' );
+		b.append( "verb=" + verb );
+		final char mainSep = ( local ) ? '+' : '&';
+		char sep = mainSep;
 		for ( final String param : params ) {
 			b.append( sep );
 			b.append( URLEncoder.encode( param, URL_ENCODING ) );
-			sep = ( sep == '&' ) ? '=' : '&';
+			sep = ( sep == '=' ) ? mainSep : '=';
+		}
+		if ( local ) {
+			b.append( ".xml" );
 		}
 		return URI.create( b.toString() ).toURL();
 	}
