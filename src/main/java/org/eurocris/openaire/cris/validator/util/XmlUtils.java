@@ -1,5 +1,6 @@
 package org.eurocris.openaire.cris.validator.util;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 import org.w3c.dom.Element;
@@ -22,6 +23,41 @@ public class XmlUtils {
 
 	public static Optional<String> getTextContents( final Optional<? extends Node> n ) {
 		return n.map( Node::getTextContent );
+	}
+
+	public static Iterable<Node> nodeListToIterableOfNodes( final NodeList nl ) {
+		return nodeListToIterable( nl, Node.class );
+	}
+	
+	public static Iterable<Element> nodeListToIterableOfElements( final NodeList nl ) {
+		return nodeListToIterable( nl, Element.class );
+	}
+	
+	private static <T extends Node> Iterable<T> nodeListToIterable( final NodeList nl, final Class<T> clazz ) {
+		return new Iterable<T>() {
+
+			@Override
+			public Iterator<T> iterator() {
+				return new Iterator<T>() {
+
+					final int n = nl.getLength();
+					int i = 0;
+					
+					@Override
+					public boolean hasNext() {
+						return ( i < n );
+					}
+
+					@SuppressWarnings( "unchecked")
+					@Override
+					public T next() {
+						return (T) nl.item( i++ );
+					}
+					
+				};
+			}
+			
+		};
 	}
 
 }
