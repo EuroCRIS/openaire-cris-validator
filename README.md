@@ -35,12 +35,9 @@ are retrieved using the `ListRecords` requests and put together, the following s
 
 
 ## Current status 
-(as of 2018-05-11)
+(as of 2018-05-15)
 
-The software currently covers checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5) incl. (5a) and (5b) above.  
-Remaining to implement is a better diagnostics for (5b).
-
-The validator copies the responses to the requests it makes into files in the `data/` subdirectory.
+The software currently covers all of the checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5) incl. (5a) and (5b) above.  
 
 
 ## Usage
@@ -69,6 +66,10 @@ Add the parallel `guidelines-cris-managers` project to the classpath of the laun
 ### Checking the examples from OpenAIRE Guidelines for CRIS Managers
 
 Use `file:samples/` as your endpoint-url.
+
+### Diagnostics
+
+The validator copies the responses to the requests it makes into files in the `data/` subdirectory.
 
 
 ## Feedback
