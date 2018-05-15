@@ -3,7 +3,7 @@ package org.eurocris.openaire.cris.validator;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,7 +21,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
-import org.eurocris.openaire.cris.validator.tree.CERIFCompoundNode;
 import org.eurocris.openaire.cris.validator.tree.CERIFNode;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.eurocris.openaire.cris.validator.util.XmlUtils;
@@ -357,8 +356,7 @@ public class CRISValidator {
 	@Test
 	public void check990_CheckFunctionalDependency() {
 		for ( final CERIFNode node : recordsByName.values() ) {
-			final CERIFCompoundNode node2 = (CERIFCompoundNode) node;
-			for ( final CERIFNode node3 : node2.getChildren() ) {
+			for ( final CERIFNode node3 : node.getChildren( null ) ) {
 				lookForCERIFObjectsAndCheckFunctionalDependency( node3 );
 			}
 		}
@@ -369,10 +367,8 @@ public class CRISValidator {
 		if ( Arrays.binarySearch( types, type ) >= 0 ) {
 			doCheckFunctionalDependency( node );
 		}
-		if ( node instanceof CERIFCompoundNode ) {
-			for ( final CERIFNode node2 : ( (CERIFCompoundNode) node ).getChildren() ) {
-				lookForCERIFObjectsAndCheckFunctionalDependency( node2 );
-			}
+		for ( final CERIFNode node2 : node.getChildren( null ) ) {
+			lookForCERIFObjectsAndCheckFunctionalDependency( node2 );
 		}
 	}
 
@@ -380,8 +376,10 @@ public class CRISValidator {
 		final String name = node.getName();
 		final CERIFNode baseNode = recordsByName.get( name );
 		assertNotNull( "Record for " + name + " not found", baseNode );
-		final boolean subsetFlag = node.isSubsetOf( baseNode );
-		assertTrue( node + "is not subset of\n" + baseNode, subsetFlag );
+		if ( ! node.isSubsetOf( baseNode ) ) {
+			final CERIFNode missingNode = node.reportWhatIMiss( baseNode ).get();
+			fail( node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
+		}
 	}
 	
 }
