@@ -35,6 +35,7 @@ import org.openarchives.oai._2.MetadataFormatType;
 import org.openarchives.oai._2.MetadataType;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
+import org.openarchives.oai._2.StatusType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -313,8 +314,14 @@ public class CRISValidator {
 				
 				@Override
 				public String apply( final RecordType x ) {
-					final Element el = (Element) x.getMetadata().getAny();
-					return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+					final MetadataType metadata = x.getMetadata();
+					if ( metadata != null ) {
+						final Element el = (Element) metadata.getAny();
+						return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+					} else {
+						// make the test trivially satisfied for records with no metadata
+						return x.getHeader().getIdentifier();
+					}
 				}
 
 			};
@@ -342,7 +349,8 @@ public class CRISValidator {
 						return true;
 					}
 				}
-				return false;
+				// fail unless the record is deleted
+				return StatusType.DELETED.equals( t.getHeader().getStatus() );
 			}
 			
 		}, "Metadata missing from OAI-PMH record" );
