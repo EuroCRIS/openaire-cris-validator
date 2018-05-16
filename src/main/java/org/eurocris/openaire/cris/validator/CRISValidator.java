@@ -345,7 +345,7 @@ public class CRISValidator {
 				return false;
 			}
 			
-		}, null );
+		}, "Metadata missing from OAI-PMH record" );
 	}
 	
 	private static final String[] types = new String[] { "Publication", "Product", "Patent", "Person", "OrgUnit", "Project", "Funding", "Event", "Equipment" };
