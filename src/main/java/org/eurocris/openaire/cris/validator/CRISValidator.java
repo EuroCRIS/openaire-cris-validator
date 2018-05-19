@@ -178,7 +178,7 @@ public class CRISValidator {
 		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
-		checker = wrapCheckMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, "https://www.openaire.eu/cerif-profile/1.1/" );
+		checker = wrapCheckMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CERIF_XMLNS );
 		checker.run();
 	}
 	
