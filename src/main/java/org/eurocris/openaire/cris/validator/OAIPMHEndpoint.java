@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -29,6 +30,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 
+import org.eurocris.openaire.cris.validator.http.CompressionHandlingHttpURLConnectionAdapter;
 import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
@@ -58,6 +60,8 @@ public class OAIPMHEndpoint {
 	private final String userAgent;
 
 	private final String logDir;
+	
+	private Optional<List<String>> supportedCompressions = Optional.empty();
 
 	private static final String URL_ENCODING = "UTF-8";
 	
@@ -109,19 +113,20 @@ public class OAIPMHEndpoint {
 	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
 		final URL url = makeUrl( verb, params );
 		System.out.println( "Fetching " + url.toExternalForm() );
-		final URLConnection conn = url.openConnection();
+		final URLConnection conn = handleCompression( url.openConnection() );
 		conn.setRequestProperty( "User-Agent", userAgent );
 		// TODO set other request headers if needed
 		conn.connect();
 		// TODO check the status and the response headers
-		assert conn.getContentType().startsWith( "text/xml" );
-
+		checkContentTypeHeader( conn );
+		checkContentEncodingHeader( conn );
+		
 		InputStream inputStream = conn.getInputStream();
 		if ( logDir != null ) {
 			final Path logDirPath = Paths.get( logDir );
 			Files.createDirectories( logDirPath );
 			final StringBuilder sb = new StringBuilder( verb );
-			final Matcher m1 = p1.matcher( url.toExternalForm() );
+			final Matcher m1 = p1.matcher( conn.getURL().toExternalForm() );
  			if ( m1.matches() ) {
  				sb.append( "__" );
  				sb.append( m1.group( 1 ) );
@@ -153,6 +158,37 @@ public class OAIPMHEndpoint {
 		}
 	}
 
+	private void checkContentEncodingHeader( final URLConnection conn ) {
+		final String contentEncoding = conn.getContentEncoding();
+		if ( ( contentEncoding != null ) && ! CompressionHandlingHttpURLConnectionAdapter.IDENTITY.equals( contentEncoding ) ) {
+			throw new IllegalStateException( "The server returns a Content-Encoding we cannot handle: " + contentEncoding );
+		}
+	}
+
+	private void checkContentTypeHeader( final URLConnection conn ) {
+		// Although the OAI-PMH 2.0 spec, section 3.1.2.1, prescribes only "text/xml",
+		// in the light of RFC7303 section 9.2 we accept "application/xml" as equivalent
+		final String contentType = conn.getContentType();
+		if (!( contentType.startsWith( "text/xml" ) || contentType.startsWith( "application/xml" ) )) {
+			throw new IllegalStateException( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
+		}
+	}
+
+	/**
+	 * Wraps the given {@link URLConnection} to ask for response compression and transparent decompression using one of the encodings the server said it supports (in its response to the Identify request).
+	 * @param conn1 the connection to wrap
+	 * @return the wrapped connection that transparently handles decompression
+	 */
+	protected URLConnection handleCompression( final URLConnection conn1 ) {
+		final CompressionHandlingHttpURLConnectionAdapter conn = CompressionHandlingHttpURLConnectionAdapter.adapt( conn1 );
+		if ( supportedCompressions.isPresent() ) {
+			for ( final String compression : supportedCompressions.get() ) {
+				conn.askForSupportedCompression( compression );
+			}
+		}
+		return conn;
+	}
+
 	/**
 	 * Creates the unmarshaller to use internally and set the schema for validation.
 	 * @return
@@ -175,7 +211,9 @@ public class OAIPMHEndpoint {
 	 * @throws SAXException
 	 */
 	public IdentifyType callIdentify() throws IOException, JAXBException, SAXException {
-		return makeConnection( "Identify" ).getIdentify();
+		final IdentifyType identifyResponse = makeConnection( "Identify" ).getIdentify();
+		supportedCompressions = Optional.of( identifyResponse.getCompression() );
+		return identifyResponse;
 	}
 
 	/**
