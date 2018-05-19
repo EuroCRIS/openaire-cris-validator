@@ -366,6 +366,7 @@ public class CRISValidator {
 	@Test
 	public void check990_CheckFunctionalDependency() {
 		for ( final CERIFNode node : recordsByName.values() ) {
+			// for all harvested CERIF data, check the children of the main objects (no need to check the objects themselves, they satisfy all checks trivially)
 			for ( final CERIFNode node3 : node.getChildren( null ) ) {
 				lookForCERIFObjectsAndCheckFunctionalDependency( node3 );
 			}
@@ -373,10 +374,12 @@ public class CRISValidator {
 	}
 
 	private void lookForCERIFObjectsAndCheckFunctionalDependency( final CERIFNode node ) {
+		// do the checks if this is a CERIF object
 		final String type = node.getType();
 		if ( Arrays.binarySearch( types, type ) >= 0 ) {
 			doCheckFunctionalDependency( node );
 		}
+		// recurse to children of this node
 		for ( final CERIFNode node2 : node.getChildren( null ) ) {
 			lookForCERIFObjectsAndCheckFunctionalDependency( node2 );
 		}
