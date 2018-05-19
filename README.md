@@ -16,8 +16,9 @@ The meaning of the SHALL keyword is specified in [RFC 2119](https://www.ietf.org
 (1) The response to an `Identify` request SHALL include:  
 (a) exactly one `description` element that contains a `Service` element from namespace <https://www.openaire.eu/cerif-profile/1.1/> and    
 (b) exactly one `description` element that contains an `oai-identifier` element from namespace <http://www.openarchives.org/OAI/2.0/oai-identifier>.   
-The `oai-identifier/repositoryIdentifier` from (b) will be refered to as `{CRIS_identifier}` in the sequel.  
+The `oai-identifier/repositoryIdentifier` from (b) will be refered to as `{CRIS_identifier}` in the sequel.
 (c) The `Service/Acronym` from (a) SHALL be equal to the `{CRIS_identifier}`.
+(d) The `baseURL` from the `Identify` response is equal to the base URL of the CRIS.
 
 (2) The list of supported metadata formats returned by the general `ListMetadataFormats` request (i.e., no `identifier` parameter specified) SHALL include
 `oai_cerif_openaire` with namespace <https://www.openaire.eu/cerif-profile/1.1/>

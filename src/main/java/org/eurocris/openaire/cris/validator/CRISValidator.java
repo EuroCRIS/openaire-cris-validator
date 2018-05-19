@@ -146,7 +146,7 @@ public class CRISValidator {
 				return false;
 			}
 			
-		}, "the Identify descriptions list", "an 'oai-identifier' element" );
+		}, "the Identify descriptions list (1b)", "an 'oai-identifier' element" );
 		checker = checker.checkContainsOne( new Predicate<DescriptionType>() {
 
 			@Override
@@ -162,13 +162,13 @@ public class CRISValidator {
 				return false;
 			}
 			
-		}, "the Identify descriptions list", "a 'Service' element" );
+		}, "the Identify descriptions list (1a)", "a 'Service' element" );
 		checker.run();
 		if ( ! endpoint.getBaseUrl().startsWith( "file:" ) ) {
-			assertEquals( "Identify response has a different endpoint base URL", endpoint.getBaseUrl(), identify.getBaseURL() );
+			assertEquals( "Identify response has a different endpoint base URL (1d)", endpoint.getBaseUrl(), identify.getBaseURL() );
 		}
 		if ( serviceAcronym.isPresent() && repoIdentifier.isPresent() ) {
-			assertEquals( "Service acronym is not the same as the repository identifier", serviceAcronym.get(), repoIdentifier.get() );
+			assertEquals( "Service acronym is not the same as the repository identifier (1c)", serviceAcronym.get(), repoIdentifier.get() );
 		}
 	}
 	
@@ -196,7 +196,7 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present" ) );
+		return parent.checkContains( predicate, new AssertionError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present (2)" ) );
 	}
 	
 	@Test
@@ -221,14 +221,14 @@ public class CRISValidator {
 			@Override
 			public boolean test( final SetType s ) {
 				if ( expectedSetSpec.equals( s.getSetSpec() ) ) {
-					assertEquals( "Non-matching set name for set '" + expectedSetSpec + "'", expectedSetName, s.getSetName() );
+					assertEquals( "Non-matching set name for set '" + expectedSetSpec + "' (3)", expectedSetName, s.getSetName() );
 					return true;
 				}
 				return false;
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionError( "Set '" + expectedSetSpec + "' not present" ) );
+		return parent.checkContains( predicate, new AssertionError( "Set '" + expectedSetSpec + "' not present (3)" ) );
 	}
 
 	@Test
@@ -332,6 +332,7 @@ public class CRISValidator {
 	}
 
 	private static Map<String, CERIFNode> recordsByName = new HashMap<>();
+	private static Map<String, CERIFNode> recordsByOaiIdentifier = new HashMap<>();
 	
 	private CheckingIterable<RecordType> wrapCheckPayloadNamespaceAndAccummulate( final CheckingIterable<RecordType> checker ) {
 		return checker.checkForAll( new Predicate<RecordType>() {
@@ -346,6 +347,7 @@ public class CRISValidator {
 						assertEquals( "The payload element not in the right namespace", OPENAIRE_CERIF_XMLNS, el.getNamespaceURI() );
 						final CERIFNode node = CERIFNode.buildTree( el );
 						recordsByName.put( node.getName(), node );
+						recordsByOaiIdentifier.put( t.getHeader().getIdentifier(), node );
 						return true;
 					}
 				}
@@ -383,10 +385,10 @@ public class CRISValidator {
 	private void doCheckFunctionalDependency( final CERIFNode node ) {
 		final String name = node.getName();
 		final CERIFNode baseNode = recordsByName.get( name );
-		assertNotNull( "Record for " + name + " not found", baseNode );
+		assertNotNull( "Record for " + name + " not found, referential integrity violated (5a)", baseNode );
 		if ( ! node.isSubsetOf( baseNode ) ) {
 			final CERIFNode missingNode = node.reportWhatIMiss( baseNode ).get();
-			fail( node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
+			fail( node + "is not subset of\n" + baseNode + "missing is\n" + missingNode + " --> violation of (5b)" );
 		}
 	}
 	
