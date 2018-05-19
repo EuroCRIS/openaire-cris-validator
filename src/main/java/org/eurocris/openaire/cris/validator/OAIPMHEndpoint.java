@@ -65,7 +65,9 @@ public class OAIPMHEndpoint {
 
 	private static final String URL_ENCODING = "UTF-8";
 	
-	private static final Pattern p1 = Pattern.compile( ".*\\W(set=\\w+).*" );
+	private static final Pattern p2 = Pattern.compile( ".*\\W(set=\\w+).*" );
+
+	private static final Pattern p1 = Pattern.compile( ".*\\W(verb=\\w+).*" );
 
 	/**
 	 * New endpoint client.
@@ -120,22 +122,7 @@ public class OAIPMHEndpoint {
 		// TODO check the status and the response headers
 		checkContentTypeHeader( conn );
 		checkContentEncodingHeader( conn );
-		
-		InputStream inputStream = conn.getInputStream();
-		if ( logDir != null ) {
-			final Path logDirPath = Paths.get( logDir );
-			Files.createDirectories( logDirPath );
-			final StringBuilder sb = new StringBuilder( verb );
-			final Matcher m1 = p1.matcher( conn.getURL().toExternalForm() );
- 			if ( m1.matches() ) {
- 				sb.append( "__" );
- 				sb.append( m1.group( 1 ) );
- 			}
-			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
-			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
-		}
-		try {
+		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
 			final Unmarshaller u = createUnmarshaller();
 			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 			final OAIPMHtype response = x.getValue();
@@ -153,9 +140,30 @@ public class OAIPMHEndpoint {
 				throw new IllegalStateException( errors );
 			}
 			return response;
-		} finally {
-			inputStream.close();
 		}
+	}
+
+	private InputStream contentSavingStream( final URLConnection conn ) throws IOException {
+		InputStream inputStream = conn.getInputStream();
+		if ( logDir != null ) {
+			final Path logDirPath = Paths.get( logDir );
+			Files.createDirectories( logDirPath );
+			final StringBuilder sb = new StringBuilder();
+			final String url2 = conn.getURL().toExternalForm();
+			final Matcher m1 = p1.matcher( url2 );
+			if ( m1.matches() ) {
+				sb.append( m1.group( 1 ) );
+			}
+			final Matcher m2 = p2.matcher( url2 );
+ 			if ( m2.matches() ) {
+ 				sb.append( "__" );
+ 				sb.append( m2.group( 1 ) );
+ 			}
+			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
+			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
+		}
+		return inputStream;
 	}
 
 	private void checkContentEncodingHeader( final URLConnection conn ) {
