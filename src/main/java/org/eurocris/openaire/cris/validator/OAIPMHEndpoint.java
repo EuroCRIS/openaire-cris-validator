@@ -102,115 +102,6 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Contact the data provider with a request and return the parsed response.
-	 * The response must be schema-valid.
-	 * @param verb the verb of the request
-	 * @param params parameters of the request: pairs of ( name, value )
-	 * @return the unmarshalled response
-	 * @throws IOException
-	 * @throws JAXBException
-	 * @throws SAXException
-	 */
-	@SuppressWarnings( "unchecked")
-	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
-		final URL url = makeUrl( verb, params );
-		System.out.println( "Fetching " + url.toExternalForm() );
-		final URLConnection conn = handleCompression( url.openConnection() );
-		conn.setRequestProperty( "User-Agent", userAgent );
-		// TODO set other request headers if needed
-		conn.connect();
-		// TODO check the status and the response headers
-		checkContentTypeHeader( conn );
-		checkContentEncodingHeader( conn );
-		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
-			final Unmarshaller u = createUnmarshaller();
-			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
-			final OAIPMHtype response = x.getValue();
-			final StringBuilder sb = new StringBuilder();
-			for ( final OAIPMHerrorType error : response.getError() ) {
-				if (! OAIPMHerrorcodeType.NO_RECORDS_MATCH.equals( error.getCode() ) ) {
-					sb.append( error.getCode().name() );
-					sb.append( ": " );
-					sb.append( error.getValue() );
-					sb.append( "; " );
-				}
-			}
-			if ( sb.length() > 0 ) {
-				final String errors = sb.substring( 0, sb.length() - 2 );
-				throw new IllegalStateException( errors );
-			}
-			return response;
-		}
-	}
-
-	private InputStream contentSavingStream( final URLConnection conn ) throws IOException {
-		InputStream inputStream = conn.getInputStream();
-		if ( logDir != null ) {
-			final Path logDirPath = Paths.get( logDir );
-			Files.createDirectories( logDirPath );
-			final StringBuilder sb = new StringBuilder();
-			final String url2 = conn.getURL().toExternalForm();
-			final Matcher m1 = p1.matcher( url2 );
-			if ( m1.matches() ) {
-				sb.append( m1.group( 1 ) );
-			}
-			final Matcher m2 = p2.matcher( url2 );
- 			if ( m2.matches() ) {
- 				sb.append( "__" );
- 				sb.append( m2.group( 1 ) );
- 			}
-			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
-			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
-		}
-		return inputStream;
-	}
-
-	private void checkContentEncodingHeader( final URLConnection conn ) {
-		final String contentEncoding = conn.getContentEncoding();
-		if ( ( contentEncoding != null ) && ! CompressionHandlingHttpURLConnectionAdapter.IDENTITY.equals( contentEncoding ) ) {
-			throw new IllegalStateException( "The server returns a Content-Encoding we cannot handle: " + contentEncoding );
-		}
-	}
-
-	private void checkContentTypeHeader( final URLConnection conn ) {
-		// Although the OAI-PMH 2.0 spec, section 3.1.2.1, prescribes only "text/xml",
-		// in the light of RFC7303 section 9.2 we accept "application/xml" as equivalent
-		final String contentType = conn.getContentType();
-		if (!( contentType.startsWith( "text/xml" ) || contentType.startsWith( "application/xml" ) )) {
-			throw new IllegalStateException( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
-		}
-	}
-
-	/**
-	 * Wraps the given {@link URLConnection} to ask for response compression and transparent decompression using one of the encodings the server said it supports (in its response to the Identify request).
-	 * @param conn1 the connection to wrap
-	 * @return the wrapped connection that transparently handles decompression
-	 */
-	protected URLConnection handleCompression( final URLConnection conn1 ) {
-		final CompressionHandlingHttpURLConnectionAdapter conn = CompressionHandlingHttpURLConnectionAdapter.adapt( conn1 );
-		if ( supportedCompressions.isPresent() ) {
-			for ( final String compression : supportedCompressions.get() ) {
-				conn.askForSupportedCompression( compression );
-			}
-		}
-		return conn;
-	}
-
-	/**
-	 * Creates the unmarshaller to use internally and set the schema for validation.
-	 * @return
-	 * @throws JAXBException
-	 * @throws SAXException
-	 */
-	protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
-		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
-		final Unmarshaller u = jc.createUnmarshaller();
-		u.setSchema( schema );
-		return u;
-	}
-
-	/**
 	 * Sends the Identify request and returns the result.
 	 * 
 	 * @return
@@ -277,6 +168,119 @@ public class OAIPMHEndpoint {
 	public Iterable<HeaderType> callListIdentifiers( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
 		final String[] params = collectHarvestingParameters( metadataFormatPrefix, setSpec, from, until );
 		return new ResumptionTokenIterable<HeaderType, ListIdentifiersType>( "ListIdentifiers", params, OAIPMHtype::getListIdentifiers, ListIdentifiersType::getHeader, ListIdentifiersType::getResumptionToken );
+	}
+
+	/**
+	 * Contact the data provider with a request and return the parsed response.
+	 * The response must be schema-valid.
+	 * @param verb the verb of the request
+	 * @param params parameters of the request: pairs of ( name, value )
+	 * @return the unmarshalled response
+	 * @throws IOException
+	 * @throws JAXBException
+	 * @throws SAXException
+	 */
+	@SuppressWarnings( "unchecked")
+	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
+		final URL url = makeUrl( verb, params );
+		System.out.println( "Fetching " + url.toExternalForm() );
+		final URLConnection conn = handleCompression( url.openConnection() );
+		conn.setRequestProperty( "User-Agent", userAgent );
+		// TODO set other request headers if needed
+		conn.connect();
+		// TODO check the status and the response headers
+		checkContentTypeHeader( conn );
+		checkContentEncodingHeader( conn );
+		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
+			final Unmarshaller u = createUnmarshaller();
+			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
+			final OAIPMHtype response = x.getValue();
+			checkForErrors( response );
+			return response;
+		}
+	}
+
+	private void checkContentEncodingHeader( final URLConnection conn ) {
+		final String contentEncoding = conn.getContentEncoding();
+		if ( ( contentEncoding != null ) && ! CompressionHandlingHttpURLConnectionAdapter.IDENTITY.equals( contentEncoding ) ) {
+			throw new IllegalStateException( "The server returns a Content-Encoding we cannot handle: " + contentEncoding );
+		}
+	}
+
+	private void checkContentTypeHeader( final URLConnection conn ) {
+		// Although the OAI-PMH 2.0 spec, section 3.1.2.1, prescribes only "text/xml",
+		// in the light of RFC7303 section 9.2 we accept "application/xml" as equivalent
+		final String contentType = conn.getContentType();
+		if (!( contentType.startsWith( "text/xml" ) || contentType.startsWith( "application/xml" ) )) {
+			throw new IllegalStateException( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
+		}
+	}
+
+	private InputStream contentSavingStream( final URLConnection conn ) throws IOException {
+		InputStream inputStream = conn.getInputStream();
+		if ( logDir != null ) {
+			final Path logDirPath = Paths.get( logDir );
+			Files.createDirectories( logDirPath );
+			final StringBuilder sb = new StringBuilder();
+			final String url2 = conn.getURL().toExternalForm();
+			final Matcher m1 = p1.matcher( url2 );
+			if ( m1.matches() ) {
+				sb.append( m1.group( 1 ) );
+			}
+			final Matcher m2 = p2.matcher( url2 );
+ 			if ( m2.matches() ) {
+ 				sb.append( "__" );
+ 				sb.append( m2.group( 1 ) );
+ 			}
+			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
+			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
+		}
+		return inputStream;
+	}
+
+	private void checkForErrors( final OAIPMHtype response ) {
+		final StringBuilder sb = new StringBuilder();
+		for ( final OAIPMHerrorType error : response.getError() ) {
+			if (! OAIPMHerrorcodeType.NO_RECORDS_MATCH.equals( error.getCode() ) ) {
+				sb.append( error.getCode().name() );
+				sb.append( ": " );
+				sb.append( error.getValue() );
+				sb.append( "; " );
+			}
+		}
+		if ( sb.length() > 0 ) {
+			final String errors = sb.substring( 0, sb.length() - 2 );
+			throw new IllegalStateException( errors );
+		}
+	}
+
+	/**
+	 * Wraps the given {@link URLConnection} to ask for response compression and transparent decompression using one of the encodings the server said it supports (in its response to the Identify request).
+	 * @param conn1 the connection to wrap
+	 * @return the wrapped connection that transparently handles decompression
+	 */
+	protected URLConnection handleCompression( final URLConnection conn1 ) {
+		final CompressionHandlingHttpURLConnectionAdapter conn = CompressionHandlingHttpURLConnectionAdapter.adapt( conn1 );
+		if ( supportedCompressions.isPresent() ) {
+			for ( final String compression : supportedCompressions.get() ) {
+				conn.askForSupportedCompression( compression );
+			}
+		}
+		return conn;
+	}
+
+	/**
+	 * Creates the unmarshaller to use internally and set the schema for validation.
+	 * @return
+	 * @throws JAXBException
+	 * @throws SAXException
+	 */
+	protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
+		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
+		final Unmarshaller u = jc.createUnmarshaller();
+		u.setSchema( schema );
+		return u;
 	}
 
 	/**
