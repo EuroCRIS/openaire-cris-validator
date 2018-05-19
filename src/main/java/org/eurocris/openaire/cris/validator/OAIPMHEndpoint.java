@@ -3,6 +3,7 @@ package org.eurocris.openaire.cris.validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -65,10 +66,6 @@ public class OAIPMHEndpoint {
 
 	private static final String URL_ENCODING = "UTF-8";
 	
-	private static final Pattern p2 = Pattern.compile( ".*\\W(set=\\w+).*" );
-
-	private static final Pattern p1 = Pattern.compile( ".*\\W(verb=\\w+).*" );
-
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
@@ -186,9 +183,9 @@ public class OAIPMHEndpoint {
 		System.out.println( "Fetching " + url.toExternalForm() );
 		final URLConnection conn = handleCompression( url.openConnection() );
 		conn.setRequestProperty( "User-Agent", userAgent );
-		// TODO set other request headers if needed
+		conn.setRequestProperty( "Accept", "text/xml, application/xml" );
 		conn.connect();
-		// TODO check the status and the response headers
+		checkResponseCode( conn );
 		checkContentTypeHeader( conn );
 		checkContentEncodingHeader( conn );
 		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
@@ -197,6 +194,16 @@ public class OAIPMHEndpoint {
 			final OAIPMHtype response = x.getValue();
 			checkForErrors( response );
 			return response;
+		}
+	}
+
+	private void checkResponseCode( final URLConnection conn ) throws IOException {
+		if ( conn instanceof HttpURLConnection ) {
+			final HttpURLConnection conn1 = (HttpURLConnection) conn;
+			final int responseCode = conn1.getResponseCode();
+			if ( responseCode != HttpURLConnection.HTTP_OK ) {
+				throw new IllegalStateException( "Invalid response code " + responseCode + " " + conn1.getResponseMessage() );
+			}
 		}
 	}
 
@@ -215,6 +222,9 @@ public class OAIPMHEndpoint {
 			throw new IllegalStateException( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
 		}
 	}
+
+	private static final Pattern p2 = Pattern.compile( ".*\\W(set=\\w+).*" );
+	private static final Pattern p1 = Pattern.compile( ".*\\W(verb=\\w+).*" );
 
 	private InputStream contentSavingStream( final URLConnection conn ) throws IOException {
 		InputStream inputStream = conn.getInputStream();
