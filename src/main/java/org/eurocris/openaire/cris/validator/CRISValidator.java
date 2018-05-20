@@ -389,11 +389,13 @@ public class CRISValidator {
 
 	private void doCheckFunctionalDependency( final CERIFNode node, final String oaiIdentifier ) {
 		final String name = node.getName();
-		final CERIFNode baseNode = recordsByName.get( name );
-		assertNotNull( "Record for " + name + " not found, referential integrity violated in " + oaiIdentifier + " (5a)", baseNode );
-		if ( ! node.isSubsetOf( baseNode ) ) {
-			final CERIFNode missingNode = node.reportWhatIMiss( baseNode ).get();
-			fail( "Violation of (5b) in " + oaiIdentifier + ":\n" + node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
+		if ( name.contains( "[@id=\"" ) ) {
+			final CERIFNode baseNode = recordsByName.get( name );
+			assertNotNull( "Record for " + name + " not found, referential integrity violated in " + oaiIdentifier + " (5a)", baseNode );
+			if ( ! node.isSubsetOf( baseNode ) ) {
+				final CERIFNode missingNode = node.reportWhatIMiss( baseNode ).get();
+				fail( "Violation of (5b) in " + oaiIdentifier + ":\n" + node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
+			}
 		}
 	}
 	
