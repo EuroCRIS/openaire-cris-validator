@@ -364,18 +364,18 @@ public class CRISValidator {
 	}
 	
 	@Test
-	public void check990_CheckFunctionalDependency() {
+	public void check990_CheckReferentialIntegrityAndFunctionalDependency() {
 		for ( final Map.Entry<String, CERIFNode> entry : recordsByOaiIdentifier.entrySet() ) {
 			final String oaiIdentifier = entry.getKey();
 			final CERIFNode node = entry.getValue();
 			// for all harvested CERIF data, check the children of the main objects (no need to check the objects themselves, they satisfy all checks trivially)
 			for ( final CERIFNode node3 : node.getChildren( null ) ) {
-				lookForCERIFObjectsAndCheckFunctionalDependency( node3, oaiIdentifier );
+				lookForCERIFObjectsAndCheckReferentialIntegrityAndFunctionalDependency( node3, oaiIdentifier );
 			}
 		}
 	}
 
-	private void lookForCERIFObjectsAndCheckFunctionalDependency( final CERIFNode node, final String oaiIdentifier ) {
+	private void lookForCERIFObjectsAndCheckReferentialIntegrityAndFunctionalDependency( final CERIFNode node, final String oaiIdentifier ) {
 		// do the checks if this is a CERIF object
 		final String type = node.getType();
 		if ( Arrays.binarySearch( types, type ) >= 0 ) {
@@ -383,7 +383,7 @@ public class CRISValidator {
 		}
 		// recurse to children of this node
 		for ( final CERIFNode node2 : node.getChildren( null ) ) {
-			lookForCERIFObjectsAndCheckFunctionalDependency( node2, oaiIdentifier );
+			lookForCERIFObjectsAndCheckReferentialIntegrityAndFunctionalDependency( node2, oaiIdentifier );
 		}
 	}
 
