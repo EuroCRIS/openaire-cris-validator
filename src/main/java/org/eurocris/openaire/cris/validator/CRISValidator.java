@@ -365,33 +365,35 @@ public class CRISValidator {
 	
 	@Test
 	public void check990_CheckFunctionalDependency() {
-		for ( final CERIFNode node : recordsByName.values() ) {
+		for ( final Map.Entry<String, CERIFNode> entry : recordsByOaiIdentifier.entrySet() ) {
+			final String oaiIdentifier = entry.getKey();
+			final CERIFNode node = entry.getValue();
 			// for all harvested CERIF data, check the children of the main objects (no need to check the objects themselves, they satisfy all checks trivially)
 			for ( final CERIFNode node3 : node.getChildren( null ) ) {
-				lookForCERIFObjectsAndCheckFunctionalDependency( node3 );
+				lookForCERIFObjectsAndCheckFunctionalDependency( node3, oaiIdentifier );
 			}
 		}
 	}
 
-	private void lookForCERIFObjectsAndCheckFunctionalDependency( final CERIFNode node ) {
+	private void lookForCERIFObjectsAndCheckFunctionalDependency( final CERIFNode node, final String oaiIdentifier ) {
 		// do the checks if this is a CERIF object
 		final String type = node.getType();
 		if ( Arrays.binarySearch( types, type ) >= 0 ) {
-			doCheckFunctionalDependency( node );
+			doCheckFunctionalDependency( node, oaiIdentifier );
 		}
 		// recurse to children of this node
 		for ( final CERIFNode node2 : node.getChildren( null ) ) {
-			lookForCERIFObjectsAndCheckFunctionalDependency( node2 );
+			lookForCERIFObjectsAndCheckFunctionalDependency( node2, oaiIdentifier );
 		}
 	}
 
-	private void doCheckFunctionalDependency( final CERIFNode node ) {
+	private void doCheckFunctionalDependency( final CERIFNode node, final String oaiIdentifier ) {
 		final String name = node.getName();
 		final CERIFNode baseNode = recordsByName.get( name );
-		assertNotNull( "Record for " + name + " not found, referential integrity violated (5a)", baseNode );
+		assertNotNull( "Record for " + name + " not found, referential integrity violated in " + oaiIdentifier + " (5a)", baseNode );
 		if ( ! node.isSubsetOf( baseNode ) ) {
 			final CERIFNode missingNode = node.reportWhatIMiss( baseNode ).get();
-			fail( node + "is not subset of\n" + baseNode + "missing is\n" + missingNode + " --> violation of (5b)" );
+			fail( "Violation of (5b) in " + oaiIdentifier + ":\n" + node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
 		}
 	}
 	
