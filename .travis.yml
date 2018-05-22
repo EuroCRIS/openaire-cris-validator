@@ -1,0 +1,4 @@
+language: java
+script:
+- mvn package -Dmaven.javadoc.skip=true -B -V
+- java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
