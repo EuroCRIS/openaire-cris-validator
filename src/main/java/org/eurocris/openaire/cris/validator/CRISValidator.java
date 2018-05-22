@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
@@ -15,6 +16,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
@@ -37,6 +41,7 @@ import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2.StatusType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
@@ -188,8 +193,23 @@ public class CRISValidator {
 			@Override
 			public boolean test( final MetadataFormatType mf ) {
 				if ( expectedMetadataFormatPrefix.equals( mf.getMetadataPrefix() ) ) {
-					assertEquals( "Non-matching set name for set '" + expectedMetadataFormatPrefix + "'", expectedMetadataFormatNamespace, mf.getMetadataNamespace() );
-					// TODO check the schema can be read & has the right target namespace
+					assertEquals( "Non-matching set name for set '" + expectedMetadataFormatPrefix + "' (2)", expectedMetadataFormatNamespace, mf.getMetadataNamespace() );
+					final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+					dbf.setNamespaceAware( true );
+					dbf.setValidating( false );
+					dbf.setIgnoringComments( true );
+					DocumentBuilder db;
+					try {
+						db = dbf.newDocumentBuilder();
+						final String schemaUrl = mf.getSchema();
+						System.out.println( "Fetching " + schemaUrl );
+						final Document doc = db.parse( schemaUrl );
+						final Element schemaRootEl = doc.getDocumentElement();
+						final String targetNsUri = schemaRootEl.getAttribute( "targetNamespace" );
+						assertEquals( "The schema does not have the advertised target namespace URI (2)", mf.getMetadataNamespace(), targetNsUri );
+					} catch ( final ParserConfigurationException | SAXException | IOException e ) {
+						throw new IllegalStateException( e ); 
+					}
 					return true;
 				}
 				return false;
