@@ -1,4 +1,5 @@
 language: java
 script:
+- ( cd .. && git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git )
 - mvn package -Dmaven.javadoc.skip=true -B -V
 - java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
