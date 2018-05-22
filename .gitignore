@@ -105,4 +105,6 @@ ENV/
 /.pydevproject
 /.classpath
 /.settings/
-/data/
+/data*
+/nohup*
+*~
