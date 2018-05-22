@@ -44,7 +44,7 @@
 				<version>0.10.0</version>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
+                        <phase>generate-sources</phase>
 						<goals>
 							<goal>generate</goal>
 						</goals>
@@ -98,21 +98,26 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
-				<configuration>
-					<resources>
-						<resource>
-							<directory>src/main/resources/schemas/</directory>
-							<include>**/*.xsd</include>
-							<targetPath>schemas</targetPath>
-						</resource>
-						<resource>
-							<directory>${guidelines.project.dir}/schemas/</directory>
-							<include>**/*.xsd</include>
-							<targetPath>schemas</targetPath>
-						</resource>
-					</resources>
-				</configuration>
+				<version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+						<phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+        				<configuration>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+        					<resources>
+                                <resource>
+                                    <directory>${guidelines.project.dir}/schemas/</directory>
+                                    <include>**/*.xsd</include>
+                                    <targetPath>schemas</targetPath>
+                                </resource>
+        					</resources>
+        				</configuration>
+                    </execution>
+                </executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
