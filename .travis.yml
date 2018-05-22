@@ -1,5 +1,6 @@
 language: java
+before_install:
+  - git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
 script:
-- git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
-- mvn package -Dmaven.javadoc.skip=true -B -V
-- java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
+  - mvn package -Dmaven.javadoc.skip=true -B -V
+  - java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
