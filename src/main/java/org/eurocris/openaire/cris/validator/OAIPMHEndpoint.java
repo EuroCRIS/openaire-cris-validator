@@ -281,7 +281,7 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Creates the unmarshaller to use internally and set the schema for validation.
+	 * Creates the unmarshaller to use internally and set the schema for validation (if one was given).
 	 * @return
 	 * @throws JAXBException
 	 * @throws SAXException
@@ -289,7 +289,9 @@ public class OAIPMHEndpoint {
 	protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
 		final Unmarshaller u = jc.createUnmarshaller();
-		u.setSchema( schema );
+		if ( schema != null ) {
+			u.setSchema( schema );
+		}
 		return u;
 	}
 
