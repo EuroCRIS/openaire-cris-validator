@@ -2,20 +2,19 @@
 
 A tool to assess whether an OAI-PMH endpoint can provide research information
 complying with the [OpenAIRE Guidelines for CRIS Managers 1.1](https://github.com/openaire/guidelines-cris-managers).
-
-[![Travis-CI Build Status](https://travis-ci.org/jdvorak001/openaire-cris-validator.svg?branch=master)](https://travis-ci.org/jdvorak001/openaire-cris-validator)
-
+It currently covers [all of the checks](CHECKS.md).
 
 ## Current status 
-(as of 2018-05-22)
 
-The software currently covers [all of the checks](CHECKS.md).  
+[![Travis-CI Build Status](https://travis-ci.org/jdvorak001/openaire-cris-validator.svg?branch=master)](https://travis-ci.org/jdvorak001/openaire-cris-validator)
+← checking if the software builds and runs on the [example files from the standard](https://github.com/openaire/guidelines-cris-managers/tree/master/samples).
 
-### Releases
 
-2018-05-22 [1.0.0](../../releases/tag/v1.0.0):
+## Releases
+
+[1.0.0](../../releases/tag/v1.0.0) on 2018-05-22:
 * checks fully implemented;
-* works against a real CRIS. 
+* works against a real CRIS.
 
 
 ## Usage
