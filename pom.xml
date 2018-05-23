@@ -110,6 +110,11 @@
                             <outputDirectory>${basedir}/target/classes</outputDirectory>
         					<resources>
                                 <resource>
+                                    <directory>src/main/resources/schemas/</directory>
+                                    <include>**/*.xsd</include>
+                                    <targetPath>schemas</targetPath>
+                                </resource>
+                                <resource>
                                     <directory>${guidelines.project.dir}/schemas/</directory>
                                     <include>**/*.xsd</include>
                                     <targetPath>schemas</targetPath>
