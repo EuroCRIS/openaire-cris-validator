@@ -1,54 +1,30 @@
 # OpenAIRE CRIS validator
 
 A tool to assess whether an OAI-PMH endpoint can provide research information
-in compliance with the [OpenAIRE Guidelines for CRIS Managers 1.1](https://github.com/openaire/guidelines-cris-managers).
-
-
-## The checks
-
-The meaning of the SHALL keyword is specified in [RFC 2119](https://www.ietf.org/rfc/rfc2119.txt).
-
-(0) Any XML response returned by the endpoint to the requests specified below SHALL validate with respect to the following XML Schemas:    
-<http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd> for the namespace <http://www.openarchives.org/OAI/2.0/>,   
-<http://www.openarchives.org/OAI/2.0/oai-identifier.xsd> for the namespace <http://www.openarchives.org/OAI/2.0/oai-identifier> and       
-<https://raw.githubusercontent.com/openaire/guidelines-cris-managers/master/schemas/openaire-cerif-profile.xsd> for the namespace <https://www.openaire.eu/cerif-profile/1.1/>.
-
-(1) The response to an `Identify` request SHALL include:  
-(a) exactly one `description` element that contains a `Service` element from namespace <https://www.openaire.eu/cerif-profile/1.1/> and    
-(b) exactly one `description` element that contains an `oai-identifier` element from namespace <http://www.openarchives.org/OAI/2.0/oai-identifier>.   
-The `oai-identifier/repositoryIdentifier` from (b) will be refered to as `{CRIS_identifier}` in the sequel.
-(c) The `Service/Acronym` from (a) SHALL be equal to the `{CRIS_identifier}`.
-(d) The `baseURL` from the `Identify` response is equal to the base URL of the CRIS.
-
-(2) The list of supported metadata formats returned by the general `ListMetadataFormats` request (i.e., no `identifier` parameter specified) SHALL include
-`oai_cerif_openaire` with namespace <https://www.openaire.eu/cerif-profile/1.1/>
-as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#metadata-format-and-prefix).
-
-(3) The list of supported sets returned by the `ListSets` request SHALL include
-all of the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).
-
-(4) - removed
-
-(5) When all objects from the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets)
-are retrieved using the `ListRecords` requests and put together, the following statements SHALL hold:    
-(a) Any `id` attribute in the CERIF XML markup points at an OAI record with identifier constructed as per [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#oai-identifiers), including the `{CRIS_identifier}`.  
-(b) CERIF XML markup contains no conflicts in properties: where a property value is given, the value does not differ from that in other places where the value of the same property is given.
-
+complying with the [OpenAIRE Guidelines for CRIS Managers 1.1](https://github.com/openaire/guidelines-cris-managers).
+It currently covers [all of the checks](CHECKS.md).
 
 ## Current status 
-(as of 2018-05-15)
 
-The software currently covers all of the checks (0), (1) incl. (1a), (1b) and (1c), (2), (3) and (5) incl. (5a) and (5b) above.  
+[![Travis-CI Build Status](https://travis-ci.org/jdvorak001/openaire-cris-validator.svg?branch=master)](https://travis-ci.org/jdvorak001/openaire-cris-validator)
+← checking if the software builds and runs on the [example files from the standard](https://github.com/openaire/guidelines-cris-managers/tree/master/samples).
+
+
+## Releases
+
+[1.0.0](../../releases/tag/v1.0.0) on 2018-05-22:
+* checks fully implemented;
+* works against a real CRIS.
 
 
 ## Usage
 
 ### Build
 
-Please make sure you have checked out the `guidelines-cris-managers` project in a parallel directory.
+Please make sure you have checked out the [guidelines-cris-managers](https://github.com/openaire/guidelines-cris-managers) project in a parallel directory.
 Then do:
 
-	mvn clean compile package
+	mvn clean package
 
 ### Run
 
