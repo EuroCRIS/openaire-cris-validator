@@ -25,6 +25,7 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
+import org.eurocris.openaire.cris.validator.OAIPMHEndpoint.ValidationMode;
 import org.eurocris.openaire.cris.validator.tree.CERIFNode;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
 import org.eurocris.openaire.cris.validator.util.XmlUtils;
@@ -62,12 +63,14 @@ public class CRISValidator {
 	
 	public static final String OPENAIRE_CERIF_XMLNS = "https://www.openaire.eu/cerif-profile/1.1/";
 	
+	public static final ValidationMode VALIDATION_MODE = ValidationMode.REPOSITORY_META_REQUESTS_ONLY;
+	
 	public static final String LOG_DIR = "data";
 
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
-		endpoint = new OAIPMHEndpoint( endpointBaseUrl, createParserSchema(), LOG_DIR );
+		endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), LOG_DIR );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
 	
@@ -81,7 +84,7 @@ public class CRISValidator {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
 			final URL endpointBaseUrl = new URL( endpointUrl );
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl, createParserSchema(), LOG_DIR );			
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), LOG_DIR );			
 		}
 	}
 	

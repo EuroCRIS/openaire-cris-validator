@@ -64,6 +64,12 @@ public class OAIPMHEndpoint {
 
 	private final String logDir;
 	
+	public static enum ValidationMode {
+		ALWAYS, REPOSITORY_META_REQUESTS_ONLY, NEVER;
+	}
+
+	private final ValidationMode validationMode;
+	
 	private Optional<List<String>> supportedCompressions = Optional.empty();
 	
 	private Optional<String> repositoryIdentifier = null;
@@ -73,11 +79,12 @@ public class OAIPMHEndpoint {
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
+	 * @param validationMode when the endpoint should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
 	 * @param logDir the optional logging directory name
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final String logDir ) {
-		this( endpointBaseUrl, schema, logDir, OAIPMHtype.class.getName() );
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final String logDir ) {
+		this( endpointBaseUrl, validationMode, schema, logDir, OAIPMHtype.class.getName() );
 	}
 
 	/**
@@ -87,8 +94,9 @@ public class OAIPMHEndpoint {
 	 * @param logDir the optional logging directory name
 	 * @param userAgent the designation of the client program to send in the 'User-Agent' HTTP header
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final String logDir, final String userAgent ) {
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final String logDir, final String userAgent ) {
 		this.baseUrl = endpointBaseUrl.toExternalForm();
+		this.validationMode = validationMode;
 		this.userAgent = userAgent;
 		this.schema = schema;
 		this.logDir = logDir;
@@ -123,7 +131,7 @@ public class OAIPMHEndpoint {
 	 * @throws SAXException
 	 */
 	public IdentifyType callIdentify() throws IOException, JAXBException, SAXException {
-		final IdentifyType identifyResponse = makeConnection( "Identify" ).getIdentify();
+		final IdentifyType identifyResponse = makeConnection( true, "Identify" ).getIdentify();
 		supportedCompressions = Optional.of( identifyResponse.getCompression() );
 		repositoryIdentifier = extractRepoIdentifier( identifyResponse );
 		return identifyResponse;
@@ -138,7 +146,7 @@ public class OAIPMHEndpoint {
 	 * @throws SAXException
 	 */
 	public ListMetadataFormatsType callListMetadataFormats() throws IOException, JAXBException, SAXException {
-		return makeConnection( "ListMetadataFormats" ).getListMetadataFormats();
+		return makeConnection( true, "ListMetadataFormats" ).getListMetadataFormats();
 	}
 
 	/**
@@ -149,7 +157,7 @@ public class OAIPMHEndpoint {
 	 *         get further elements; iterable just once
 	 */
 	public Iterable<SetType> callListSets() {
-		return new ResumptionTokenIterable<SetType, ListSetsType>( "ListSets", new String[0], OAIPMHtype::getListSets, ListSetsType::getSet, ListSetsType::getResumptionToken );
+		return new ResumptionTokenIterable<SetType, ListSetsType>( true, "ListSets", new String[0], OAIPMHtype::getListSets, ListSetsType::getSet, ListSetsType::getResumptionToken );
 	}
 
 	/**
@@ -165,7 +173,7 @@ public class OAIPMHEndpoint {
 	 */
 	public Iterable<RecordType> callListRecords( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
 		final String[] params = collectHarvestingParameters( metadataFormatPrefix, setSpec, from, until );
-		return new ResumptionTokenIterable<RecordType, ListRecordsType>( "ListRecords", params, OAIPMHtype::getListRecords, ListRecordsType::getRecord, ListRecordsType::getResumptionToken );
+		return new ResumptionTokenIterable<RecordType, ListRecordsType>( false, "ListRecords", params, OAIPMHtype::getListRecords, ListRecordsType::getRecord, ListRecordsType::getResumptionToken );
 	}
 
 	/**
@@ -181,12 +189,13 @@ public class OAIPMHEndpoint {
 	 */
 	public Iterable<HeaderType> callListIdentifiers( final String metadataFormatPrefix, final String setSpec, final ZonedDateTime from, final ZonedDateTime until ) {
 		final String[] params = collectHarvestingParameters( metadataFormatPrefix, setSpec, from, until );
-		return new ResumptionTokenIterable<HeaderType, ListIdentifiersType>( "ListIdentifiers", params, OAIPMHtype::getListIdentifiers, ListIdentifiersType::getHeader, ListIdentifiersType::getResumptionToken );
+		return new ResumptionTokenIterable<HeaderType, ListIdentifiersType>( false, "ListIdentifiers", params, OAIPMHtype::getListIdentifiers, ListIdentifiersType::getHeader, ListIdentifiersType::getResumptionToken );
 	}
 
 	/**
 	 * Contact the data provider with a request and return the parsed response.
 	 * The response must be schema-valid.
+	 * @param 
 	 * @param verb the verb of the request
 	 * @param params parameters of the request: pairs of ( name, value )
 	 * @return the unmarshalled response
@@ -195,9 +204,11 @@ public class OAIPMHEndpoint {
 	 * @throws SAXException
 	 */
 	@SuppressWarnings( "unchecked")
-	private OAIPMHtype makeConnection( final String verb, final String... params ) throws IOException, JAXBException, SAXException {
+	private OAIPMHtype makeConnection( final boolean repoWideRequest, final String verb, final String... params ) throws IOException, JAXBException, SAXException {
 		final URL url = makeUrl( verb, params );
-		System.out.println( "Fetching " + url.toExternalForm() );
+		final ValidationMode limitValidationMode = ( repoWideRequest ) ? ValidationMode.REPOSITORY_META_REQUESTS_ONLY : ValidationMode.ALWAYS;
+		final boolean validate = ( validationMode.compareTo( limitValidationMode ) <= 0 );
+		System.out.println( "Fetching "  + ( ( validate ) ? "and validating " : "" ) + url.toExternalForm() );
 		final URLConnection conn = handleCompression( url.openConnection() );
 		conn.setRequestProperty( "User-Agent", userAgent );
 		conn.setRequestProperty( "Accept", "text/xml, application/xml" );
@@ -206,7 +217,7 @@ public class OAIPMHEndpoint {
 		checkContentTypeHeader( conn );
 		checkContentEncodingHeader( conn );
 		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
-			final Unmarshaller u = createUnmarshaller();
+			final Unmarshaller u = createUnmarshaller( validate );
 			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 			final OAIPMHtype response = x.getValue();
 			checkForErrors( response );
@@ -298,15 +309,16 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Creates the unmarshaller to use internally and set the schema for validation (if one was given).
+	 * Creates the unmarshaller to use internally and set the schema for validation (if one was given and validation should be done).
+	 * @param validate if schema validation should be done
 	 * @return
 	 * @throws JAXBException
 	 * @throws SAXException
 	 */
-	protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException {
+	protected Unmarshaller createUnmarshaller( final boolean validate ) throws JAXBException, SAXException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
 		final Unmarshaller u = jc.createUnmarshaller();
-		if ( schema != null ) {
+		if ( validate && schema != null ) {
 			u.setSchema( schema );
 		}
 		return u;
@@ -407,10 +419,11 @@ public class OAIPMHEndpoint {
 		 * @param funcGetResumptionToken
 		 *            the function to get the resumption token
 		 */
-		private ResumptionTokenIterable( final String verb, final String[] params, final Function<OAIPMHtype, ListType> funcGetList, final Function<ListType, Iterable<ItemType>> functGetIterable,
+		private ResumptionTokenIterable( final boolean repoWideRequest, final String verb, final String[] params, final Function<OAIPMHtype, ListType> funcGetList, final Function<ListType, Iterable<ItemType>> functGetIterable,
 				final Function<ListType, ResumptionTokenType> funcGetResumptionToken ) {
 			this.verb = verb;
 			this.params = params;
+			this.repoWideRequest = repoWideRequest;
 			this.funcGetList = funcGetList;
 			this.functGetIterable = functGetIterable;
 			this.funcGetResumptionToken = funcGetResumptionToken;
@@ -418,6 +431,7 @@ public class OAIPMHEndpoint {
 
 		private final String verb;
 		private final String[] params;
+		private boolean repoWideRequest;
 		private final Function<OAIPMHtype, ListType> funcGetList;
 		private final Function<ListType, Iterable<ItemType>> functGetIterable;
 		private final Function<ListType, ResumptionTokenType> funcGetResumptionToken;
@@ -435,7 +449,7 @@ public class OAIPMHEndpoint {
 			try {
 				final Iterator<ItemType> i = new Iterator<ItemType>() {
 
-					private ListType currentChunk = funcGetList.apply( makeConnection( verb, params ) );
+					private ListType currentChunk = funcGetList.apply( makeConnection( repoWideRequest, verb, params ) );
 					private Iterator<ItemType> innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
 
 					@Override
@@ -457,7 +471,7 @@ public class OAIPMHEndpoint {
 							final String resumptionTokenValue = resumptionToken.getValue();
 							if ( ! resumptionTokenValue.isEmpty() ) {
 								try {
-									currentChunk = funcGetList.apply( makeConnection( verb, "resumptionToken", resumptionTokenValue ) );
+									currentChunk = funcGetList.apply( makeConnection( repoWideRequest, verb, "resumptionToken", resumptionTokenValue ) );
 									innerIterator = ( currentChunk != null ) ? functGetIterable.apply( currentChunk ).iterator() : null;
 									return ( innerIterator != null );
 								} catch ( final RuntimeException e ) {
