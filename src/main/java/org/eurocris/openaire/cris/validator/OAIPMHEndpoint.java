@@ -33,6 +33,7 @@ import javax.xml.validation.Schema;
 
 import org.eurocris.openaire.cris.validator.http.CompressionHandlingHttpURLConnectionAdapter;
 import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
+import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
 import org.openarchives.oai._2.ListIdentifiersType;
@@ -45,6 +46,7 @@ import org.openarchives.oai._2.OAIPMHtype;
 import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.ResumptionTokenType;
 import org.openarchives.oai._2.SetType;
+import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
 import org.xml.sax.SAXException;
 
 /**
@@ -63,6 +65,8 @@ public class OAIPMHEndpoint {
 	private final String logDir;
 	
 	private Optional<List<String>> supportedCompressions = Optional.empty();
+	
+	private Optional<String> repositoryIdentifier = null;
 
 	private static final String URL_ENCODING = "UTF-8";
 	
@@ -97,6 +101,18 @@ public class OAIPMHEndpoint {
 	public String getBaseUrl() {
 		return baseUrl;
 	}
+	
+	/**
+	 * Get the repository identifier (after {@link #callIdentify()} had been called).
+	 * @return
+	 * @throws IllegalStateException if {@link #callIdentify()} had not been called yet
+	 */
+	public Optional<String> getRepositoryIdentifer() {
+		if ( repositoryIdentifier == null ) {
+			throw new IllegalStateException( "Repository identifier can only be available after callIdentify() had been called" );
+		}
+		return repositoryIdentifier;
+	}
 
 	/**
 	 * Sends the Identify request and returns the result.
@@ -109,6 +125,7 @@ public class OAIPMHEndpoint {
 	public IdentifyType callIdentify() throws IOException, JAXBException, SAXException {
 		final IdentifyType identifyResponse = makeConnection( "Identify" ).getIdentify();
 		supportedCompressions = Optional.of( identifyResponse.getCompression() );
+		repositoryIdentifier = extractRepoIdentifier( identifyResponse );
 		return identifyResponse;
 	}
 
@@ -295,6 +312,25 @@ public class OAIPMHEndpoint {
 		return u;
 	}
 
+	/**
+	 * Extracts the OAI identifier's repository identifier value. 
+	 * @param identifyResponse
+	 */
+	private Optional<String> extractRepoIdentifier( final IdentifyType identifyResponse ) {
+		for ( final DescriptionType description : identifyResponse.getDescription() ) {
+			final Object obj = description.getAny();
+			if ( obj instanceof JAXBElement<?> ) {
+				final JAXBElement<?> jaxbEl = (JAXBElement<?>) obj;
+				final Object obj1 = jaxbEl.getValue();
+				if ( obj1 instanceof OaiIdentifierType ) {
+					final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
+					return Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
+				}
+			}
+		}
+		return Optional.empty();
+	}
+	
 	/**
 	 * Constructs the parameters array to express the query.
 	 * 

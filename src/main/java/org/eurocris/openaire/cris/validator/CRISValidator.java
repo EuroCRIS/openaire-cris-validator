@@ -125,8 +125,6 @@ public class CRISValidator {
 	@SuppressWarnings( "unused")
 	private static Optional<String> sampleIdentifier = Optional.empty();
 
-	private static Optional<String> repoIdentifier = Optional.empty();
-	
 	private static Optional<String> serviceAcronym = Optional.empty();
 	
 	@Test
@@ -144,7 +142,6 @@ public class CRISValidator {
 					if ( obj1 instanceof OaiIdentifierType ) {
 						final OaiIdentifierType oaiIdentifier = (OaiIdentifierType) obj1;
 						sampleIdentifier = Optional.ofNullable( oaiIdentifier.getSampleIdentifier() );
-						repoIdentifier = Optional.ofNullable( oaiIdentifier.getRepositoryIdentifier() );
 						return true;
 					}
 				}
@@ -172,6 +169,7 @@ public class CRISValidator {
 		if ( ! endpoint.getBaseUrl().startsWith( "file:" ) ) {
 			assertEquals( "Identify response has a different endpoint base URL (1d)", endpoint.getBaseUrl(), identify.getBaseURL() );
 		}
+		final Optional<String> repoIdentifier = endpoint.getRepositoryIdentifer();
 		if ( serviceAcronym.isPresent() && repoIdentifier.isPresent() ) {
 			assertEquals( "Service acronym is not the same as the repository identifier (1c)", serviceAcronym.get(), repoIdentifier.get() );
 		}
@@ -329,6 +327,7 @@ public class CRISValidator {
 	}
 	
 	private CheckingIterable<RecordType> wrapCheckOAIIdentifier( final CheckingIterable<RecordType> checker ) {
+		final Optional<String> repoIdentifier = endpoint.getRepositoryIdentifer();
 		if ( repoIdentifier.isPresent() ) {
 			final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
 				
