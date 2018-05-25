@@ -17,17 +17,17 @@ import java.util.zip.GZIPInputStream;
  */
 public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLConnection {
 
-	public static final String ACCEPT_ENCODING = "Accept-Encoding";
+	private static final String ACCEPT_ENCODING = "Accept-Encoding";
 	
-	public static final String CONTENT_ENCODING = "Content-Encoding";
+	private static final String CONTENT_ENCODING = "Content-Encoding";
 	
-	public static final String CONTENT_LENGTH = "Content-Length";
+	private static final String CONTENT_LENGTH = "Content-Length";
 	
-	public static final String IDENTITY = "identity";
+	private static final String IDENTITY = "identity";
 	
 	/**
 	 * Adapt a base connection.
-	 * @param base
+	 * @param base the connection to provide transparent compression handling for
 	 * @return the adapted connection
 	 */
 	public static CompressionHandlingHttpURLConnectionAdapter adapt( final URLConnection base ) {
@@ -247,24 +247,47 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	
 }
 
+/**
+ * {@link InputStream} wrapper maker class with a set token.
+ */
 abstract class InputStreamCompressionAdapter {
 	
+	/**
+	 * The wrapper maker with the given token.
+	 * @param encodingToken the token this adapter is known under
+	 */
 	public InputStreamCompressionAdapter( final String encodingToken ) {
 		this.encodingToken = encodingToken;
 	}
 
 	private final String encodingToken;
 	
+	/**
+	 * @return the token this adapter is known under
+	 */
 	public String getEncodingToken() {
 		return encodingToken;
 	}
 	
+	/**
+	 * Wrap the given {@link InputStream}.
+	 * @param in the {@link InputStream} to wrap
+	 * @return the wrapped {@link InputStream}
+	 * @throws IOException if there is a problem with the wrapping
+	 */
 	public abstract InputStream adapt( final InputStream in ) throws IOException;
 	
 }
 
+/**
+ * Wrapping with {@link GZIPInputStream}.
+ */
 class GzipInputStreamConnectionAdapter extends InputStreamCompressionAdapter {
 	
+	/**
+	 * The {@link GZIPInputStream} wrapper maker with the given token.
+	 * @param encodingToken the token this adapter is known under
+	 */
 	public GzipInputStreamConnectionAdapter( final String encodingToken ) {
 		super( encodingToken );
 	}
@@ -276,8 +299,15 @@ class GzipInputStreamConnectionAdapter extends InputStreamCompressionAdapter {
 	
 }
 
+/**
+ * Wrapping with {@link DeflaterInputStream}.
+ */
 class DeflaterInputStreamConnectionAdapter extends InputStreamCompressionAdapter {
 	
+	/**
+	 * The {@link DeflaterInputStream} wrapper maker with the given token.
+	 * @param encodingToken the token this adapter is known under
+	 */
 	public DeflaterInputStreamConnectionAdapter( final String encodingToken ) {
 		super( encodingToken );
 	}

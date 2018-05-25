@@ -9,13 +9,24 @@ import java.security.Permission;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * A purely delegating {@link URLConnection}. 
+ * @author jdvorak
+ */
 public class DelegatingURLConnection extends URLConnection {
 
+	/**
+	 * Delegating {@link URLConnection} that delegates to the given {@link URLConnection}.
+	 * @param base the connection to delegate to
+	 */
 	public DelegatingURLConnection( final URLConnection base ) {
 		super( base.getURL() );
 		this.base = base;
 	}
 
+	/**
+	 * The base {@link URLConnection}.
+	 */
 	protected final URLConnection base;
 
 	public void connect() throws IOException {
