@@ -55,8 +55,22 @@ public class OAIPMHEndpoint {
 	
 	private final String userAgent;
 
+	/**
+	 * Expresses when XML Schema validation should take place.
+	 */
 	public static enum ValidationMode {
-		ALWAYS, REPOSITORY_META_REQUESTS_ONLY, NEVER;
+		/**
+		 * For any data read from the endpoint.
+		 */
+		ALWAYS, 
+		/**
+		 * Just for the Identify, ListMetadataFormats and ListSets responses.
+		 */
+		REPOSITORY_META_REQUESTS_ONLY, 
+		/**
+		 * For no responses.
+		 */
+		NEVER;
 	}
 
 	private final ValidationMode validationMode;
@@ -86,7 +100,7 @@ public class OAIPMHEndpoint {
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
-	 * @param validationMode when the endpoint should use validation
+	 * @param validationMode when the client should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
 	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 */
@@ -97,6 +111,7 @@ public class OAIPMHEndpoint {
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
+	 * @param validationMode when the client should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
 	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 * @param userAgent the designation of the client program to send in the 'User-Agent' HTTP header
@@ -111,7 +126,7 @@ public class OAIPMHEndpoint {
 
 	/**
 	 * Get the base URL of the endpoint.
-	 * @return
+	 * @return the base URL
 	 */
 	public String getBaseUrl() {
 		return baseUrl;
@@ -119,7 +134,7 @@ public class OAIPMHEndpoint {
 	
 	/**
 	 * Get the repository identifier (after {@link #callIdentify()} had been called).
-	 * @return
+	 * @return the repository identifier if one was found in the response to the first Identify request
 	 * @throws IllegalStateException if {@link #callIdentify()} had not been called yet
 	 */
 	public Optional<String> getRepositoryIdentifer() {
@@ -131,13 +146,12 @@ public class OAIPMHEndpoint {
 
 	/**
 	 * Sends the Identify request and returns the result.
-	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws JAXBException
-	 * @throws SAXException
+	 * @return the result of the Identify call
+	 * @throws IOException on network error
+	 * @throws SAXException on XML parsing error
+	 * @throws JAXBException on XML processing error
 	 */
-	public IdentifyType callIdentify() throws IOException, JAXBException, SAXException {
+	public IdentifyType callIdentify() throws IOException, SAXException, JAXBException {
 		final IdentifyType identifyResponse = makeConnection( true, "Identify" ).getIdentify();
 		supportedCompressions = Optional.of( identifyResponse.getCompression() );
 		repositoryIdentifier = extractRepoIdentifier( identifyResponse );
@@ -146,20 +160,18 @@ public class OAIPMHEndpoint {
 
 	/**
 	 * Sends the ListMetadataFormats request and returns the result.
-	 * 
-	 * @return
-	 * @throws IOException
-	 * @throws JAXBException
-	 * @throws SAXException
+	 * @return the result of the ListMetadataFormats call
+	 * @throws IOException on network error
+	 * @throws SAXException on XML parsing error
+	 * @throws JAXBException on XML processing error
 	 */
-	public ListMetadataFormatsType callListMetadataFormats() throws IOException, JAXBException, SAXException {
+	public ListMetadataFormatsType callListMetadataFormats() throws IOException, SAXException, JAXBException {
 		return makeConnection( true, "ListMetadataFormats" ).getListMetadataFormats();
 	}
 
 	/**
 	 * Sends the ListSets request and returns the result. 
 	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all sets are listed.
-	 * 
 	 * @return a virtual collection that will use OAI-PMH resumption tokens to
 	 *         get further elements; iterable just once
 	 */
@@ -170,7 +182,6 @@ public class OAIPMHEndpoint {
 	/**
 	 * Sends the ListRecords request and returns the result. 
 	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all records are listed.
-	 *
 	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
 	 * @param setSpec only fetch records from this set (optional)
 	 * @param from only fetch records at least this young (optional)
@@ -186,7 +197,6 @@ public class OAIPMHEndpoint {
 	/**
 	 * Sends the ListIdentfiers request and returns the result. 
 	 * The returned {@link Iterable} will keep requesting information from the data provider using <code>resumptionToken</code>s until all identifiers are listed.
-	 * 
 	 * @param metadataFormatPrefix only fetch records in this metadata format (mandatory)
 	 * @param setSpec only fetch records from this set (optional)
 	 * @param from only fetch records at least this young (optional)
@@ -202,16 +212,16 @@ public class OAIPMHEndpoint {
 	/**
 	 * Contact the data provider with a request and return the parsed response.
 	 * The response must be schema-valid.
-	 * @param 
+	 * @param repoWideRequest true for Identify, ListMetadataFormats and ListSets
 	 * @param verb the verb of the request
 	 * @param params parameters of the request: pairs of ( name, value )
 	 * @return the unmarshalled response
-	 * @throws IOException
-	 * @throws JAXBException
-	 * @throws SAXException
+	 * @throws IOException on network error
+	 * @throws SAXException on XML parsing error
+	 * @throws JAXBException on XML processing error
 	 */
 	@SuppressWarnings( "unchecked")
-	private OAIPMHtype makeConnection( final boolean repoWideRequest, final String verb, final String... params ) throws IOException, JAXBException, SAXException {
+	private OAIPMHtype makeConnection( final boolean repoWideRequest, final String verb, final String... params ) throws IOException, SAXException, JAXBException {
 		final URL url = makeUrl( verb, params );
 		final ValidationMode limitValidationMode = ( repoWideRequest ) ? ValidationMode.REPOSITORY_META_REQUESTS_ONLY : ValidationMode.ALWAYS;
 		final boolean validate = ( validationMode.compareTo( limitValidationMode ) <= 0 );
@@ -290,13 +300,12 @@ public class OAIPMHEndpoint {
 	}
 
 	/**
-	 * Creates the unmarshaller to use internally and set the schema for validation (if one was given and validation should be done).
+	 * Creates the unmarshaller to use for de-serializing the OAI-PMH 2.0 responses and set the schema for validation (if one was given and validation should be done).
 	 * @param validate if schema validation should be done
-	 * @return
-	 * @throws JAXBException
-	 * @throws SAXException
+	 * @return the unmarshaller
+	 * @throws JAXBException on problems initializing the unmarshaller
 	 */
-	protected Unmarshaller createUnmarshaller( final boolean validate ) throws JAXBException, SAXException {
+	protected Unmarshaller createUnmarshaller( final boolean validate ) throws JAXBException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
 		final Unmarshaller u = jc.createUnmarshaller();
 		if ( validate && schema != null ) {
@@ -307,7 +316,8 @@ public class OAIPMHEndpoint {
 
 	/**
 	 * Extracts the OAI identifier's repository identifier value. 
-	 * @param identifyResponse
+	 * @param identifyResponse the response to an Identify request
+	 * @param the repository identifier if one is provided, an empty {@link Optional} otherwise. 
 	 */
 	private Optional<String> extractRepoIdentifier( final IdentifyType identifyResponse ) {
 		for ( final DescriptionType description : identifyResponse.getDescription() ) {
