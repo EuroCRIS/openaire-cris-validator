@@ -94,12 +94,22 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	}
 
 	private boolean isCompressionSupported( final String compression ) {
-		return IDENTITY.equals( compression ) || registeredAdapters.containsKey( compression );
+		return isIdentity( compression ) || registeredAdapters.containsKey( compression );
 	}
 
 	/**
+	 * Test if the given content encoding is identity.
+	 * @param contentEncoding the content encoding to check
+	 * @return true if the given content encoding is identity
+	 */
+	public static boolean isIdentity( final String contentEncoding ) {
+		return IDENTITY.equals( contentEncoding );
+	}
+	
+	/**
 	 * Sets the "Accept-Encoding" request header and calls {@link URLConnection#connect()} on the base connection.
 	 */
+	@Override
 	public void connect() throws IOException {
 		connectCalled = true;
 		fieldKeys = null;
@@ -112,6 +122,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	/**
 	 * Returns -1 if the response will be transparently uncompressed. 
 	 */
+	@Override
 	public int getContentLength() {
 		return ( isResponseCompressed() ) ? -1 : super.getContentLength();
 	}
@@ -119,6 +130,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	/**
 	 * Returns -1L if the response will be transparently uncompressed. 
 	 */
+	@Override
 	public long getContentLengthLong() {
 		return ( isResponseCompressed() ) ? -1L : super.getContentLengthLong();
 	}
@@ -126,6 +138,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	/**
 	 * Returns "identity" if the response will be transparently uncompressed. 
 	 */
+	@Override
 	public String getContentEncoding() {
 		final String contentEncoding = super.getContentEncoding();
 		return ( isResponseCompressed() ) ? IDENTITY : contentEncoding;
@@ -143,6 +156,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 	/**
 	 * Returns the original header value unless the response will be transparently uncompressed and you ask for "Content-Encoding" or "Content-Length".
 	 */
+	@Override
 	public String getHeaderField( final String name ) {
 		if ( isResponseCompressed() ) {
 			if ( CONTENT_ENCODING.equals( name ) ) {
@@ -154,6 +168,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 		return super.getHeaderField( name );
 	}
 
+	@Override
 	public Map<String, List<String>> getHeaderFields() {
 		final boolean compressed = isResponseCompressed();
 		final Map<String, List<String>> result = new HashMap<>();
@@ -173,23 +188,28 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 		return Collections.unmodifiableMap( result );
 	}
 
+	@Override
 	public int getHeaderFieldInt( final String name, final int Default ) {
 		return ( CONTENT_LENGTH.equals( name ) && isResponseCompressed() ) ? Default : super.getHeaderFieldInt( name, Default );
 	}
 
+	@Override
 	public long getHeaderFieldLong( final String name, final long Default ) {
 		return ( CONTENT_LENGTH.equals( name ) && isResponseCompressed() ) ? Default : super.getHeaderFieldLong( name, Default );
 	}
 
+	@Override
 	public long getHeaderFieldDate( final String name, final long Default ) {
 		return super.getHeaderFieldDate( name, Default );
 	}
 
+	@Override
 	public String getHeaderFieldKey( final int n ) {
 		final Integer nn = convertFieldIndex( n );
 		return ( nn != null ) ? super.getHeaderFieldKey( nn ) : null;
 	}
 
+	@Override
 	public String getHeaderField( final int n ) {
 		final Integer nn = convertFieldIndex( n );
 		return ( nn != null ) 
@@ -244,7 +264,7 @@ public class CompressionHandlingHttpURLConnectionAdapter extends DelegatingURLCo
 			throw new UnsupportedOperationException( "Please do not set the " + ACCEPT_ENCODING + " header directly, use the askForCompression() method instead" );
 		}
 	}
-	
+
 }
 
 /**

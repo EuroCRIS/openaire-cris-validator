@@ -254,7 +254,7 @@ public class OAIPMHEndpoint {
 
 	private void checkContentEncodingHeader( final URLConnection conn ) {
 		final String contentEncoding = conn.getContentEncoding();
-		if ( ( contentEncoding != null ) && ! CompressionHandlingHttpURLConnectionAdapter.IDENTITY.equals( contentEncoding ) ) {
+		if ( ( contentEncoding != null ) && ! CompressionHandlingHttpURLConnectionAdapter.isIdentity( contentEncoding ) ) {
 			throw new IllegalStateException( "The server returns a Content-Encoding we cannot handle: " + contentEncoding );
 		}
 	}
