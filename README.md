@@ -59,13 +59,14 @@ The validator copies the responses to the requests it makes into files in the `d
 ## Internals
 
 [CRISValidator](./src/main/java/org/eurocris/openaire/cris/validator/CRISValidator.java) is the main validator class.  It is the JUnit4 test suite. 
-As it reads the metadata records from the CRIS, it builds an internal representation:
-a [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html) of trees that consist of [CERIFNode](./src/main/java/org/eurocris/openaire/cris/validator/tree/CERIFNode.java)s.
-The last test, `check990_CheckReferentialIntegrityAndFunctionalDependency`, works on this internal representation.
+As it reads the metadata records from the CRIS:
+ * it does simple checks on the fly (using [CheckingIterable](./src/main/java/org/eurocris/openaire/cris/validator/util/CheckingIterable.java)); and
+ * it builds an internal representation: a [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html) of trees that consist of [CERIFNode](./src/main/java/org/eurocris/openaire/cris/validator/tree/CERIFNode.java)s. The last test, `check990_CheckReferentialIntegrityAndFunctionalDependency`, works on this internal representation.
 
-[OAIPMHEndpoint](./src/main/java/org/eurocris/openaire/cris/validator/OAIPMHEndpoint.java) is an independent implementation of an OAI-PMH 2.0 client in Java.
-While it uses JAXB to map the OAI-PMH 2.0 markup to Java objects, it does not make any assumptions about the metadata payload.
-For requests list objects (i.e., `ListIdentifiers`, `ListRecords` or `ListSets`) an [Iterable](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html) is returned
+[OAIPMHEndpoint](./src/main/java/org/eurocris/openaire/cris/validator/OAIPMHEndpoint.java) is an independent implementation
+of an [OAI-PMH 2.0](https://www.openarchives.org/OAI/openarchivesprotocol.html) client in Java.
+While it uses JAXB to map the OAI-PMH 2.0 markup to Java objects, any metadata payload is opaque to it.
+For requests that list objects (i.e., `ListIdentifiers`, `ListRecords` or `ListSets`) an [Iterable](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html) is returned
 that uses the protocol's resumption token mechanism to fetch successive chunks of objects.
 This is entirely transparent to the class user. 
 
