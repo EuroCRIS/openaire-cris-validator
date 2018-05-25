@@ -9,10 +9,6 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -22,8 +18,6 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -32,7 +26,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 
 import org.eurocris.openaire.cris.validator.http.CompressionHandlingHttpURLConnectionAdapter;
-import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
 import org.openarchives.oai._2.DescriptionType;
 import org.openarchives.oai._2.HeaderType;
 import org.openarchives.oai._2.IdentifyType;
@@ -62,13 +55,27 @@ public class OAIPMHEndpoint {
 	
 	private final String userAgent;
 
-	private final String logDir;
-	
 	public static enum ValidationMode {
 		ALWAYS, REPOSITORY_META_REQUESTS_ONLY, NEVER;
 	}
 
 	private final ValidationMode validationMode;
+
+	/**
+	 * The way to make an {@link InputStream} from a connected {@link URLConnection}.
+	 * @author jdvorak
+	 */
+	public static interface ConnectionStreamFactory {
+		/**
+		 * Make an {@link InputStream} from a connected {@link URLConnection}.
+		 * @param conn the connection to start from, should be connected 
+		 * @return the {@link InputStream} to be read
+		 * @throws IOException
+		 */
+		InputStream makeInputStream( final URLConnection conn ) throws IOException;
+	}
+	
+	private final ConnectionStreamFactory connStreamFactory;
 	
 	private Optional<List<String>> supportedCompressions = Optional.empty();
 	
@@ -81,25 +88,25 @@ public class OAIPMHEndpoint {
 	 * @param endpointBaseUrl the base URL of the endpoint
 	 * @param validationMode when the endpoint should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
-	 * @param logDir the optional logging directory name
+	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final String logDir ) {
-		this( endpointBaseUrl, validationMode, schema, logDir, OAIPMHtype.class.getName() );
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final ConnectionStreamFactory connStreamFactory ) {
+		this( endpointBaseUrl, validationMode, schema, connStreamFactory, OAIPMHtype.class.getName() );
 	}
 
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
-	 * @param logDir the optional logging directory name
+	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 * @param userAgent the designation of the client program to send in the 'User-Agent' HTTP header
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final String logDir, final String userAgent ) {
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final ConnectionStreamFactory connStreamFactory, final String userAgent ) {
 		this.baseUrl = endpointBaseUrl.toExternalForm();
 		this.validationMode = validationMode;
 		this.userAgent = userAgent;
 		this.schema = schema;
-		this.logDir = logDir;
+		this.connStreamFactory = connStreamFactory;
 	}
 
 	/**
@@ -216,7 +223,7 @@ public class OAIPMHEndpoint {
 		checkResponseCode( conn );
 		checkContentTypeHeader( conn );
 		checkContentEncodingHeader( conn );
-		try ( final InputStream inputStream = contentSavingStream( conn ) ) {
+		try ( final InputStream inputStream = connStreamFactory.makeInputStream( conn ) ) {
 			final Unmarshaller u = createUnmarshaller( validate );
 			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 			final OAIPMHtype response = x.getValue();
@@ -249,32 +256,6 @@ public class OAIPMHEndpoint {
 		if (!( contentType.startsWith( "text/xml" ) || contentType.startsWith( "application/xml" ) )) {
 			System.err.println( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
 		}
-	}
-
-	private static final Pattern p2 = Pattern.compile( ".*\\W(set=\\w+).*" );
-	private static final Pattern p1 = Pattern.compile( ".*\\W(verb=\\w+).*" );
-
-	private InputStream contentSavingStream( final URLConnection conn ) throws IOException {
-		InputStream inputStream = conn.getInputStream();
-		if ( logDir != null ) {
-			final Path logDirPath = Paths.get( logDir );
-			Files.createDirectories( logDirPath );
-			final StringBuilder sb = new StringBuilder();
-			final String url2 = conn.getURL().toExternalForm();
-			final Matcher m1 = p1.matcher( url2 );
-			if ( m1.matches() ) {
-				sb.append( m1.group( 1 ) );
-			}
-			final Matcher m2 = p2.matcher( url2 );
- 			if ( m2.matches() ) {
- 				sb.append( "__" );
- 				sb.append( m2.group( 1 ) );
- 			}
-			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
-			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
-		}
-		return inputStream;
 	}
 
 	private void checkForErrors( final OAIPMHtype response ) {

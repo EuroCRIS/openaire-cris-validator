@@ -6,14 +6,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
@@ -25,9 +34,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.commons.cli.MissingArgumentException;
+import org.eurocris.openaire.cris.validator.OAIPMHEndpoint.ConnectionStreamFactory;
 import org.eurocris.openaire.cris.validator.OAIPMHEndpoint.ValidationMode;
 import org.eurocris.openaire.cris.validator.tree.CERIFNode;
 import org.eurocris.openaire.cris.validator.util.CheckingIterable;
+import org.eurocris.openaire.cris.validator.util.FileSavingInputStream;
 import org.eurocris.openaire.cris.validator.util.XmlUtils;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -65,12 +76,12 @@ public class CRISValidator {
 	
 	public static final ValidationMode VALIDATION_MODE = ValidationMode.REPOSITORY_META_REQUESTS_ONLY;
 	
-	public static final String LOG_DIR = "data";
-
+	public static final ConnectionStreamFactory CONN_STREAM_FACTORY = new FileLoggingConnectionStreamFactory( "data" );
+	
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
-		endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), LOG_DIR );
+		endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), CONN_STREAM_FACTORY );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
 	
@@ -84,7 +95,7 @@ public class CRISValidator {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
 			final URL endpointBaseUrl = new URL( endpointUrl );
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), LOG_DIR );			
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, VALIDATION_MODE, createParserSchema(), CONN_STREAM_FACTORY );			
 		}
 	}
 	
@@ -419,6 +430,51 @@ public class CRISValidator {
 				fail( "Violation of (5b) in " + oaiIdentifier + ":\n" + node + "is not subset of\n" + baseNode + "missing is\n" + missingNode );
 			}
 		}
+	}
+	
+}
+
+/**
+ * A {@link ConnectionStreamFactory} that logs the input as files in a given directory.
+ * @author jdvorak
+ */
+class FileLoggingConnectionStreamFactory implements OAIPMHEndpoint.ConnectionStreamFactory {
+
+	private final String logDir;
+	
+	/**
+	 * The factory with the given directory to place the files in.
+	 * @param logDir the directory for the files
+	 */
+	public FileLoggingConnectionStreamFactory( final String logDir ) {
+		this.logDir = logDir;
+	}
+	
+	private static final Pattern p2 = Pattern.compile( ".*\\W(set=\\w+).*" );
+	private static final Pattern p1 = Pattern.compile( ".*\\W(verb=\\w+).*" );
+
+	@Override
+	public InputStream makeInputStream( final URLConnection conn ) throws IOException {
+		InputStream inputStream = conn.getInputStream();
+		if ( logDir != null ) {
+			final Path logDirPath = Paths.get( logDir );
+			Files.createDirectories( logDirPath );
+			final StringBuilder sb = new StringBuilder();
+			final String url2 = conn.getURL().toExternalForm();
+			final Matcher m1 = p1.matcher( url2 );
+			if ( m1.matches() ) {
+				sb.append( m1.group( 1 ) );
+			}
+			final Matcher m2 = p2.matcher( url2 );
+ 			if ( m2.matches() ) {
+ 				sb.append( "__" );
+ 				sb.append( m2.group( 1 ) );
+ 			}
+			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
+			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
+		}
+		return inputStream;
 	}
 	
 }
