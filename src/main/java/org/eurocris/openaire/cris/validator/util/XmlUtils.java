@@ -15,12 +15,12 @@ public class XmlUtils {
 	/**
 	 * Get the first child element that matches the given localname and namespace.
 	 * @param el the parent element
-	 * @param localName the local name to match ("*" means any local name)
-	 * @param nsUri the namespace URI to match (null means any namespace)
+	 * @param localName the local name to match ("*" selects any local name)
+	 * @param nsUri the namespace URI to match ("*" selects any namespace)
 	 * @return the element, empty if no matching element is found
 	 */
 	public static Optional<Element> getFirstMatchingChild( final Element el, final String localName, final String nsUri ) {
-		return nodeListToOptionalElement( el.getElementsByTagNameNS( nsUri, localName ) );
+		return Utils.getFirstElement( Utils.filter( nodeListToIterableOfElements( el.getElementsByTagNameNS( nsUri, localName ) ), ( final Element el1 ) -> el1.getParentNode() == el ) );
 	}
 	
 	/**
@@ -94,5 +94,5 @@ public class XmlUtils {
 			
 		};
 	}
-
+	
 }
