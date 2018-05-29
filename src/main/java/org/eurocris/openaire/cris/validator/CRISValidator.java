@@ -57,27 +57,80 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+/**
+ * Validating a given OAI-PMH endpoint for compliance with the OpenAIRE Guidelines for CRIS Managers 1.1.
+ * This is organized as a JUnit4 test suite that works over a given OAI-PMH endpoint. 
+ * @author jdvorak001
+ * @see <a href="https://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/">the text of the specification</a>
+ * @see <a href="https://github.com/openaire/guidelines-cris-managers">the github project of the specification, XML Schema and examples</a>
+ * @see <a href="https://github.com/jdvorak001/openaire-cris-validator">this project on GitHub</a>
+ */
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
 	
+	/**
+	 * The spec of the set of equipments.
+	 */
 	public static final String OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC = "openaire_cris_equipments";
+	/**
+	 * The spec of the set of events.
+	 */
 	public static final String OPENAIRE_CRIS_EVENTS__SET_SPEC = "openaire_cris_events";
+	/**
+	 * The spec of the set of fundings.
+	 */
 	public static final String OPENAIRE_CRIS_FUNDING__SET_SPEC = "openaire_cris_funding";
+	/**
+	 * The spec of the set of projects.
+	 */
 	public static final String OPENAIRE_CRIS_PROJECTS__SET_SPEC = "openaire_cris_projects";
+	/**
+	 * The spec of the set of organisation units.
+	 */
 	public static final String OPENAIRE_CRIS_ORGUNITS__SET_SPEC = "openaire_cris_orgunits";
+	/**
+	 * The spec of the set of persons.
+	 */
 	public static final String OPENAIRE_CRIS_PERSONS__SET_SPEC = "openaire_cris_persons";
+	/**
+	 * The spec of the set of patents.
+	 */
 	public static final String OPENAIRE_CRIS_PATENTS__SET_SPEC = "openaire_cris_patents";
+	/**
+	 * The spec of the set of products.
+	 */
 	public static final String OPENAIRE_CRIS_PRODUCTS__SET_SPEC = "openaire_cris_products";
+	/**
+	 * The spec of the set of publications.
+	 */
 	public static final String OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC = "openaire_cris_publications";
 	
+	/**
+	 * The OAI-PMH metadata prefix for the CERIF XML format.
+	 */
 	public static final String OAI_CERIF_OPENAIRE__METADATA_PREFIX = "oai_cerif_openaire";
 	
+	/**
+	 * The URI of the XML namespace.
+	 */
 	public static final String OPENAIRE_CERIF_XMLNS = "https://www.openaire.eu/cerif-profile/1.1/";
 	
+	/**
+	 * The validation mode to use.
+	 */
 	public static final ValidationMode VALIDATION_MODE = ValidationMode.REPOSITORY_META_REQUESTS_ONLY;
 	
+	/**
+	 * The connection stream factory to use for getting the response stream from a connection.
+	 */
 	public static final ConnectionStreamFactory CONN_STREAM_FACTORY = new FileLoggingConnectionStreamFactory( "data" );
 	
+	/**
+	 * The main method: used for running the JUnit4 test suite from the command line.
+	 * The first command line argument should be the URL of the endpoint to test.
+	 * @param args command line arguments
+	 * @throws Exception any uncaught exception 
+	 */
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
 		final URL endpointBaseUrl = new URL( endpointUrl );
@@ -87,6 +140,12 @@ public class CRISValidator {
 	
 	private static OAIPMHEndpoint endpoint;
 
+	/**
+	 * Set up the test suite.
+	 * @throws MalformedURLException on an invalid endpoint URL
+	 * @throws MissingArgumentException when the endpoint URL is not specified
+	 * @throws SAXException when the parser schema cannot be created
+	 */
 	public CRISValidator() throws MalformedURLException, MissingArgumentException, SAXException {
 		if ( endpoint == null ) {
 			final String endpointPropertyKey = "endpoint.to.validate";
@@ -99,12 +158,20 @@ public class CRISValidator {
 		}
 	}
 	
+	/**
+	 * @return the URL of the endpoint
+	 */
 	public String getName() {
 		return endpoint.getBaseUrl();
 	}
 	
 	private static Schema schema = null;
 	
+	/**
+	 * Create the schema for the validating XML parser.
+	 * @return the compound schema
+	 * @throws SAXException when problem reading the schema
+	 */
 	protected static synchronized Schema createParserSchema() throws SAXException {
 		if ( schema == null ) {
 			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
@@ -141,6 +208,10 @@ public class CRISValidator {
 
 	private static Optional<String> serviceAcronym = Optional.empty();
 	
+	/**
+	 * Ask for ?verb=Identity and test it for consistence – checks (1).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check000_Identify() throws Exception {
 		final IdentifyType identify = endpoint.callIdentify();
@@ -189,6 +260,10 @@ public class CRISValidator {
 		}
 	}
 	
+	/**
+	 * Ask for ?verb=ListMetadataFormats and test it for consistence – checks (2).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check010_MetadataFormats() throws Exception {
 		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
@@ -231,6 +306,10 @@ public class CRISValidator {
 		return parent.checkContains( predicate, new AssertionError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present (2)" ) );
 	}
 	
+	/**
+	 * Ask for ?verb=ListSets and test it for consistence – checks (3).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check020_Sets() throws Exception {
 		CheckingIterable<SetType> checker = CheckingIterable.over( endpoint.callListSets() );
@@ -263,6 +342,10 @@ public class CRISValidator {
 		return parent.checkContains( predicate, new AssertionError( "Set '" + expectedSetSpec + "' not present (3)" ) );
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the products set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check100_CheckPublications() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
@@ -270,6 +353,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the publications set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check200_CheckProducts() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
@@ -277,6 +364,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the patents set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check300_CheckPatents() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
@@ -284,6 +375,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the persons set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check400_CheckPersons() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
@@ -291,6 +386,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the organisation units set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check500_CheckOrgUnits() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
@@ -298,6 +397,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the projects set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check600_CheckProjects() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
@@ -305,6 +408,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the fundings set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check700_CheckFundings() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
@@ -312,6 +419,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the equipment set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check800_CheckEquipment() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
@@ -319,6 +430,10 @@ public class CRISValidator {
 		checker.run();
 	}
 
+	/**
+	 * Ask for ?verb=ListRecords on the events set and test it for consistence – checks (5).
+	 * @throws Exception on any unexpected circumstance
+	 */
 	@Test
 	public void check900_CheckEvents() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
@@ -328,8 +443,8 @@ public class CRISValidator {
 
 	/**
 	 * Prepare the checks to run on all CERIF records. 
-	 * @param records
-	 * @return
+	 * @param records the iterable containing the records
+	 * @return a {@link CheckingIterable} that checks the namespace, the uniqueness of the OAI identifiers of the records and their consistence with the types and IDs of the objects
 	 */
 	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records ) {
 		return wrapCheckPayloadNamespaceAndAccummulate( wrapCheckUniqueness( wrapCheckOAIIdentifier( CheckingIterable.over( records ) ) ) );
@@ -396,6 +511,9 @@ public class CRISValidator {
 		Arrays.sort( types );
 	}
 	
+	/**
+	 * Test the accummulated data for consistence – checks (5a) and (5b).
+	 */
 	@Test
 	public void check990_CheckReferentialIntegrityAndFunctionalDependency() {
 		for ( final Map.Entry<String, CERIFNode> entry : recordsByOaiIdentifier.entrySet() ) {
