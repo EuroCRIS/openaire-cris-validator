@@ -42,8 +42,8 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 	/**
 	 * A simple CheckingIterable that in fact doesn't check anything yet.
 	 * Wrap it to do the checks.
-	 * @param list
-	 * @return
+	 * @param list the elements to iterate over
+	 * @return a CheckingIterable
 	 */
 	public static <T> CheckingIterable<T> over( final Iterable<T> list ) {
 		return new CheckingIterable<T>() {
@@ -63,9 +63,9 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 
 	/**
 	 * Build a CheckingIterable which checks that the collection contains at least one element for which the given predicate is true.
-	 * @param predicate
-	 * @param error
-	 * @return
+	 * @param predicate the condition to look for
+	 * @param message to signal when no matching element is found
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public CheckingIterable<T> checkContains( final Predicate<T> predicate, final String message ) {
 		return checkContains( predicate, new AssertionFailedError( message ) );
@@ -73,9 +73,9 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 	
 	/**
 	 * Build a CheckingIterable which checks that the collection contains at least one element for which the given predicate is true.
-	 * @param predicate
-	 * @param error
-	 * @return
+	 * @param predicate the condition to look for
+	 * @param error to raise when no matching element is found
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public CheckingIterable<T> checkContains( final Predicate<T> predicate, final Error error ) {
 		final CheckingIterable<T> parentChecker = this;
@@ -101,9 +101,10 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 
 	/**
 	 * Build a CheckingIterable which checks that the collection contains at least one element for which the given predicate is true.
-	 * @param predicate
-	 * @param error
-	 * @return
+	 * @param predicate the condition to look for
+	 * @param collectionSpec how the collection description is to be phrased in the error message
+	 * @param matchingObjectSpec how the matching object description is to be phrased in the error message
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public CheckingIterable<T> checkContainsOne( final Predicate<T> predicate, final String collectionSpec, final String matchingObjectSpec ) {
 		final CheckingIterable<T> parentChecker = this;
@@ -163,9 +164,9 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 
 	/**
 	 * Build a CheckingIterable which checks that the given predicate is true for all elements of the collection.
-	 * @param predicate
-	 * @param message
-	 * @return
+	 * @param predicate the condition to look for
+	 * @param message to signal when no matching element is found
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public CheckingIterable<T> checkForAll( final Predicate<T> predicate, final String message ) {
 		final CheckingIterable<T> parentChecker = this;
@@ -203,11 +204,11 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 	}
 
 	/**
-	 * Build a CheckingIterable which checks that the given predicate is true for all elements of the collection.
-	 * @param expectedFunction
-	 * @param realFunction
-	 * @param message
-	 * @return
+	 * Build a CheckingIterable which checks that two values are equal for all elements of the collection.
+	 * @param expectedFunction the function to construct the expected value
+	 * @param realFunction the function extract the actual value
+	 * @param message the message to signal when the actual value is not equal to the expected one
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public <U> CheckingIterable<T> checkForAllEquals( final Function<T, U> expectedFunction, final Function<T, U> realFunction, final String message ) {
 		return checkForAll( new Predicate<T>() {
@@ -225,10 +226,9 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 
 	/**
 	 * Build a CheckingIterable which checks that the values of a function for all elements of the collection are unique.
-	 * @param expectedFunction
-	 * @param realFunction
-	 * @param message
-	 * @return
+	 * @param function the mapping from the collection element to the key that should be unique
+	 * @param message the message to write on a non-unique key
+	 * @return this CheckingIterable wrapped to check the condition
 	 */
 	public <U> CheckingIterable<T> checkUnique( final Function<T, U> function, final String message ) {
 		final CheckingIterable<T> parentChecker = this;

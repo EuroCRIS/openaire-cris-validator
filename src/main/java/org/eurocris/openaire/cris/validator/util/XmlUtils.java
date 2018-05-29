@@ -7,28 +7,63 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * Useful operations that modernize the W3C DOM interface for XML. 
+ */
 public class XmlUtils {
 	
+	/**
+	 * Get the first child element that matches the given localname and namespace.
+	 * @param el the parent element
+	 * @param localName the local name to match ("*" means any local name)
+	 * @param nsUri the namespace URI to match (null means any namespace)
+	 * @return the element, empty if no matching element is found
+	 */
 	public static Optional<Element> getFirstMatchingChild( final Element el, final String localName, final String nsUri ) {
 		return nodeListToOptionalElement( el.getElementsByTagNameNS( nsUri, localName ) );
 	}
 	
+	/**
+	 * Get the first node of a {@link NodeList}.
+	 * @param nl the given nodelist
+	 * @return the first element; {@link Optional#empty()} if the nodelist was empty
+	 */
 	public static Optional<Node> nodeListToOptionalNode( final NodeList nl ) {
 		return Optional.ofNullable( ( nl.getLength() > 0 ) ? nl.item( 0 ) : null );
 	}
 
+	/**
+	 * Get the first element of a {@link NodeList}.
+	 * @param nl the given nodelist, should contain {@link Element}s only
+	 * @return the first element; {@link Optional#empty()} if the nodelist was empty
+	 */
 	public static Optional<Element> nodeListToOptionalElement( final NodeList nl ) {
 		return Optional.ofNullable( ( nl.getLength() > 0 ) ? (Element) nl.item( 0 ) : null );
 	}
 
+	/**
+	 * Get the (optional) text contents of an optional node.
+	 * @param n the node
+	 * @return the text contents
+	 */
 	public static Optional<String> getTextContents( final Optional<? extends Node> n ) {
 		return n.map( Node::getTextContent );
 	}
 
+	/**
+	 * Expose a {@link NodeList} as an {@link Iterable} of {@link Node}s.
+	 * @param nl the nodelist
+	 * @return the iterable
+	 */
 	public static Iterable<Node> nodeListToIterableOfNodes( final NodeList nl ) {
 		return nodeListToIterable( nl, Node.class );
 	}
 	
+	/**
+	 * Expose a {@link NodeList} as an {@link Iterable} of {@link Element}s.
+	 * @param nl the nodelist; may only contain {@link Element}s
+	 * @return the iterable
+	 */
 	public static Iterable<Element> nodeListToIterableOfElements( final NodeList nl ) {
 		return nodeListToIterable( nl, Element.class );
 	}

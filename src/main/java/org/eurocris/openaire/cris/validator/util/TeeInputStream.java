@@ -12,11 +12,18 @@ public class TeeInputStream extends FilterInputStream {
 	
 	private final OutputStream out;
 	
+	/**
+	 * A new TeeInputStream.
+	 * @param in the stream to read
+	 * @param out the stream to copy to
+	 * @throws IOException if something goes wrong
+	 */
 	public TeeInputStream( final InputStream in, final OutputStream out ) throws IOException {
 		super( in );
 		this.out = out;
 	}
 
+	@Override
 	public int read() throws IOException {
 		final int b = super.read();
 		if ( b != -1 ) {
@@ -25,10 +32,12 @@ public class TeeInputStream extends FilterInputStream {
 		return b;
 	}
 
+	@Override
 	public int read( byte[] b ) throws IOException {
 		return read( b, 0, b.length );
 	}
 
+	@Override
 	public int read( byte[] b, int off, int len ) throws IOException {
 		final int r = super.read( b, off, len );
 		if ( r > 0 ) {
@@ -37,18 +46,25 @@ public class TeeInputStream extends FilterInputStream {
 		return r;
 	}
 
+	@Override
 	public boolean equals( Object obj ) {
 		return super.equals( obj );
 	}
 
+	@Override
 	public int hashCode() {
 		return 29 * super.hashCode() + out.hashCode();
 	}
 
+	@Override
 	public String toString() {
 		return "TeeInputStream[ " + super.toString() + " -> " + out.toString() + " ]";
 	}
 
+	/**
+	 * Read and copy the rest of the input before closing.
+	 */
+	@Override
 	public void close() throws IOException {
 		try {
 			try {
@@ -67,14 +83,26 @@ public class TeeInputStream extends FilterInputStream {
 		}
 	}
 
+	/**
+	 * @return false
+	 */
+	@Override
 	public boolean markSupported() {
 		return false;
 	}
 
+	/**
+	 * Not supported.
+	 */
+	@Override
 	public void mark( int readlimit ) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * Not supported.
+	 */
+	@Override
 	public void reset() throws IOException {
 		throw new UnsupportedOperationException();
 	}
