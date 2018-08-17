@@ -25,6 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -349,7 +350,7 @@ public class CRISValidator {
 	@Test
 	public void check100_CheckPublications() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Publication" );
 		checker.run();
 	}
 
@@ -360,7 +361,7 @@ public class CRISValidator {
 	@Test
 	public void check200_CheckProducts() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Product" );
 		checker.run();
 	}
 
@@ -371,7 +372,7 @@ public class CRISValidator {
 	@Test
 	public void check300_CheckPatents() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Patent" );
 		checker.run();
 	}
 
@@ -382,7 +383,7 @@ public class CRISValidator {
 	@Test
 	public void check400_CheckPersons() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Person" );
 		checker.run();
 	}
 
@@ -393,7 +394,7 @@ public class CRISValidator {
 	@Test
 	public void check500_CheckOrgUnits() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "OrgUnit" );
 		checker.run();
 	}
 
@@ -404,7 +405,7 @@ public class CRISValidator {
 	@Test
 	public void check600_CheckProjects() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Project" );
 		checker.run();
 	}
 
@@ -415,7 +416,7 @@ public class CRISValidator {
 	@Test
 	public void check700_CheckFundings() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Funding" );
 		checker.run();
 	}
 
@@ -426,7 +427,7 @@ public class CRISValidator {
 	@Test
 	public void check800_CheckEquipment() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Equipment" );
 		checker.run();
 	}
 
@@ -437,17 +438,25 @@ public class CRISValidator {
 	@Test
 	public void check900_CheckEvents() throws Exception {
 		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records );
+		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Event" );
 		checker.run();
 	}
 
 	/**
 	 * Prepare the checks to run on all CERIF records. 
 	 * @param records the iterable containing the records
+	 * @param expectedElementLocalName the expected local name of the metadata elements
 	 * @return a {@link CheckingIterable} that checks the namespace, the uniqueness of the OAI identifiers of the records and their consistence with the types and IDs of the objects
 	 */
-	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records ) {
-		return wrapCheckPayloadNamespaceAndAccummulate( wrapCheckUniqueness( wrapCheckOAIIdentifier( CheckingIterable.over( records ) ) ) );
+	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records, final String expectedElementLocalName ) {
+		final QName expectedQName = new QName( OPENAIRE_CERIF_XMLNS, expectedElementLocalName );
+		return wrapCheckPayloadQNameAndAccummulate( expectedQName,
+				wrapCheckUniqueness( 
+						wrapCheckOAIIdentifier( 
+								CheckingIterable.over( records ) 
+						) 
+				) 
+		);
 	}
 	
 	private CheckingIterable<RecordType> wrapCheckUniqueness( final CheckingIterable<RecordType> checker ) {
@@ -482,7 +491,7 @@ public class CRISValidator {
 	private static Map<String, CERIFNode> recordsByName = new HashMap<>();
 	private static Map<String, CERIFNode> recordsByOaiIdentifier = new HashMap<>();
 	
-	private CheckingIterable<RecordType> wrapCheckPayloadNamespaceAndAccummulate( final CheckingIterable<RecordType> checker ) {
+	private CheckingIterable<RecordType> wrapCheckPayloadQNameAndAccummulate( final QName expectedQName, final CheckingIterable<RecordType> checker ) {
 		return checker.checkForAll( new Predicate<RecordType>() {
 
 			@Override
@@ -492,7 +501,8 @@ public class CRISValidator {
 					final Object obj = recordMetadata.getAny();
 					if ( obj instanceof Element ) {
 						final Element el = (Element) obj;
-						assertEquals( "The payload element not in the right namespace", OPENAIRE_CERIF_XMLNS, el.getNamespaceURI() );
+						assertEquals( "The payload element not in the right namespace", expectedQName.getNamespaceURI(), el.getNamespaceURI() );
+						assertEquals( "The payload element does not have the right local name", expectedQName.getLocalPart(), el.getLocalName() );
 						final CERIFNode node = CERIFNode.buildTree( el );
 						recordsByName.put( node.getName(), node );
 						recordsByOaiIdentifier.put( t.getHeader().getIdentifier(), node );
