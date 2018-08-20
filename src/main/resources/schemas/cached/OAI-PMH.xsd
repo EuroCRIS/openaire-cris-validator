@@ -194,7 +194,7 @@
        explicitly qualified in the response.</documentation>
     </annotation>
     <sequence>
-      <any namespace="##other" processContents="strict"/>
+      <any namespace="##other" processContents="skip"/>
     </sequence>
   </complexType>
 

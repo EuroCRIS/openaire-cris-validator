@@ -119,7 +119,7 @@ public class CRISValidator {
 	/**
 	 * The validation mode to use.
 	 */
-	public static final ValidationMode VALIDATION_MODE = ValidationMode.REPOSITORY_META_REQUESTS_ONLY;
+	public static final ValidationMode VALIDATION_MODE = ValidationMode.ALWAYS;
 	
 	/**
 	 * The connection stream factory to use for getting the response stream from a connection.
@@ -177,7 +177,6 @@ public class CRISValidator {
 		if ( schema == null ) {
 			final SchemaFactory sf = SchemaFactory.newInstance( W3C_XML_SCHEMA_NS_URI );
 			final Source[] schemas = { 
-					schema( "/openaire-cerif-profile.xsd" ), 
 					schema( "/cached/oai-identifier.xsd" ), 
 					schema( "/cached/OAI-PMH.xsd" ), 
 					schema( "/cached/oai_dc.xsd" ), 
