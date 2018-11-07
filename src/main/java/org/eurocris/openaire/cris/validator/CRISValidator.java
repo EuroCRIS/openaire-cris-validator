@@ -183,7 +183,8 @@ public class CRISValidator {
 					schema( "/cached/oai-identifier.xsd" ), 
 					schema( "/cached/OAI-PMH.xsd" ), 
 					schema( "/cached/oai_dc.xsd" ), 
-					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
+					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
+					schema( "/cached/provenance.xsd", "http://www.openarchives.org/OAI/2.0/provenance.xsd" ),
 				} );
 		}
 		return parserSchema;
