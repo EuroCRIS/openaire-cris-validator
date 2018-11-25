@@ -19,6 +19,10 @@ This is Open Source software, available under the terms of the [Apache 2.0 Licen
 
 ## Releases
 
+[1.1.0](../../releases/tag/v1.1.0) on 2018-11-24:
+* regular expression non-match is reported, but does not stop the harvest;
+* fix to one reported issue ([#1](../../issues/1)).
+
 [1.0.0](../../releases/tag/v1.0.0) on 2018-05-22:
 * checks fully implemented;
 * works against a real CRIS.
