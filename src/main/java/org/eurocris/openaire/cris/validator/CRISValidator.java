@@ -3,6 +3,7 @@ package org.eurocris.openaire.cris.validator;
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -119,6 +120,16 @@ public class CRISValidator {
 	 */
 	public static final String OPENAIRE_CERIF_XMLNS = "https://www.openaire.eu/cerif-profile/1.1/";
 	
+	/**
+	 * The URL base for the XML Schema locations by version.
+	 */
+	public static final String OPENAIRE_CERIF_SCHEMAS_ROOT = "https://www.openaire.eu/schema/cris/";
+	
+	/**
+	 * The URL base for the XML Schema location of the current version.
+	 */
+	public static final String CURRENT_XML_SCHEMA_URL_PREFIX = OPENAIRE_CERIF_SCHEMAS_ROOT + "current/";
+
 	/**
 	 * The connection stream factory to use for getting the response stream from a connection.
 	 */
@@ -313,12 +324,16 @@ public class CRISValidator {
 					dbf.setNamespaceAware( true );
 					dbf.setValidating( false );
 					dbf.setIgnoringComments( true );
-					DocumentBuilder db;
 					try {
-						db = dbf.newDocumentBuilder();
+						final DocumentBuilder db = dbf.newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
-						System.out.println( "Fetching " + schemaUrl );
-						final Document doc = db.parse( schemaUrl );
+						assertTrue( schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
+						assertTrue( schemaUrl.endsWith( "/openaire-cerif-profile.xsd" ) );
+						final String realSchemaUrl = ( schemaUrl.equals( CURRENT_XML_SCHEMA_URL_PREFIX + "openaire-cerif-profile.xsd" ) ) 
+									? this.getClass().getResource( "/schemas/openaire-cerif-profile.xsd" ).toExternalForm()
+									: schemaUrl;
+						System.out.println( "Fetching " + realSchemaUrl );
+						final Document doc = db.parse( realSchemaUrl );
 						final Element schemaRootEl = doc.getDocumentElement();
 						final String targetNsUri = schemaRootEl.getAttribute( "targetNamespace" );
 						assertEquals( "The schema does not have the advertised target namespace URI (2)", mf.getMetadataNamespace(), targetNsUri );
