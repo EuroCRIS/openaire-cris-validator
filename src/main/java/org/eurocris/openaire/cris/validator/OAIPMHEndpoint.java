@@ -56,26 +56,6 @@ public class OAIPMHEndpoint {
 	private final String userAgent;
 
 	/**
-	 * Expresses when XML Schema validation should take place.
-	 */
-	public static enum ValidationMode {
-		/**
-		 * For any data read from the endpoint.
-		 */
-		ALWAYS, 
-		/**
-		 * Just for the Identify, ListMetadataFormats and ListSets responses.
-		 */
-		REPOSITORY_META_REQUESTS_ONLY, 
-		/**
-		 * For no responses.
-		 */
-		NEVER;
-	}
-
-	private final ValidationMode validationMode;
-
-	/**
 	 * The way to make an {@link InputStream} from a connected {@link URLConnection}.
 	 * @author jdvorak
 	 */
@@ -100,25 +80,22 @@ public class OAIPMHEndpoint {
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
-	 * @param validationMode when the client should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
 	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final ConnectionStreamFactory connStreamFactory ) {
-		this( endpointBaseUrl, validationMode, schema, connStreamFactory, OAIPMHtype.class.getName() );
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final ConnectionStreamFactory connStreamFactory ) {
+		this( endpointBaseUrl, schema, connStreamFactory, OAIPMHtype.class.getName() );
 	}
 
 	/**
 	 * New endpoint client.
 	 * @param endpointBaseUrl the base URL of the endpoint
-	 * @param validationMode when the client should use validation
 	 * @param schema the compound schema for the responses: should include both the OAI-PMH schema and any schemas for the payload
 	 * @param connStreamFactory the way to make an {@link InputStream} from a connected {@link URLConnection}
 	 * @param userAgent the designation of the client program to send in the 'User-Agent' HTTP header
 	 */
-	public OAIPMHEndpoint( final URL endpointBaseUrl, final ValidationMode validationMode, final Schema schema, final ConnectionStreamFactory connStreamFactory, final String userAgent ) {
+	public OAIPMHEndpoint( final URL endpointBaseUrl, final Schema schema, final ConnectionStreamFactory connStreamFactory, final String userAgent ) {
 		this.baseUrl = endpointBaseUrl.toExternalForm();
-		this.validationMode = validationMode;
 		this.userAgent = userAgent;
 		this.schema = schema;
 		this.connStreamFactory = connStreamFactory;
@@ -223,9 +200,7 @@ public class OAIPMHEndpoint {
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final boolean repoWideRequest, final String verb, final String... params ) throws IOException, SAXException, JAXBException {
 		final URL url = makeUrl( verb, params );
-		final ValidationMode limitValidationMode = ( repoWideRequest ) ? ValidationMode.REPOSITORY_META_REQUESTS_ONLY : ValidationMode.ALWAYS;
-		final boolean validate = ( validationMode.compareTo( limitValidationMode ) <= 0 );
-		System.out.println( "Fetching "  + ( ( validate ) ? "and validating " : "" ) + url.toExternalForm() );
+		System.out.println( "Fetching and validating " + url.toExternalForm() );
 		final URLConnection conn = handleCompression( url.openConnection() );
 		conn.setRequestProperty( "User-Agent", userAgent );
 		conn.setRequestProperty( "Accept", "text/xml, application/xml" );
@@ -234,7 +209,7 @@ public class OAIPMHEndpoint {
 		checkContentTypeHeader( conn );
 		checkContentEncodingHeader( conn );
 		try ( final InputStream inputStream = connStreamFactory.makeInputStream( conn ) ) {
-			final Unmarshaller u = createUnmarshaller( validate );
+			final Unmarshaller u = createUnmarshaller();
 			final JAXBElement<OAIPMHtype> x = (JAXBElement<OAIPMHtype>) u.unmarshal( inputStream );
 			final OAIPMHtype response = x.getValue();
 			checkForErrors( response );
@@ -301,14 +276,13 @@ public class OAIPMHEndpoint {
 
 	/**
 	 * Creates the unmarshaller to use for de-serializing the OAI-PMH 2.0 responses and set the schema for validation (if one was given and validation should be done).
-	 * @param validate if schema validation should be done
 	 * @return the unmarshaller
 	 * @throws JAXBException on problems initializing the unmarshaller
 	 */
-	protected Unmarshaller createUnmarshaller( final boolean validate ) throws JAXBException {
+	protected Unmarshaller createUnmarshaller() throws JAXBException {
 		final JAXBContext jc = JAXBContext.newInstance( OAIPMHtype.class, org.openarchives.oai._2_0.oai_identifier.ObjectFactory.class );
 		final Unmarshaller u = jc.createUnmarshaller();
-		if ( validate && schema != null ) {
+		if ( schema != null ) {
 			u.setSchema( schema );
 		}
 		return u;
