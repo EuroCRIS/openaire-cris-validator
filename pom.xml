@@ -125,6 +125,44 @@
                 </executions>
 			</plugin>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>xml-maven-plugin</artifactId>
+				<version>1.0.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>transform</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+                    <forceCreation>true</forceCreation>
+					<transformationSets>
+						<transformationSet>
+							<dir>${basedir}/target/classes/schemas</dir>
+							<includes>
+								<include>openaire-cerif-profile.xsd</include>
+								<include>includes/**/*.xsd</include>
+								<include>vocabularies/**/*.xsd</include>
+							</includes>
+							<outputDir>${basedir}/target/classes/schemas/relaxed</outputDir>
+							<stylesheet>src/tools/xslt/relax-xml-schema-for-first-validation.xslt</stylesheet>
+						</transformationSet>
+					</transformationSets>
+					<catalogs>
+						<catalog>schemas/cached/catalog.xml</catalog>
+						<catalog>schemas/catalog.xml</catalog>
+					</catalogs>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>net.sf.saxon</groupId>
+						<artifactId>Saxon-HE</artifactId>
+						<version>9.8.0-12</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
