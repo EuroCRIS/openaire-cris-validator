@@ -185,11 +185,13 @@ public class CRISValidator {
 	protected static synchronized Schema getParserSchema() throws SAXException {
 		if ( parserSchema == null ) {
 			parserSchema = getXmlSchemaFactory().newSchema( new Source[] { 
-					schema( "/cached/oai-identifier.xsd" ), 
-					schema( "/cached/OAI-PMH.xsd" ), 
-					schema( "/cached/oai_dc.xsd" ), 
 					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
+					schema( "/cached/oai-identifier.xsd" ), 
+					schema( "/cached/simpledc20021212.xsd", "http://dublincore.org/schemas/xmls/simpledc20021212.xsd" ), 
+					schema( "/cached/oai_dc.xsd" ), 
 					schema( "/cached/provenance.xsd", "http://www.openarchives.org/OAI/2.0/provenance.xsd" ),
+					schema( "/cached/OAI-PMH.xsd" ), 
+					schema( "/relaxed/openaire-cerif-profile.xsd" ), 
 				} );
 		}
 		return parserSchema;
@@ -206,8 +208,8 @@ public class CRISValidator {
 		if ( validatorSchema == null ) {
 			try {
 				validatorSchema = getXmlSchemaFactory().newSchema( new Source[] { 
-						schema( "/openaire-cerif-profile.xsd" ), 
 						schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
+						schema( "/openaire-cerif-profile.xsd" ), 
 					} );
 			} catch ( final SAXException e ) {
 				throw new IllegalStateException( "While initializing validator schema", e );
