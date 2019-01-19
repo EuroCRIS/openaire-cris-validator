@@ -131,6 +131,11 @@ public class CRISValidator {
 	public static final String CURRENT_XML_SCHEMA_URL_PREFIX = OPENAIRE_CERIF_SCHEMAS_ROOT + "current/";
 
 	/**
+	 * The name of the XML Schema file. 
+	 */
+	public static final String OPENAIRE_CERIF_SCHEMA_FILENAME = "openaire-cerif-profile.xsd";
+	
+	/**
 	 * The connection stream factory to use for getting the response stream from a connection.
 	 */
 	public static final ConnectionStreamFactory CONN_STREAM_FACTORY = new FileLoggingConnectionStreamFactory( "data" );
@@ -329,8 +334,8 @@ public class CRISValidator {
 					try {
 						final DocumentBuilder db = dbf.newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
-						assertTrue( schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
-						assertTrue( schemaUrl.endsWith( "/openaire-cerif-profile.xsd" ) );
+						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
+						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
 						final String realSchemaUrl = ( schemaUrl.equals( CURRENT_XML_SCHEMA_URL_PREFIX + "openaire-cerif-profile.xsd" ) ) 
 									? this.getClass().getResource( "/schemas/openaire-cerif-profile.xsd" ).toExternalForm()
 									: schemaUrl;
