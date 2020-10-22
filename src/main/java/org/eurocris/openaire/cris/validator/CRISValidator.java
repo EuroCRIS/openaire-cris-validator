@@ -523,7 +523,7 @@ public class CRISValidator {
 					final MetadataType metadata = x.getMetadata();
 					if ( metadata != null ) {
 						final Element el = (Element) metadata.getAny();
-						return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+						return "oai:" + repoIdentifier.get() + ":" + el.getAttribute( "id" );
 					} else {
 						// make the test trivially satisfied for records with no metadata
 						return x.getHeader().getIdentifier();
