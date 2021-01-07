@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -224,6 +225,25 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 		}, null );
 	}
 
+    public <U> CheckingIterable<T> checkForOneEqualsOnList(final Function<T, List<U>> expectedFunction, Function<T, U> realFunction, final String message) {
+        return checkForAll(new Predicate<T>()
+        {
+
+            @Override
+            public boolean test(final T obj)
+            {
+                final List<U> expectedValue = expectedFunction.apply(obj);
+                final U realValue = realFunction.apply(obj);
+                
+                if(!expectedValue.contains(realValue)) {
+                    throw new AssertionFailedError( message + "; object: " + obj );
+                }
+                return true;
+            }
+
+        }, null);
+    }
+	   
 	/**
 	 * Build a CheckingIterable which checks that the values of a function for all elements of the collection are unique.
 	 * @param function the mapping from the collection element to the key that should be unique

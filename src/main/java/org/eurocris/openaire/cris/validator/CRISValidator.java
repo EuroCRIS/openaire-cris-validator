@@ -16,8 +16,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -516,22 +518,25 @@ public class CRISValidator {
 	private CheckingIterable<RecordType> wrapCheckOAIIdentifier( final CheckingIterable<RecordType> checker ) {
 		final Optional<String> repoIdentifier = endpoint.getRepositoryIdentifer();
 		if ( repoIdentifier.isPresent() ) {
-			final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
+			final Function<RecordType, List<String>> expectedFunction = new Function<RecordType, List<String>>() {
 				
 				@Override
-				public String apply( final RecordType x ) {
+				public List<String> apply( final RecordType x ) {
 					final MetadataType metadata = x.getMetadata();
+					List<String> results = new ArrayList<String>();
 					if ( metadata != null ) {
 						final Element el = (Element) metadata.getAny();
-						return "oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" );
+						results.add("oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + el.getAttribute( "id" ));
+						results.add("oai:" + repoIdentifier.get() + ":" + el.getAttribute( "id" ));
 					} else {
 						// make the test trivially satisfied for records with no metadata
-						return x.getHeader().getIdentifier();
+					    results.add(x.getHeader().getIdentifier());
 					}
+					return results;
 				}
 
 			};
-			return checker.checkForAllEquals( expectedFunction, ( final RecordType record ) -> ( record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
+			return checker.checkForOneEqualsOnList( expectedFunction, (( final RecordType record ) -> record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
 		} else {
 			return checker;
 		}
