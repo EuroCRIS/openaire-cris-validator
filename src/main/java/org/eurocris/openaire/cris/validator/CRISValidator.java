@@ -216,7 +216,7 @@ public class CRISValidator {
 			try {
 				validatorSchema = getXmlSchemaFactory().newSchema( new Source[] { 
 						schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
-						schema( "/openaire-cerif-profile.xsd" ), 
+						schema( "/relaxed/openaire-cerif-profile.xsd" ), 
 					} );
 			} catch ( final SAXException e ) {
 				throw new IllegalStateException( "While initializing validator schema", e );

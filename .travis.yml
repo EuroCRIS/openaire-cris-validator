@@ -1,4 +1,6 @@
 language: java
+jdk:
+    - openjdk8
 before_install:
   - git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
 script:
