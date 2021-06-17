@@ -1,8 +1,0 @@
-language: java
-jdk:
-    - openjdk8
-before_install:
-  - git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
-script:
-  - mvn package -Dmaven.javadoc.skip=true -B -V
-  - java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
