@@ -11,8 +11,6 @@ Please read below how to [build](#build) it, [run](#run) it, [explore](#internal
 This is Open Source software, available under the terms of the [Apache 2.0 License](#license).
 
 
-## Current status 
-
 ![CI workflow](https://github.com/jdvorak001/openaire-cris-validator/actions/workflows/maven.yml/badge.svg)
 ← checking if the software builds and runs on the [example files from the standard](https://github.com/openaire/guidelines-cris-managers/tree/master/samples).
 
