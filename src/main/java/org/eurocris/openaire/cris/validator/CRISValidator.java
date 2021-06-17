@@ -18,8 +18,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -516,22 +518,26 @@ public class CRISValidator {
 	private CheckingIterable<RecordType> wrapCheckOAIIdentifier( final CheckingIterable<RecordType> checker ) {
 		final Optional<String> repoIdentifier = endpoint.getRepositoryIdentifer();
 		if ( repoIdentifier.isPresent() ) {
-			final Function<RecordType, String> expectedFunction = new Function<RecordType, String>() {
+			final Function<RecordType, Set<String>> expectedFunction = new Function<RecordType, Set<String>>() {
 				
 				@Override
-				public String apply( final RecordType x ) {
+				public Set<String> apply( final RecordType x ) {
 					final MetadataType metadata = x.getMetadata();
+					final Set<String> results = new HashSet<>();
 					if ( metadata != null ) {
 						final Element el = (Element) metadata.getAny();
-						return "oai:" + repoIdentifier.get() + ":" + el.getAttribute( "id" );
+						final String id = el.getAttribute( "id" );
+						results.add("oai:" + repoIdentifier.get() + ":" + el.getLocalName() + "s/" + id);
+						results.add("oai:" + repoIdentifier.get() + ":" + id);
 					} else {
 						// make the test trivially satisfied for records with no metadata
-						return x.getHeader().getIdentifier();
+					    results.add(x.getHeader().getIdentifier());
 					}
+					return results;
 				}
 
 			};
-			return checker.checkForAllEquals( expectedFunction, ( final RecordType record ) -> ( record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
+			return checker.checkForAllValueInSet( expectedFunction, ( ( final RecordType record ) -> record.getHeader().getIdentifier() ), "OAI identifier other than expected" );
 		} else {
 			return checker;
 		}

@@ -1,6 +1,7 @@
 package org.eurocris.openaire.cris.validator.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -224,6 +225,29 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 		}, null );
 	}
 
+	/**
+	 * Build a CheckingIterable which checks that a derived value belongs to a derived set for all elements of the collection.
+	 * @param expectedFunction the function to construct the set of expected values
+	 * @param realFunction the function extract the actual value
+	 * @param message the message to signal when the actual value does not belong to the expected set
+	 * @return this CheckingIterable wrapped to check the condition
+	 */
+    public <U> CheckingIterable<T> checkForAllValueInSet( final Function<T, Set<U>> expectedFunction, final Function<T, U> realFunction, final String message ) {
+        return checkForAll( new Predicate<T>()
+        {
+
+            @Override
+            public boolean test(final T obj)
+            {
+                final Set<U> expectedValues = expectedFunction.apply( obj );
+                final U realValue = realFunction.apply( obj );
+                assertTrue( message + "; object: " + obj, expectedValues.contains( realValue ) );
+                return true;
+            }
+
+        }, null );
+    }
+	   
 	/**
 	 * Build a CheckingIterable which checks that the values of a function for all elements of the collection are unique.
 	 * @param function the mapping from the collection element to the key that should be unique
