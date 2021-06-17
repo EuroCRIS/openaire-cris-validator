@@ -1,10 +1,10 @@
 package org.eurocris.openaire.cris.validator.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -225,23 +225,27 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 		}, null );
 	}
 
-    public <U> CheckingIterable<T> checkForOneEqualsOnList(final Function<T, List<U>> expectedFunction, Function<T, U> realFunction, final String message) {
-        return checkForAll(new Predicate<T>()
+	/**
+	 * Build a CheckingIterable which checks that a derived value belongs to a derived set for all elements of the collection.
+	 * @param expectedFunction the function to construct the set of expected values
+	 * @param realFunction the function extract the actual value
+	 * @param message the message to signal when the actual value does not belong to the expected set
+	 * @return this CheckingIterable wrapped to check the condition
+	 */
+    public <U> CheckingIterable<T> checkForAllValueInSet( final Function<T, Set<U>> expectedFunction, final Function<T, U> realFunction, final String message ) {
+        return checkForAll( new Predicate<T>()
         {
 
             @Override
             public boolean test(final T obj)
             {
-                final List<U> expectedValue = expectedFunction.apply(obj);
-                final U realValue = realFunction.apply(obj);
-                
-                if(!expectedValue.contains(realValue)) {
-                    throw new AssertionFailedError( message + "; object: " + obj );
-                }
+                final Set<U> expectedValues = expectedFunction.apply( obj );
+                final U realValue = realFunction.apply( obj );
+                assertTrue( message + "; object: " + obj, expectedValues.contains( realValue ) );
                 return true;
             }
 
-        }, null);
+        }, null );
     }
 	   
 	/**
