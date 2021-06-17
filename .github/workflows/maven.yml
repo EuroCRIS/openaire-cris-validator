@@ -24,6 +24,6 @@ jobs:
     - name: Checkout the OpenAIRE Guidelines for CRIS Managers repo
       run: git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
       run: mvn package -Dmaven.javadoc.skip=true -B -V
+    - name: Run the validator on the example files
       run: java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
