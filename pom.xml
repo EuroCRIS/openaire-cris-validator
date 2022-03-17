@@ -13,6 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<guidelines.project.dir>../guidelines-cris-managers</guidelines.project.dir>
 		<fully.qualified.main.class.name>org.eurocris.openaire.cris.validator.CRISValidator</fully.qualified.main.class.name>
+		<maven.compiler.version>1.8</maven.compiler.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -44,8 +45,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.8.1</version>
 				<configuration>
-					<source>11</source>
-					<target>11</target>
+					<source>${maven.compiler.version}</source>
+					<target>${maven.compiler.version}</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
