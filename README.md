@@ -67,7 +67,7 @@ If the OAI-PMH 2.0 data provider advertises support for a compression, the endpo
 ## Feedback
 
 I'll be grateful for your feedback.  
-Please submit a [github issue](https://github.com/jdvorak001/openaire-cris-validator/issues) or email me to [jan.dvorak@ff.cuni.cz](mailto:jan.dvorak@ff.cuni.cz).
+Please submit a [github issue](https://github.com/euroCRIS/openaire-cris-validator/issues) or email me to [jan.dvorak@ff.cuni.cz](mailto:jan.dvorak@ff.cuni.cz).
 
 
 ## License
