@@ -23,13 +23,13 @@ Then do:
 
 	mvn clean package
 
+We compile for Java 17 by default, but you can switch to 11 or 1.8 [in the POM file](https://github.com/EuroCRIS/openaire-cris-validator/blob/master/pom.xml#L16).
+
 ### Run
 
 #### From command line
 
 	java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar {endpoint-url}
-
-With Java 9 you'll need the additional command-line option `--add-modules=java.xml.bind` to run the code (as per [this answer on StackOverflow](https://stackoverflow.com/a/43574427/7739289)).
 
 #### From Eclipse
 
@@ -72,7 +72,7 @@ Please submit a [github issue](https://github.com/jdvorak001/openaire-cris-valid
 
 ## License
 
-Copyright 2018 Jan Dvořák <a href="https://orcid.org/0000-0001-8985-152X" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"> https://orcid.org/0000-0001-8985-152X</a>
+Copyright 2018–2022 Jan Dvořák <a href="https://orcid.org/0000-0001-8985-152X" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"> https://orcid.org/0000-0001-8985-152X</a> and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

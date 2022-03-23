@@ -13,7 +13,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<guidelines.project.dir>../guidelines-cris-managers</guidelines.project.dir>
 		<fully.qualified.main.class.name>org.eurocris.openaire.cris.validator.CRISValidator</fully.qualified.main.class.name>
-		<maven.compiler.version>1.8</maven.compiler.version>
+		<maven.compiler.version>17</maven.compiler.version>
 	</properties>
 	<dependencies>
 		<dependency>
