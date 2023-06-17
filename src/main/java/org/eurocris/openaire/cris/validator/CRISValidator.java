@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -150,7 +151,7 @@ public class CRISValidator {
 	 */
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
-		final URL endpointBaseUrl = new URL( endpointUrl );
+		final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
 		endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
@@ -170,7 +171,7 @@ public class CRISValidator {
 			if ( endpointUrl == null ) {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
-			final URL endpointBaseUrl = new URL( endpointUrl );
+			final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
 			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );			
 		}
 	}
