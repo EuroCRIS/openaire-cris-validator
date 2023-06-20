@@ -50,7 +50,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -72,11 +71,10 @@
 				</executions>
 				<configuration>
 					<extension>true</extension>
-					<schemaDirectory>${guidelines.project.dir}/schemas</schemaDirectory>
+					<schemaDirectory>src/main/xjc/schemas</schemaDirectory>
 					<schemaIncludes>
-						<schemaInclude>cached/oai-identifier.xsd</schemaInclude>
-						<schemaInclude>cached/OAI-PMH.xsd</schemaInclude>
-						<!-- schemaInclude>openaire-cerif-profile.xsd</schemaInclude -->
+						<include>cached/oai-identifier.xsd</include>
+						<include>cached/OAI-PMH.xsd</include>
 					</schemaIncludes>
 					<bindingDirectory>src/main/xjc</bindingDirectory>
 					<bindingIncludes>
@@ -127,17 +125,17 @@
                             <goal>copy-resources</goal>
                         </goals>
         				<configuration>
-                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes/schemas</outputDirectory>
         					<resources>
                                 <resource>
-                                    <directory>src/main/resources/schemas/</directory>
+                                    <directory>src/main/resources/schemas/cached</directory>
                                     <include>**/*.xsd</include>
-                                    <targetPath>schemas</targetPath>
+                                    <targetPath>cached</targetPath>
                                 </resource>
                                 <resource>
-                                    <directory>${guidelines.project.dir}/schemas/</directory>
+                                    <directory>${guidelines.project.dir}/schemas/cached</directory>
                                     <include>**/*.xsd</include>
-                                    <targetPath>schemas</targetPath>
+                                    <targetPath>cached</targetPath>
                                 </resource>
         					</resources>
         				</configuration>
@@ -170,7 +168,7 @@
 						</transformationSet>
 					</transformationSets>
 					<catalogs>
-						<catalog>${guidelines.project.dir}/schemas/cached/catalog.xml</catalog>
+						<catalog>file:./schemas/cached/catalog.xml</catalog>
 						<catalog>${guidelines.project.dir}/schemas/catalog.xml</catalog>
 					</catalogs>
 				</configuration>
