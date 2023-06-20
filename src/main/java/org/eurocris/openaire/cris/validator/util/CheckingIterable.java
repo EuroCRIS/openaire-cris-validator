@@ -61,6 +61,44 @@ public abstract class CheckingIterable<T> implements Iterable<T> {
 			
 		};
 	}
+	
+	/**
+	 * When iterating, call the given function on each element.
+	 * The result of this call is sent further up the CheckingIterable chain.
+	 * @param <U> the target class of the mapping
+	 * @param f the function to apply
+	 * @return a CheckingIterable
+	 */
+	public <U> CheckingIterable<U> map( final Function<T,U> f ) {
+		final CheckingIterable<T> parentChecker = this;
+		return new CheckingIterable<U>() {
+
+			@Override
+			public Iterator<U> iterator() {
+				final Iterator<T> parentIterator = parentChecker.iterator();
+				return new Iterator<U>() {
+
+					@Override
+					public boolean hasNext() {
+						return parentIterator.hasNext();
+					}
+
+					@Override
+					public U next() {
+						final T x = parentIterator.next();
+						return f.apply( x );
+					}
+					
+				};
+			}
+
+			@Override
+			protected void close() {
+				parentChecker.close();
+			}
+
+		};		
+	}
 
 	/**
 	 * Build a CheckingIterable which checks that the collection contains at least one element for which the given predicate is true.

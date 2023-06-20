@@ -213,6 +213,18 @@ public class CheckingIterableTest {
 	}
 	
 	/**
+	 * Test that {@link CheckingIterable#map(Function)} works: convert to uppercase.
+	 */
+	@Test
+	public void testMapOk() {
+		final List<String> list = Arrays.asList( "hello", "beautiful", "world" );
+		final CheckingIterable<String> c0 = CheckingIterable.over( list );
+		final CheckingIterable<String> c1 = c0.map( String::toUpperCase );
+		final CheckingIterable<String> c2 = c1.checkForAllEquals( String::toUpperCase, String::toString, "Entries should be uppercased" );
+		runChecker( list, c2 );
+	}
+	
+	/**
 	 * Run the checker and see if the number of elements is preserved.
 	 * @param list the list the checker was constructed from
 	 * @param c1 the checker to exercise
