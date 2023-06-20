@@ -1,0 +1,538 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_publications 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_publications">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/812348</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="812348"><!-- Linking Data and Publications: Towards a Cross-Disciplinary Approach -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_6501<!-- journal article --></Type>
+                    <Language>en</Language>
+					<Title xml:lang="en">Linking Data and Publications: Towards a Cross-Disciplinary Approach</Title>
+					<PublishedIn>
+						<Publication id="894490"><!-- Int J Digital Curation -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_0640<!-- journal --></Type>
+							<Title xml:lang="en">The International Journal of Digital Curation</Title>
+							<ISSN>1746-8256</ISSN>
+						</Publication>
+					</PublishedIn>
+					<PublicationDate>2013-06-14</PublicationDate>
+					<Volume>8</Volume>
+					<Issue>1</Issue>
+					<StartPage>244</StartPage>
+					<EndPage>254</EndPage>
+					<DOI>10.2218/ijdc.v8i1.257</DOI>
+					<Authors>
+						<Author>
+							<DisplayName>Maarten Hoogerwerf</DisplayName>
+							<Person id="2123455"><!-- Maarten Hoogerwerf -->
+								<PersonName>
+									<FamilyNames>Hoogerwerf</FamilyNames>
+									<FirstNames>Maarten</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Mathias Lösch</DisplayName>
+							<Person id="2123456"><!-- Mathias Lösch -->
+								<PersonName>
+									<FamilyNames>Lösch</FamilyNames>
+									<FirstNames>Mathias</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Jochen Schirrwagen</DisplayName>
+							<Person id="2123457"><!-- Jochen Schirrwagen -->
+								<PersonName>
+									<FamilyNames>Schirrwagen</FamilyNames>
+									<FirstNames>Jochen</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Sarah Callaghan</DisplayName>
+							<Person id="2123458"><!-- Sarah Callaghan -->
+								<PersonName>
+									<FamilyNames>Callaghan</FamilyNames>
+									<FirstNames>Sarah</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Paolo Manghi</DisplayName>
+							<Person id="2123452"><!-- Paolo Manghi -->
+								<PersonName>
+									<FamilyNames>Manghi</FamilyNames>
+									<FirstNames>Paolo</FirstNames>
+								</PersonName>
+								<ORCID>https://orcid.org/0000-0001-7291-3210</ORCID>
+							</Person>
+						</Author>
+						<Author>	
+							<DisplayName>Katerina Iatropoulou</DisplayName>
+							<Person id="2123459"><!-- Katerina Iatropoulou -->
+								<PersonName>
+									<FamilyNames>Iatropoulou</FamilyNames>
+									<FirstNames>Katerina</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Dimitra Keramida</DisplayName>
+							<Person id="21234510"><!-- Dimitra Keramida -->
+								<PersonName>
+									<FamilyNames>Keramida</FamilyNames>
+									<FirstNames>Dimitra</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Najla Rettberg</DisplayName>
+							<Person id="21234511"><!-- Najla Rettberg -->
+								<PersonName>
+									<FamilyNames>Rettberg</FamilyNames>
+									<FirstNames>Najla</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+					</Authors>
+					<License scheme="https://www.openaire.eu/cerif-profile/vocab/LicenseTypes#">CCAttribution(CCBY)</License>
+					<Abstract xml:lang="en">In this paper, we tackle the challenge of linking scholarly information in multi-disciplinary research infrastructures. There is a trend towards linking
+						publications with research data and other information, but, as it is still emerging, this is handled differently by various initiatives and disciplines. For OpenAIRE, a European
+						cross-disciplinary publication infrastructure, this poses the challenge of supporting these heterogeneous practices. Hence, OpenAIRE wants to contribute to the development of a common approach
+						for discipline-independent linking practices between publications, data, project information and researchers. To this end, we constructed two demonstrators to identify commonalities and
+						differences. The results show the importance of stable and unique identifiers, and support a “by reference” approach of interlinking research results. This approach allows discipline-specific
+						research information to be managed independently in distributed systems and avoids redundant maintenance. Furthermore, it allows these disciplinary systems to manage the specialized structures
+						of their contents themselves.</Abstract>
+
+					<OriginatesFrom>
+						<Project id="112345"><!-- OpenAIREplus -->
+							<Acronym>OpenAIREplus</Acronym>
+							<Title xml:lang="en">2nd-Generation Open Access Infrastructure for Research in Europe</Title>
+							<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">283595</Identifier>
+							<StartDate>2011-12-01</StartDate>
+							<EndDate>2014-05-31</EndDate>
+							<Funded>
+								<By>
+									<OrgUnit id="310001">
+										<Acronym>EC</Acronym>
+										<Name xml:lang="en">European Commission</Name>
+										<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+									</OrgUnit>
+								</By>
+								<As>
+									<Funding id="612352"/><!-- FP7 / Capacities / Research Infrastructures / OpenAIREplus -->
+								</As>
+							</Funded>
+						</Project>
+					</OriginatesFrom>
+
+					<Access xmlns="http://purl.org/coar/access_right" endDate="2017-05-31">http://purl.org/coar/access_right/c_f1cf<!-- embargoed --></Access>
+				</Publication>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/894490</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="894490"><!-- Int J Digital Curation -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_0640<!-- journal --></Type>
+					<Title xml:lang="en">The International Journal of Digital Curation</Title>
+					<ISSN>1746-8256</ISSN>
+					<Access xmlns="http://purl.org/coar/access_right">http://purl.org/coar/access_right/c_14cb<!-- metadata only access --></Access>
+				</Publication>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/894491</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="894491">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_3e5a<!-- contribution to journal --></Type>
+					<Title xml:lang="en">The International Journal of Digital Curation: Special Issue on Open Access Repositories</Title>
+					<PublishedIn>
+						<Publication id="894490"><!-- Int J Digital Curation -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_0640<!-- journal --></Type>
+							<Title xml:lang="en">The International Journal of Digital Curation</Title>
+							<ISSN>1746-8256</ISSN>
+						</Publication>
+					</PublishedIn>
+					<Editors>
+						<Editor>
+							<Person id="2123452"><!-- Paolo Manghi -->
+								<PersonName>
+									<FamilyNames>Manghi</FamilyNames>
+									<FirstNames>Paolo</FirstNames>
+								</PersonName>
+								<ORCID>https://orcid.org/0000-0001-7291-3210</ORCID>
+							</Person>
+						</Editor>
+					</Editors>
+					<OriginatesFrom>
+						<Project id="112345"><!-- OpenAIREplus -->
+		                    <Acronym>OpenAIREplus</Acronym>
+	                        <Title xml:lang="en">2nd-Generation Open Access Infrastructure for Research in Europe</Title>
+	                        	<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">283595</Identifier>
+						    <StartDate>2011-12-01</StartDate>
+    		                    	<EndDate>2014-05-31</EndDate>
+							<Funded>
+								<By>
+									<OrgUnit id="310001">
+										<Acronym>EC</Acronym>
+							            <Name xml:lang="en">European Commission</Name>
+										<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+			                			</OrgUnit>
+								</By>
+								<As>
+									<Funding id="612352"/><!-- FP7 / Capacities / Research Infrastructures / OpenAIREplus -->
+								</As>
+							</Funded>
+    						</Project>
+					</OriginatesFrom>
+				</Publication>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/4123451</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="4123451">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_5794<!-- conference paper --></Type>
+                    <Language>en</Language>
+					<Title xml:lang="en">The Data Model of the OpenAIRE Scientific Communication e-Infrastructure</Title>
+					<PublishedIn>
+						<Publication id="895501">
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_f744</Type><!-- conference proceedings -->
+							<Title xml:lang="en">Metadata and Semantics Research</Title>
+							<Subtitle xml:lang="en">6th Research Conference, MTSR 2012, Cádiz, Spain, November 28-30, 2012. Proceedings</Subtitle>
+							<DOI>10.1007/978-3-642-35233-1</DOI>
+							<ISBN medium="http://issn.org/vocabularies/Medium#Print">978-3-642-35232-4</ISBN>
+							<ISBN medium="http://issn.org/vocabularies/Medium#Online">978-3-642-35233-1</ISBN>
+ 							<Publishers>
+								<Publisher>
+									<OrgUnit id="301250">
+										<Name xml:lang="en">Springer</Name>
+									</OrgUnit>
+								</Publisher>
+							</Publishers>
+							<Keyword xml:lang="en">cultural heritage</Keyword>
+							<Keyword xml:lang="en">digital libraries</Keyword>
+							<Keyword xml:lang="en">learning objects</Keyword>
+							<Keyword xml:lang="en">linked open data</Keyword>
+							<Keyword xml:lang="en">scholarly publications</Keyword>
+							<OutputFrom>
+								<Event id="583475">
+									<Type scheme="https://w3id.org/cerif/vocab/EventTypes">https://w3id.org/cerif/vocab/EventTypes#Conference</Type>
+									<Acronym>MTSR 2012</Acronym>
+									<Name xml:lang="en">6th Research Conference on Metadata and Semantics Research</Name>
+								</Event>
+							</OutputFrom>
+						</Publication>
+					</PublishedIn>
+					<PublicationDate>2012-11-30</PublicationDate>
+					<Volume>343</Volume>
+					<StartPage>168</StartPage>
+					<EndPage>180</EndPage>
+					<DOI>10.1007/978-3-642-35233-1_18</DOI>
+					<Authors>
+						<Author>
+							<DisplayName>Paolo Manghi</DisplayName>
+							<Person id="2123452"><!-- Paolo Manghi -->
+								<PersonName>
+									<FamilyNames>Manghi</FamilyNames>
+									<FirstNames>Paolo</FirstNames>
+								</PersonName>
+								<ORCID>https://orcid.org/0000-0001-7291-3210</ORCID>
+							</Person>
+							<Affiliation>
+								<OrgUnit id="312346"><!-- CNR -->
+									<Acronym>CNR</Acronym>
+								</OrgUnit>
+							</Affiliation>
+						</Author>
+						<Author>
+							<DisplayName>Nikos Houssos</DisplayName>
+							<Person id="2123451"><!-- Nikos Houssos -->
+								<PersonName>
+									<FamilyNames>Houssos</FamilyNames>
+									<FirstNames>Nikos</FirstNames>
+								</PersonName>
+								<ORCID>https://orcid.org/0000-0002-5277-285X</ORCID>
+							</Person>
+							<Affiliation>
+								<OrgUnit id="312347"><!-- EKT -->
+									<Acronym>EKT</Acronym>
+								</OrgUnit>
+							</Affiliation>
+						</Author>
+						<Author>
+							<DisplayName>Marko Mikulicic</DisplayName>
+							<Person id="2123454"><!-- Marko Mikulicic -->
+								<PersonName>
+									<FamilyNames>Mikulicic</FamilyNames>
+									<FirstNames>Marko</FirstNames>
+								</PersonName>
+							</Person>
+						</Author>
+						<Author>
+							<DisplayName>Brigitte Jörg</DisplayName>
+							<Person id="2123453"><!-- Brigitte Jörg -->
+								<PersonName>
+									<FamilyNames>Jörg</FamilyNames>
+									<FirstNames>Brigitte</FirstNames>
+								</PersonName>
+								<ORCID>https://orcid.org/0000-0001-7941-8108</ORCID>
+							</Person>
+							<Affiliation>
+								<OrgUnit id="312348"><!-- UKOLN -->
+									<Acronym>UKOLN</Acronym>
+								</OrgUnit>
+							</Affiliation>
+						</Author>
+					</Authors>
+					<Keyword xml:lang="en">open access</Keyword>
+					<Keyword xml:lang="en">infrastructure</Keyword>
+					<Keyword xml:lang="en">data model</Keyword>
+					<Keyword xml:lang="en">CERIF</Keyword>
+					<Keyword xml:lang="en">DataCite</Keyword>
+					<Abstract xml:lang="en">The OpenAIREplus project aims to further develop and operate the OpenAIRE e-infrastructure, in order to provide a central entry point to Open Access and
+						non-Open Access publications and datasets funded by the European Commission and National agencies. The infrastructure provides the services to populate, curate, and enrich an Information Space
+						by collecting metadata descriptions relative to organizations, data sources, projects, funding programmes, persons, publications, and datasets. Stakeholders in the research process and
+						scientific communication, such as researchers, funding agencies, organizations involved in projects, project coordinators, can here find the information to improve their research and statistics
+						to measure the impact of Open Access and funding schemes over research. In this paper, we introduce the functional requirements to be satisfied and describe the OpenAIREplus data model entities
+						and relationships required to represent information capable of meeting them.</Abstract>
+
+					<OriginatesFrom>
+						<Project id="112345"><!-- OpenAIREplus -->
+							<Acronym>OpenAIREplus</Acronym>
+							<Title xml:lang="en">2nd-Generation Open Access Infrastructure for Research in Europe</Title>
+							<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">283595</Identifier>
+							<StartDate>2011-12-01</StartDate>
+							<EndDate>2014-05-31</EndDate>
+							<Funded>
+								<By>
+									<OrgUnit id="310001">
+										<Acronym>EC</Acronym>
+										<Name xml:lang="en">European Commission</Name>
+										<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+									</OrgUnit>
+								</By>
+								<As>
+									<Funding id="612352"/><!-- FP7 / Capacities / Research Infrastructures / OpenAIREplus -->
+								</As>
+							</Funded>
+						</Project>
+					</OriginatesFrom>
+				</Publication>				
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/852734</identifier>
+				<datestamp>2016-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="852734">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_6501<!-- journal article --></Type>
+					<Title xml:lang="en">Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Title>
+					<PublishedIn>
+						<Publication id="893204"><!-- Evolution -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_0640<!-- journal --></Type>
+							<Title xml:lang="en">Evolution</Title>
+							<ISSN>1558-5646</ISSN>
+							<Publishers>
+								<Publisher>
+									<OrgUnit id="301253">
+										<Name xml:lang="en">Society for the Study of Evolution</Name>
+									</OrgUnit>
+								</Publisher>
+							</Publishers>
+						</Publication>
+					</PublishedIn>
+					<Volume>66</Volume>
+					<Issue>5</Issue>
+					<StartPage>1474</StartPage>
+					<EndPage>1489</EndPage>
+					<DOI>10.1111/J.1558-5646.2011.01539.X</DOI>
+					<Authors>
+						<Author>
+							<DisplayName>Sonal Singhal</DisplayName>
+							<Person id="21234512">
+								<PersonName>
+									<FamilyNames>Singhal</FamilyNames>
+									<FirstNames>Sonal</FirstNames>
+								</PersonName>
+							</Person>
+							<Affiliation>
+								<OrgUnit id="301248">
+									<Name xml:lang="en">Museum of Vertebrate Zoology</Name>
+									<PartOf>
+										<OrgUnit id="329384">
+											<Name xml:lang="en">University of California, Berkeley</Name>
+										</OrgUnit>
+									</PartOf>
+								</OrgUnit>
+							</Affiliation>
+							<Affiliation>
+								<OrgUnit id="301249">
+									<Name xml:lang="en">Department of Integrative Biology</Name>
+									<PartOf>
+										<OrgUnit id="329384">
+											<Name xml:lang="en">University of California, Berkeley</Name>
+										</OrgUnit>
+									</PartOf>
+								</OrgUnit>
+							</Affiliation>
+						</Author>
+						<Author>
+							<DisplayName>Craig Moritz</DisplayName>
+							<Person id="21234513">
+								<PersonName>
+									<FamilyNames>Moritz</FamilyNames>
+									<FirstNames>Craig</FirstNames>
+								</PersonName>
+							</Person>
+							<Affiliation>
+								<OrgUnit id="301248">
+									<Name xml:lang="en">Museum of Vertebrate Zoology</Name>
+									<PartOf>
+										<OrgUnit id="329384">
+											<Name xml:lang="en">University of California, Berkeley</Name>
+										</OrgUnit>
+									</PartOf>
+								</OrgUnit>
+							</Affiliation>
+							<Affiliation>
+								<OrgUnit id="301249">
+									<Name xml:lang="en">Department of Integrative Biology</Name>
+									<PartOf>
+										<OrgUnit id="329384">
+											<Name xml:lang="en">University of California, Berkeley</Name>
+										</OrgUnit>
+									</PartOf>
+								</OrgUnit>
+							</Affiliation>
+						</Author>
+					</Authors>
+					<Keyword xml:lang="en">hybrid zones</Keyword>
+					<Keyword xml:lang="en">phylogeography</Keyword>
+					<Keyword xml:lang="en">speciation</Keyword>
+					<Keyword xml:lang="en">Lampropholis coggeri</Keyword>
+					<Keyword xml:lang="en">simulations</Keyword>
+					<Abstract xml:lang="en">Phenotypically cryptic lineages comprise an important yet understudied part of biodiversity; in particular, we have much to
+						learn about how these lineages are formed and maintained. To better understand the evolutionary significance of such lineages,
+						we studied a hybrid zone between two morphologically cryptic phylogeographic lineages in the rainforest lizard, Lampropholis
+						coggeri. Analyzing a multilocus genetic dataset through cline inference, individual-based methods and population measures of
+						disequilibrium and using simulations to explore our genetic results in context of theoretical expectations, we inferred the processes
+						maintaining this hybrid zone. We find that these lineages meet in a hybrid zone that is narrow (≈400 m) relative to inferred
+						dispersal rate. Further, the hybrid zone exhibits substantial genetic disequilibrium and sharply coincident and largely concordant
+						clines. Based on our knowledge about the region’s biogeography, the species’ natural history, and our simulation results, we
+						suggest that strong selection against hybrids structures this system. As all clines show a relatively narrow range of introgression,
+						we posit that this hybrid zone might not yet be in equilibrium. Nonetheless, our results clearly show that phylogeographic lineages
+						can evolve substantial reproductive isolation without concomitant morphological diversification, suggesting that such lineages
+						can constitute a significant component of evolutionary diversity.</Abstract>
+					<References>
+						<Product id="729487">
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+							<Name xml:lang="en">Data from: Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Name>
+							<VersionInfo xml:lang="en">1</VersionInfo>
+							<DOI>10.5061/DRYAD.4GH6HF5G</DOI>
+						</Product>
+					</References>
+				</Publication>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Publications/893204</identifier>
+				<datestamp>2016-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_publications</setSpec>
+			</header>
+			<metadata>
+				<Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="893204">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_0640<!-- journal --></Type>
+					<Title xml:lang="en">Evolution</Title>
+					<ISSN>1558-5646</ISSN>
+					<Publishers>
+						<Publisher>
+							<OrgUnit id="301253">
+								<Name xml:lang="en">Society for the Study of Evolution</Name>
+							</OrgUnit>
+						</Publisher>
+					</Publishers>
+				</Publication>
+			</metadata>
+		</record>
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Publications/895501</identifier>
+                <datestamp>2016-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_publications</setSpec>
+            </header>
+            <metadata>
+                <Publication xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="895501">
+                    <Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Publication_Types">http://purl.org/coar/resource_type/c_f744</Type><!-- conference proceedings -->
+                    <Title xml:lang="en">Metadata and Semantics Research</Title>
+                    <Subtitle xml:lang="en">6th Research Conference, MTSR 2012, Cádiz, Spain, November 28-30, 2012. Proceedings</Subtitle>
+                    <DOI>10.1007/978-3-642-35233-1</DOI>
+                    <ISBN medium="http://issn.org/vocabularies/Medium#Print">978-3-642-35232-4</ISBN>
+                    <ISBN medium="http://issn.org/vocabularies/Medium#Online">978-3-642-35233-1</ISBN>
+                    <Publishers>
+                        <Publisher>
+                        	<DisplayName>Springer, Berlin, Heidelberg</DisplayName>
+                            <OrgUnit id="301250">
+                                <Name xml:lang="en">Springer</Name>
+                            </OrgUnit>
+                        </Publisher>
+                    </Publishers>
+                    <Keyword xml:lang="en">cultural heritage</Keyword>
+                    <Keyword xml:lang="en">digital libraries</Keyword>
+                    <Keyword xml:lang="en">learning objects</Keyword>
+                    <Keyword xml:lang="en">linked open data</Keyword>
+                    <Keyword xml:lang="en">scholarly publications</Keyword>
+                    <OutputFrom>
+                        <Event id="583475">
+                            <Type scheme="https://w3id.org/cerif/vocab/EventTypes">https://w3id.org/cerif/vocab/EventTypes#Conference</Type>
+                            <Acronym>MTSR 2012</Acronym>
+                            <Name xml:lang="en">6th Research Conference on Metadata and Semantics Research</Name>
+                        </Event>
+                    </OutputFrom>
+                </Publication>
+            </metadata>
+        </record>
+        <record>
+            <header status="deleted">
+                <identifier>oai:cris.example.org:Publications/899999</identifier>
+                <datestamp>2018-05-15T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_publications</setSpec>
+            </header>
+        </record>
+	</ListRecords>
+</OAI-PMH>

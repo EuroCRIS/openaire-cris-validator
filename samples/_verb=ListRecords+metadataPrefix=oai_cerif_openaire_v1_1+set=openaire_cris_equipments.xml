@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload.
+	OAI-PMH Set: openaire_cris_equipments 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_equipments">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Equipments/82394874</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_equipments</setSpec>
+			</header>
+			<metadata>
+				<Equipment xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="82394874">
+					<Name xml:lang="en">SkyArrow 650 TCNS operated by IBIMET CNR</Name>
+					<Identifier type="Institution assigned unique equipment identifier">982340-29481/1999</Identifier>
+					<Description xml:lang="en">The SkyArrow 650 TCNS operated by IBIMET (CNR - Institute of Biometeorology) for the EUFAR project</Description>
+					<Owner>
+						<OrgUnit id="312346">
+							<Acronym>CNR</Acronym>
+							<Name xml:lang="it">CONSIGLIO NAZIONALE DELLE RICERCHE</Name>
+							<Name xml:lang="en" trans="h">NATIONAL RESEARCH COUNCIL</Name>
+						</OrgUnit>
+					</Owner>
+				</Equipment>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Equipments/82394875</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_equipments</setSpec>
+			</header>
+			<metadata>
+				<Equipment xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="82394875">
+					<Name xml:lang="en">Cessna T207A operated by Freie Universität Berlin</Name>
+					<Identifier type="Institution assigned unique equipment identifier">2005:192834/11A</Identifier>
+					<Description xml:lang="en">The Cessna T207A operated by Freie Universität Berlin, Institut für Weltraumwissenschaften, for the EUFAR project</Description>
+				</Equipment>
+			</metadata>
+		</record>
+
+	</ListRecords>
+</OAI-PMH>

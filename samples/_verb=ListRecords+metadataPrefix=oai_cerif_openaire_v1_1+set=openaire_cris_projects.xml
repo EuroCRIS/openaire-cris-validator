@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_projects 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_projects">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Projects/112345</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Project xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="112345"><!-- OpenAIREplus -->
+					<Acronym>OpenAIREplus</Acronym>
+					<Title xml:lang="en">2nd-Generation Open Access Infrastructure for Research in Europe</Title>
+					<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">283595</Identifier>
+					<Identifier type="">http://www.openaire.eu</Identifier><!-- FIXME -->
+					<StartDate>2011-12-01</StartDate>
+					<EndDate>2014-05-31</EndDate>
+					<Consortium>
+						<Coordinator>
+							<OrgUnit id="312345">
+								<Acronym>NKUA</Acronym>
+								<Name xml:lang="el">ΕΘΝΙΚΟ ΚΑΙ ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ</Name>
+								<Name xml:lang="en" trans="h">NATIONAL AND KAPODISTRIAN UNIVERSITY OF ATHENS</Name>
+							</OrgUnit>
+						</Coordinator>
+						<Partner>
+							<OrgUnit id="312346">
+								<Acronym>CNR</Acronym>
+								<Name xml:lang="it">CONSIGLIO NAZIONALE DELLE RICERCHE</Name>
+								<Name xml:lang="en" trans="h">NATIONAL RESEARCH COUNCIL</Name>
+							</OrgUnit>
+						</Partner>
+					</Consortium>
+					<Funded>
+						<By>
+							<OrgUnit id="310001">
+								<Acronym>EC</Acronym>
+								<Name xml:lang="en">European Commission</Name>
+								<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+							</OrgUnit>
+						</By>
+						<As>
+							<Funding id="612352"><!-- FP7 / Capacities / Research Infrastructures / OpenAIREplus -->
+								<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+								<Name xml:lang="en">FP7 funding for the OpenAIREplus project</Name>
+								<PartOf>
+									<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+										<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+										<Name xml:lang="en">Research infrastructures</Name>
+										<PartOf>
+											<Funding id="612346"><!-- FP7 / Capacities -->
+												<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+												<Name xml:lang="en">Capacities</Name>
+												<PartOf>
+													<Funding id="612345"><!-- FP7 -->
+														<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+														<Acronym>FP7</Acronym>
+													</Funding>
+												</PartOf>
+											</Funding>
+										</PartOf>
+ 									</Funding>
+								</PartOf>
+                                <Duration startDate="2011-12" endDate="2014-05"/>
+                                <OAMandate mandated="true"/>
+							</Funding>
+						</As>
+					</Funded>
+					<Keyword xml:lang="en">open access</Keyword>
+					<Keyword xml:lang="en">scholarly communication</Keyword>
+					<Keyword xml:lang="en">research</Keyword>
+					<Keyword xml:lang="en">publications</Keyword>
+					<Keyword xml:lang="en">datasets</Keyword>
+					<Abstract xml:lang="en">OpenAIREplus will build a 2nd-Generation Open Access Infrastructure by significantly expanding in several directions the outcomes of the OpenAIRE project, which implements the EC Open Access (OA) pilot. Capitalizing on the OpenAIRE infrastructure, built for managing FP7 and ERC funded articles, and the associated supporting mechanism of the European Helpdesk System, OpenAIREplus will develop an open access, participatory infrastructure for scientific information.
+						It will significantly expand its base of harvested publications to also include all OA publications indexed by the DRIVER infrastructure (more than 270 validated institutional repositories) and any other repository containing peer-reviewed literature that complies with certain standards.
+						It will also generically harvest and index the metadata of scientific datasets in selected diverse OA thematic data repositories. It will support the concept of linked publications by deploying novel
+						services for linking peer-reviewed literature and associated data sets and collections, from link discovery based on diverse forms of mining (textual, usage, etc.), to storage, visual representation, and on-line exploration. It will offer both user-level services to experts and non-scientists
+						alike as well as programming interfaces for providers of value-added services to build applications on its content. Deposited articles and data will be openly accessible through an enhanced version of
+						the OpenAIRE portal, together with any available relevant information on associated project funding and usage statistics.
+						OpenAIREplus will retain its European footprint, engaging people and scientific repositories in almost all 27 EU member states and beyond. The technical work will be complemented by a suite of studies and associated research efforts that will partly proceed in collaboration with different European initiatives and investigate issues of intellectual property rights,
+						efficient financing models, and standards.</Abstract>
+                    <OAMandate mandated="true"/>
+				</Project>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Projects/112346</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Project xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="112346"><!-- OpenAIRE -->
+					<Acronym>OpenAIRE</Acronym>
+					<Title xml:lang="en">Open Access Infrastructure for Research in Europe</Title>
+					<Title xml:lang="el">Υποδομή Ανοικτής Πρόσβασης για την Έρευνα στην Ευρώπη</Title>
+					<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">246686</Identifier>
+					<Identifier type="">http://www.openaire.eu</Identifier><!-- FIXME -->
+					<StartDate>2009-12-01</StartDate>
+					<EndDate>2012-11-30</EndDate>
+					<Consortium>
+						<Coordinator>
+							<OrgUnit id="312345">
+								<Acronym>NKUA</Acronym>
+								<Name xml:lang="el">ΕΘΝΙΚΟ ΚΑΙ ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ</Name>
+								<Name xml:lang="en" trans="h">NATIONAL AND KAPODISTRIAN UNIVERSITY OF ATHENS</Name>
+							</OrgUnit>
+						</Coordinator>
+						<Partner>
+							<OrgUnit id="312346">
+								<Acronym>CNR</Acronym>
+								<Name xml:lang="it">CONSIGLIO NAZIONALE DELLE RICERCHE</Name>
+								<Name xml:lang="en" trans="h">NATIONAL RESEARCH COUNCIL</Name>
+							</OrgUnit>
+						</Partner>
+					</Consortium>
+					<Funded>
+						<By>
+							<OrgUnit id="310001">
+								<Acronym>EC</Acronym>
+								<Name xml:lang="en">European Commission</Name>
+								<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+							</OrgUnit>
+						</By>
+						<As>
+							<Funding id="612351"><!-- FP7 / Capacities / Research Infrastructures / OpenAIRE -->
+								<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+								<Name xml:lang="en">FP7 funding for the OpenAIRE project</Name>
+								<PartOf>
+									<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+										<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+										<Name xml:lang="en">Research infrastructures</Name>
+										<PartOf>
+											<Funding id="612346"><!-- FP7 / Capacities -->
+												<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+												<Name xml:lang="en">Capacities</Name>
+												<PartOf>
+													<Funding id="612345"><!-- FP7 -->
+														<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+														<Acronym>FP7</Acronym>
+													</Funding>
+												</PartOf>
+											</Funding>
+										</PartOf>
+									</Funding>
+								</PartOf>
+								<Duration startDate="2009-12" endDate="2012-11"/>
+                                <OAMandate mandated="true"/>
+							</Funding>
+						</As>
+					</Funded>
+					<Keyword xml:lang="en">open access</Keyword>
+					<Keyword xml:lang="en">scholarly communication</Keyword>
+					<Keyword xml:lang="en">research</Keyword>
+					<Keyword xml:lang="en">publications</Keyword>
+					<Abstract xml:lang="en">OpenAIRE will deliver an electronic infrastructure and supporting mechanisms for the identification, deposition, access, and monitoring of FP7 and ERC funded articles, where the main supporting mechanism will be the establishment and operation of the European Helpdesk System. Additionally, the project will offer a special repository for articles that can be stored neither in institutional nor in subject-based/thematic repositories, while it will also prepare the
+						way for similar functionality on scientific data. All deposited articles and data will be freely accessible worldwide through a new portal to the products of EU-funded research, built as part of this project. It will also connect research input (project contracts) with research output (publications and data) and monitor the system use to obtain statistically-significant trends about both.
+						Thematically, the project will focus on peer-reviewed publications (primarily, journal articles in
+						final or pre-print form, but also conference articles, when considered important) in at least the seven disciplines highlighted in the Open Access pilot (energy, environment, health, cognitive systems-interaction-robotics, electronic infrastructures, science in society, and socioeconomic sciences-humanities) and on research datasets in a subset of them.
+						Geographically, however, it will have a definitive European footprint by covering the European Union in its entirety, engaging people and
+						scientific repositories in almost all 27 member states and beyond.
+						The electronic infrastructure built by the project will be based on state-of-the-art software services of the D-NET package developed within the DRIVER and DRIVER-II projects and the Invenio digital repository software developed at CERN. These will be further enhanced and complemented with services developed within OpenAIRE to address critical requirements and issues that arise in the target environment and require further
+						investigation.</Abstract>
+                    <OAMandate mandated="true"/>
+				</Project>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Projects/112347</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Project xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="112347"><!-- EUFAR -->
+					<Acronym>EUFAR</Acronym>
+					<Title xml:lang="en">European Facility for Airborne Research in Environmental and Geoscience</Title>
+					<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#ProjectReference">227159</Identifier>
+					<Identifier type="">http://www.eufar.net</Identifier><!-- FIXME -->
+					<StartDate>2008-09-22</StartDate>
+					<EndDate>2013-09-30</EndDate>
+					<Consortium>
+						<Partner>
+							<OrgUnit id="312346">
+								<Acronym>CNR</Acronym>
+								<Name xml:lang="it">CONSIGLIO NAZIONALE DELLE RICERCHE</Name>
+								<Name xml:lang="en" trans="h">NATIONAL RESEARCH COUNCIL</Name>
+								<Identifier type="">http://www.cnr.it</Identifier><!-- FIXME -->
+							</OrgUnit>
+						</Partner>
+					</Consortium>
+					<Funded>
+						<By>
+							<OrgUnit id="310001">
+								<Acronym>EC</Acronym>
+								<Name xml:lang="en">European Commission</Name>
+								<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+							</OrgUnit>
+						</By>
+						<As>
+							<Funding id="612353"><!-- FP7 / Capacities / Research Infrastructures / EUFAR -->
+								<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+								<Name xml:lang="en">FP7 funding for the EUFAR project</Name>
+								<PartOf>
+									<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+										<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+										<Name xml:lang="en">Research infrastructures</Name>
+										<PartOf>
+											<Funding id="612346"><!-- FP7 / Capacities -->
+												<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+												<Name xml:lang="en">Capacities</Name>
+												<PartOf>
+													<Funding id="612345"><!-- FP7 -->
+														<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+														<Acronym>FP7</Acronym>
+													</Funding>
+												</PartOf>
+											</Funding>
+										</PartOf>
+									</Funding>
+								</PartOf>
+								<Duration startDate="2008-09-22" endDate="2013-09-30"/>
+                                <OAMandate mandated="true"/>
+							</Funding>
+						</As>
+					</Funded>
+					<Keyword xml:lang="en">airborne research</Keyword>
+					<Keyword xml:lang="en">geoscience</Keyword>
+					<Abstract xml:lang="en">EUFAR is the Integrating Activity for airborne research in Geo-science. It will integrate the airborne community, to ensure that researchers may have access to the most suited infrastructure they need, irrespective of the location of the infrastructure. The EUFAR consortium comprises 33 legal entities. 15 operators of airborne facilities, and 18 experts in airborne research. They contribute to 9 Networking Activities, Trans-national Access to 25 installations,
+						and 3 Joint Research Activities. A Scientific Advisory Committee, constituted of eminent scientists, contributes to a better integration of the users with the operators to tackle new user driven developments. Transnational Access coordination aims at providing a wider and more efficient access to the infrastructures. The working group for the Future of the Fleet fosters the joint development of airborne infrastructures in terms of capacity and performance. The Expert Working Groups
+						facilitate a wider sharing of knowledge and technologies across fields. The activity for Education and Training provides training courses to new users. The working group on Standards and Protocols contributes to better structure the way research infrastructures operate. The development of a distributed data base for airborne activities improves the access to the data collected by the aircraft. All these activities rely on an unique web portal to airborne research in Europe. The working
+						group on the Sustainable Structure aims at promoting solutions for the long term sustainability of EUFAR. Among the JRA, one will develop and characterize airborne hygrometers, the second one will develop and implement quality layers in the processing chains of hyperspectral imagery, and the third one will develop an airborne drop spectrometer based on a new principle.
+					</Abstract>
+					<Uses>
+						<Equipment id="82394874">
+							<Name xml:lang="en">SkyArrow 650 TCNS operated by IBIMET CNR</Name>
+						</Equipment>
+					</Uses>
+					<Uses>
+						<Equipment id="82394875">
+							<Name xml:lang="en">Cessna T207A operated by Freie Universität Berlin</Name>
+						</Equipment>
+					</Uses>
+                    <OAMandate mandated="true"/>
+				</Project>
+			</metadata>
+		</record>
+
+	</ListRecords>
+</OAI-PMH>

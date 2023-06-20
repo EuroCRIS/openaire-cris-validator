@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_orgunits 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_orgunits">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/312345</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="312345">
+                    <Type scheme="https://w3id.org/cerif/vocab/OrganisationTypes">https://w3id.org/cerif/vocab/OrganisationTypes#HigherEducation</Type>
+					<Acronym>NKUA</Acronym>
+					<Name xml:lang="el">ΕΘΝΙΚΟ ΚΑΙ ΚΑΠΟΔΙΣΤΡΙΑΚΟ ΠΑΝΕΠΙΣΤΗΜΙΟ ΑΘΗΝΩΝ</Name>
+					<Name xml:lang="en" trans="h">NATIONAL AND KAPODISTRIAN UNIVERSITY OF ATHENS</Name>
+					<Identifier type="">http://www.uoa.gr</Identifier><!-- FIXME -->
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/312346</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="312346">
+                    <Type scheme="https://w3id.org/cerif/vocab/OrganisationTypes">https://w3id.org/cerif/vocab/OrganisationTypes#ResearchInstitute</Type>
+					<Acronym>CNR</Acronym>
+					<Name xml:lang="it">CONSIGLIO NAZIONALE DELLE RICERCHE</Name>
+					<Name xml:lang="en" trans="h">NATIONAL RESEARCH COUNCIL</Name>
+					<Identifier type="">http://www.cnr.it</Identifier><!-- FIXME -->
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/312347</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="312347">
+					<Acronym>EKT</Acronym>
+					<Name xml:lang="en" trans="h">National Documentation Centre</Name>
+					<Name xml:lang="el">Εθνικό Κέντρο Τεκμηρίωσης</Name>
+					<Identifier type="">http://www.ekt.gr</Identifier><!-- FIXME -->
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/312348</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="312348">
+					<Acronym>UKOLN</Acronym>
+					<Name xml:lang="en">UKOLN</Name>
+					<Identifier type="">http://www.ukoln.ac.uk</Identifier><!-- FIXME -->
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/310001</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="310001">
+                    <Type scheme="https://w3id.org/cerif/vocab/OrganisationTypes">https://w3id.org/cerif/vocab/OrganisationTypes#Intergovernmental</Type>
+					<Acronym>EC</Acronym>
+		            <Name xml:lang="en">European Commission</Name>
+		            <Name xml:lang="bg">Европейска комисия</Name>
+		            <Name xml:lang="es">Comisión Europea</Name>
+		            <Name xml:lang="cs">Evropská komise</Name>
+		            <Name xml:lang="da">Europa-Kommissionen</Name>
+		            <Name xml:lang="de">Europäische Kommission</Name>
+		            <Name xml:lang="et">Euroopa Komisjon</Name>
+		            <Name xml:lang="el">Ευρωπαϊκή Επιτροπή</Name>
+		            <Name xml:lang="fr">Commission européenne</Name>
+		            <Name xml:lang="it">Commissione europea</Name>
+		            <Name xml:lang="lv">Eiropas Komisija</Name>
+		            <Name xml:lang="lt">Europos Komisija</Name>
+		            <Name xml:lang="hu">Európai Bizottság</Name>
+		            <Name xml:lang="mt">Il-Kummissjoni Ewropea</Name>
+		            <Name xml:lang="nl">Europese Commissie</Name>
+		            <Name xml:lang="pl">Komisja Europejska</Name>
+		            <Name xml:lang="pt">Comissão Europeia</Name>
+		            <Name xml:lang="ro">Comisia Europeană</Name>
+		            <Name xml:lang="sk">Európska komisia</Name>
+		            <Name xml:lang="sl">Evropska komisija</Name>
+		            <Name xml:lang="fi">Euroopan komissio</Name>
+		            <Name xml:lang="sv">Europeiska kommissionen</Name>
+		            <Name xml:lang="hr">Europska komisija</Name>
+					<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+					<Identifier type="">https://europa.eu/</Identifier><!-- FIXME -->
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/329384</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="329384">
+					<Name xml:lang="en">University of California, Berkeley</Name>
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/301248</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="301248">
+					<Name xml:lang="en">Museum of Vertebrate Zoology</Name>
+					<PartOf>
+						<OrgUnit id="329384">
+							<Name xml:lang="en">University of California, Berkeley</Name>
+						</OrgUnit>
+					</PartOf>
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/301249</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="301249">
+					<Name xml:lang="en">Department of Integrative Biology</Name>
+					<PartOf>
+						<OrgUnit id="329384">
+							<Name xml:lang="en">University of California, Berkeley</Name>
+						</OrgUnit>
+					</PartOf>
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/301250</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="301250">
+                    <Type scheme="https://w3id.org/cerif/vocab/OrganisationTypes">https://w3id.org/cerif/vocab/OrganisationTypes#Commercial</Type>
+					<Name xml:lang="en">Springer</Name>
+				</OrgUnit>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:OrgUnits/301253</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_orgunits</setSpec>
+			</header>
+			<metadata>
+				<OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="301253">
+					<Name xml:lang="en">Society for the Study of Evolution</Name>
+				</OrgUnit>
+			</metadata>
+		</record>
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:OrgUnits/330001</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_orgunits</setSpec>
+            </header>
+            <metadata>
+                <OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="330001">
+                    <Name xml:lang="en">European Patent Office</Name>
+                    <Name xml:lang="fr">Office européen des brevets</Name>
+                    <Name xml:lang="de">Europäisches Patentamt</Name>
+                </OrgUnit>
+            </metadata>
+        </record>
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:OrgUnits/341234</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_orgunits</setSpec>
+            </header>
+            <metadata>
+                <OrgUnit xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="341234">
+                    <Name xml:lang="en">Eltek S.P.A</Name>
+                </OrgUnit>
+            </metadata>
+        </record>
+        
+	</ListRecords>
+</OAI-PMH>

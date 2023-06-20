@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_funding 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_funding">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612345</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_funding</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612345"><!-- FP7 -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+					<Acronym>FP7</Acronym>
+					<Name xml:lang="en">Seventh Framework Programme</Name>
+					<Amount currency="EUR">50500000000</Amount>
+					<Description xml:lang="en">The Seventh Framework Programme (FP7) bundles all research-related EU initiatives together under a common roof playing a crucial role in reaching the goals of growth, competitiveness and employment. It is a key pillar for the European Research Area (ERA).
+						The broad objectives of FP7 have been grouped into four categories: Cooperation, Ideas, People and Capacities. For each type of objective, there is a specific programme corresponding to the main areas of EU
+						research policy. All specific programmes work together to promote and encourage the creation of European poles of (scientific) excellence.
+					</Description>
+					<Keyword xml:lang="en">European Union</Keyword>
+					<Keyword xml:lang="en">Framework Programme</Keyword>
+					<Funder>
+						<OrgUnit id="310001">
+							<Acronym>EC</Acronym>
+							<Name xml:lang="en">European Commission</Name>
+							<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+						</OrgUnit>
+					</Funder>
+					<Duration startDate="2007-01-01" endDate="2013-12-31"/>
+				</Funding>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612346</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_funding</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612346"><!-- FP7 / Capacities -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+					<Name xml:lang="en">Capacities</Name>
+					<Amount currency="EUR">40970000000</Amount>
+					<Description xml:lang="en">The FP7 Capacities programme aims to enhance research and innovation capacities throughout Europe and ensure their optimal use. The Capacities programme operates in seven broad areas: Research infrastructures, Research for the benefit of SMEs, Regions of knowledge and support for regional research-driven clusters, Research potential of Convergence Regions, Science in society, Support to the coherent development of research policies, International
+						cooperation.</Description>
+					<Keyword xml:lang="en">Research capacities</Keyword>
+					<Keyword xml:lang="en">Innovation capacities</Keyword>
+					<Funder>
+						<OrgUnit id="310001">
+							<Acronym>EC</Acronym>
+							<Name xml:lang="en">European Commission</Name>
+							<Identifier type="https://w3id.org/cerif/vocab/IdentifierTypes#FundRefID">http://dx.doi.org/10.13039/501100000780</Identifier>
+						</OrgUnit>
+					</Funder>
+					<PartOf>
+						<Funding id="612345"><!-- FP7 -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+							<Acronym>FP7</Acronym>
+						</Funding>
+					</PartOf>
+					<Duration startDate="2007-01-01" endDate="2013-12-31"/>
+				</Funding>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612347</identifier>
+				<datestamp>2017-04-30T15:29:24Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+					<Name xml:lang="en">Research infrastructures</Name>
+					<Amount currency="EUR">1715000000</Amount>
+					<Description xml:lang="en">The overall objective of the ‘Research infrastructures’ part of the FP7 Capacities programme is to optimise the use and development of the best research infrastructures existing in Europe. Furthermore, it aims to help to create new research infrastructures of pan-European interest in all fields of science and technology. The European scientific community needs these to remain at the forefront of the advancement of research, and they will help industry to
+						strengthen its base of knowledge and technological know how.</Description>
+					<Keyword xml:lang="en">Research infrastructures</Keyword>
+					<PartOf>
+						<Funding id="612346"><!-- FP7 / Capacities -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+							<Name xml:lang="en">Capacities</Name>
+							<PartOf>
+								<Funding id="612345"><!-- FP7 -->
+									<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+									<Acronym>FP7</Acronym>
+								</Funding>
+							</PartOf>
+						</Funding>
+					</PartOf>
+					<Duration startDate="2007-01-01" endDate="2013-12-31"/>
+                    <OAMandate mandated="true" startDate="2008-08-20"/>
+                    <OAMandate mandated="false" endDate="2008-08-19"/>
+				</Funding>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612351</identifier>
+				<datestamp>2017-04-30T15:29:24Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612351"><!-- FP7 / Capacities / Research Infrastructures / OpenAIRE -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+					<Name xml:lang="en">FP7 funding for the OpenAIRE project</Name>
+					<PartOf>
+						<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+							<Name xml:lang="en">Research infrastructures</Name>
+							<PartOf>
+								<Funding id="612346"><!-- FP7 / Capacities -->
+									<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+									<Name xml:lang="en">Capacities</Name>
+									<PartOf>
+										<Funding id="612345"><!-- FP7 -->
+											<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+											<Acronym>FP7</Acronym>
+										</Funding>
+									</PartOf>
+								</Funding>
+							</PartOf>
+						</Funding>
+					</PartOf>
+					<Duration startDate="2009-12" endDate="2012-11"/>
+                    <OAMandate mandated="true"/>
+				</Funding>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612352</identifier>
+				<datestamp>2017-04-30T15:29:24Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612352"><!-- FP7 / Capacities / Research Infrastructures / OpenAIREplus -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+					<Name xml:lang="en">FP7 funding for the OpenAIREplus project</Name>
+					<PartOf>
+						<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+							<Name xml:lang="en">Research infrastructures</Name>
+							<PartOf>
+								<Funding id="612346"><!-- FP7 / Capacities -->
+									<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+									<Name xml:lang="en">Capacities</Name>
+									<PartOf>
+										<Funding id="612345"><!-- FP7 -->
+											<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+											<Acronym>FP7</Acronym>
+										</Funding>
+									</PartOf>
+								</Funding>
+							</PartOf>
+						</Funding>
+					</PartOf>
+					<Duration startDate="2011-12" endDate="2014-05"/>
+                    <OAMandate mandated="true"/>
+				</Funding>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Fundings/612353</identifier>
+				<datestamp>2017-04-30T15:29:24Z</datestamp>
+				<setSpec>openaire_cris_projects</setSpec>
+			</header>
+			<metadata>
+				<Funding xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="612353"><!-- FP7 / Capacities / Research Infrastructures / EUFAR -->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#Contract</Type>
+					<Name xml:lang="en">FP7 funding for the EUFAR project</Name>
+					<PartOf>
+						<Funding id="612347"><!-- FP7 / Capacities / Research Infrastructures -->
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+							<Name xml:lang="en">Research infrastructures</Name>
+							<PartOf>
+								<Funding id="612346"><!-- FP7 / Capacities -->
+									<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+									<Name xml:lang="en">Capacities</Name>
+									<PartOf>
+										<Funding id="612345"><!-- FP7 -->
+											<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Funding_Types#FundingProgramme</Type>
+											<Acronym>FP7</Acronym>
+										</Funding>
+									</PartOf>
+								</Funding>
+							</PartOf>
+						</Funding>
+					</PartOf>
+					<Duration startDate="2008-09-22" endDate="2013-09-30"/>
+                    <OAMandate mandated="true"/>
+				</Funding>
+			</metadata>
+		</record>
+
+	</ListRecords>
+</OAI-PMH>
