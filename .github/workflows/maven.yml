@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Checkout the OpenAIRE Guidelines for CRIS Managers repo
       run: git clone --branch=master https://github.com/openaire/guidelines-cris-managers.git ../guidelines-cris-managers
     - name: Set up JDK 17
-      uses: actions/setup-java@v2
+      uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'adopt'
