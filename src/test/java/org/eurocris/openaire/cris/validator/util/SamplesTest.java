@@ -1,6 +1,8 @@
 package org.eurocris.openaire.cris.validator.util;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.cli.MissingArgumentException;
 import org.eurocris.openaire.cris.validator.CRISValidator;
@@ -12,7 +14,7 @@ import org.xml.sax.SAXException;
 public class SamplesTest extends CRISValidator {
 	
 	@SuppressWarnings("javadoc")
-	public SamplesTest() throws MalformedURLException, MissingArgumentException, SAXException {
+	public SamplesTest() throws MissingArgumentException, SAXException, IOException, ParserConfigurationException {
 		super();
 	}
 
