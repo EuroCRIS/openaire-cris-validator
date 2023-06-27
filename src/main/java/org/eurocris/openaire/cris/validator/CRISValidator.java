@@ -179,6 +179,7 @@ public class CRISValidator {
 			}
 			final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
 			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );
+			metadataFormatsByPrefix.clear();
 		}
 	}
 	
@@ -191,6 +192,7 @@ public class CRISValidator {
 	 */
 	public CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
 		endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
+		metadataFormatsByPrefix.clear();
 	}
 	
 	/**
@@ -329,6 +331,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check010_MetadataFormats() throws Exception {
+		metadataFormatsByPrefix.clear();
 		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
 		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
 		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
