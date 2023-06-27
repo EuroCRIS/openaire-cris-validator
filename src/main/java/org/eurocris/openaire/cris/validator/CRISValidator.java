@@ -66,12 +66,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * Validating a given OAI-PMH endpoint for compliance with the OpenAIRE Guidelines for CRIS Managers 1.1.
+ * Validating a given OAI-PMH endpoint for compliance with the OpenAIRE Guidelines for CRIS Managers 1.1 or higher.
  * This is organized as a JUnit4 test suite that works over a given OAI-PMH endpoint. 
  * @author jdvorak001
  * @see <a href="https://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/">the text of the specification</a>
  * @see <a href="https://github.com/openaire/guidelines-cris-managers">the github project of the specification, XML Schema and examples</a>
- * @see <a href="https://github.com/jdvorak001/openaire-cris-validator">this project on GitHub</a>
+ * @see <a href="https://github.com/euroCRIS/openaire-cris-validator">this project on GitHub</a>
  */
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
@@ -341,12 +341,14 @@ public class CRISValidator {
 			final String prefix = mft.getMetadataPrefix();
 			if ( prefix.startsWith(OAI_CERIF_OPENAIRE__METADATA_PREFIX) ) { 
 				metadataFormatsByPrefix.put( prefix, mft );
+				assertTrue( "The metadata NS for prefix " + prefix + " does not start with " + OPENAIRE_CERIF_XMLNS_PREFIX, mft.getMetadataNamespace().startsWith(OPENAIRE_CERIF_XMLNS_PREFIX) );
 			}
 			return mft; 
 		} );
 		final long nMetadataFormats = checker.run();
 		final int nOpenAireMetadataFormats = metadataFormatsByPrefix.size();
 		System.out.println( "Having " + nOpenAireMetadataFormats + " OpenAIRE CRIS metadata formats (out of the total " + nMetadataFormats + " metadata formats)" );
+		assertTrue( "No OpenAIRE CRIS metadata prefix", nOpenAireMetadataFormats > 0 );
 	}
 	
 	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent ) {
@@ -380,7 +382,7 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionError( "MetadataFormat for the OpenAIRE Guidelines for CRIS Managers not present (2)" ) );
+		return parent.checkContains( predicate, new AssertionError( "Metadata format for the OpenAIRE Guidelines for CRIS Managers not present (2)" ) );
 	}
 	
 	/**
