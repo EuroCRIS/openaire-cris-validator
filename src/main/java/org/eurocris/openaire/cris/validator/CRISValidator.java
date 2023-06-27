@@ -357,7 +357,7 @@ public class CRISValidator {
 			public boolean test( final MetadataFormatType mf ) {
 				final String metadataNs = mf.getMetadataNamespace();
 				if ( metadataNs.startsWith( OPENAIRE_CERIF_XMLNS_PREFIX ) ) {
-					assertTrue( "The metadata prefix of an OpenAIRE CRIS Guidelines namespace shall start with " + OAI_CERIF_OPENAIRE__METADATA_PREFIX, mf.getMetadataPrefix().startsWith(OAI_CERIF_OPENAIRE__METADATA_PREFIX) );
+					assertTrue( "The metadata prefix for XML namespace " + metadataNs + " does not start with " + OAI_CERIF_OPENAIRE__METADATA_PREFIX + " (2c)", mf.getMetadataPrefix().startsWith(OAI_CERIF_OPENAIRE__METADATA_PREFIX) );
 					try {
 						final DocumentBuilder db = getDocumentBuilderFactory().newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();

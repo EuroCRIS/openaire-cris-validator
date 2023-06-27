@@ -50,4 +50,22 @@ public class MetadataFormatTest {
 		}
 	}
 
+	/**
+	 * Test that {@link CRISValidator} reports when an OpenAIRE CRIS XML namespace has a wrong metadata format.
+	 * @see (2c) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2c() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2c/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2c) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "The metadata prefix for XML namespace https://www.openaire.eu/cerif-profile/1.2/ does not start with " + CRISValidator.OAI_CERIF_OPENAIRE__METADATA_PREFIX + " (2c)", e.getMessage() );
+		}
+	}
+
 }
