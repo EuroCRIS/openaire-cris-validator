@@ -22,9 +22,10 @@ The `oai-identifier/repositoryIdentifier` from (b) will be refered to as `{CRIS_
 (c) The `Service/Acronym` from (a) SHALL be equal to the `{CRIS_identifier}`.
 (d) The `baseURL` from the `Identify` response is equal to the base URL of the CRIS.
 
-(2) The list of supported metadata formats returned by the general `ListMetadataFormats` request (i.e., no `identifier` parameter specified) SHALL include
-at least one prefix starting with `oai_cerif_openaire` with namespace URI starting with <https://www.openaire.eu/cerif-profile/>
-as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#metadata-format-and-prefix).
+(2) As per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#metadata-format-and-prefix),
+the list of supported metadata formats returned by the general `ListMetadataFormats` request (i.e., no `identifier` parameter specified) 
+(a) SHALL include at least one prefix starting with `oai_cerif_openaire`;
+(b) if the metadata prefix starts with `oai_cerif_openaire`, the corresponding XML namespace URI SHALL start with <https://www.openaire.eu/cerif-profile/>.
 
 (3) The list of supported sets returned by the `ListSets` request SHALL include
 all of the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).

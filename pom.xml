@@ -140,6 +140,23 @@
         					</resources>
         				</configuration>
                     </execution>
+                    <execution>
+                        <id>copy-test-resources</id>
+						<phase>generate-sources</phase>
+                        <goals>
+                            <goal>testResources</goal>
+                        </goals>
+        				<configuration>
+                            <outputDirectory>${basedir}/target</outputDirectory>
+        					<resources>
+                                <resource>
+                                    <directory>src/test/java</directory>
+                                    <include>**/_verb*.xml</include>
+                                    <targetPath>test-classes</targetPath>
+                                </resource>
+        					</resources>
+        				</configuration>
+                    </execution>
                 </executions>
 			</plugin>
 			<plugin>
