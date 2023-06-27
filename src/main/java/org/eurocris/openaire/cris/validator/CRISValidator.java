@@ -228,28 +228,6 @@ public class CRISValidator {
 		return parserSchema;
 	}
 
-	private static Schema validatorSchema = null;
-
-	/**
-	 * Create the schema for the second-phase validation.
-	 * @return the compound schema
-	 * @throws SAXException when problem reading the schema
-	 */
-	protected static synchronized Schema getValidatorSchema() {
-		if ( validatorSchema == null ) {
-			try {
-				validatorSchema = getSchema(
-					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
-					schema( "/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
-					schema( "/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
-				);
-			} catch ( final SAXException | IOException | ParserConfigurationException e ) {
-				throw new IllegalStateException( "While initializing validator schema", e );
-			}
-		}
-		return validatorSchema;
-	}
-
 	private static SchemaFactory xmlSchemaFactory = null;
 	
 	private static synchronized SchemaFactory getXmlSchemaFactory() {
@@ -683,8 +661,8 @@ public class CRISValidator {
 	 */
 	protected void validateMetadataPayload( final Element el ) {
 		final String elString = el.getLocalName() + "[@id=\"" + el.getAttribute( "id" ) + "\"]";
-		final Validator validator = getValidatorSchema().newValidator();
 		try {
+			final Validator validator = getParserSchema().newValidator();
 			final ErrorHandler errorHandler = new ErrorHandler() {
 				
 				private boolean patternValidErrorSignalled = false;
@@ -716,7 +694,7 @@ public class CRISValidator {
 			};
 			validator.setErrorHandler( errorHandler );
 			validator.validate( new DOMSource( el ) );
-		} catch ( final SAXException | IOException e ) {
+		} catch ( final SAXException | IOException | ParserConfigurationException e ) {
 			fail( "While validating element " + elString + ": " + e );
 		}
 	}
