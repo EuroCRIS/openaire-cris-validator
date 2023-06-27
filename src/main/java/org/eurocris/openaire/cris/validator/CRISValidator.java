@@ -333,9 +333,9 @@ public class CRISValidator {
 	public void check010_MetadataFormats() throws Exception {
 		metadataFormatsByPrefix.clear();
 		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
-		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
-		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
-		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
+		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique (2d)" );
+		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique (2e)" );
+		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique (2f)" );
 		checker = wrapCheckMetadataFormatPresent( checker );
 		checker = checker.map( (MetadataFormatType mft) -> { 
 			final String prefix = mft.getMetadataPrefix();

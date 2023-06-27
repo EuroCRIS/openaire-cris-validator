@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH response to the ListMetadataFormats request. 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.2 
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+
+	<responseDate>2023-06-18T10:27:20Z</responseDate>
+	<request verb="ListMetadataFormats">http://cris.example.org/openaire/connector</request>
+
+	<ListMetadataFormats>
+
+		<metadataFormat>
+			<metadataPrefix>oai_cerif_openaire_v1_2</metadataPrefix>
+			<schema>https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd</schema>
+			<metadataNamespace>https://www.openaire.eu/cerif-profile/1.2/</metadataNamespace>
+		</metadataFormat>
+
+		<metadataFormat>
+			<metadataPrefix>oai_cerif_openaire_v1_1</metadataPrefix>
+			<schema>https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd</schema>
+			<metadataNamespace>https://www.openaire.eu/cerif-profile/1.2/</metadataNamespace>
+		</metadataFormat>
+
+	</ListMetadataFormats>
+
+</OAI-PMH>

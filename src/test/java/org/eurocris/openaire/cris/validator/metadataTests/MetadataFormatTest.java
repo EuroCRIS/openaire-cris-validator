@@ -68,4 +68,58 @@ public class MetadataFormatTest {
 		}
 	}
 
+	/**
+	 * Test that {@link CRISValidator} reports a non-unique metadata format.
+	 * @see (2d) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2d() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2d/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2d) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "Metadata prefix not unique (2d); value: oai_cerif_openaire", e.getMessage() );
+		}
+	}
+
+	/**
+	 * Test that {@link CRISValidator} reports a non-unique metadata namespace URI.
+	 * @see (2e) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2e() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2e/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2e) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "Metadata namespace not unique (2e); value: https://www.openaire.eu/cerif-profile/1.2/", e.getMessage() );
+		}
+	}
+
+	/**
+	 * Test that {@link CRISValidator} reports a non-unique XML Schema URL.
+	 * @see (2f) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2f() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2f/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2f) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "Metadata schema location not unique (2f); value: https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd", e.getMessage() );
+		}
+	}
+
 }
