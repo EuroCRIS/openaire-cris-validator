@@ -12,7 +12,7 @@ This is Open Source software, available under the terms of the [Apache 2.0 Licen
 
 
 ![CI workflow](https://github.com/euroCRIS/openaire-cris-validator/actions/workflows/maven.yml/badge.svg)
-← checking if the software builds and runs on the [example files from the standard](https://github.com/openaire/guidelines-cris-managers/tree/master/samples).
+← checking if the software builds and runs on the [example files from the standard](./samples).
 
 ## Usage
 
@@ -23,7 +23,7 @@ Then do:
 
 	mvn clean package
 
-We compile for Java 17 by default, but you can switch to 11 or 1.8 [in the POM file](https://github.com/EuroCRIS/openaire-cris-validator/blob/master/pom.xml#L16).
+We compile for Java 17 by default, but you can switch to 11 or 1.8 [in the POM file](./pom.xml#L16).
 
 ### Run
 
