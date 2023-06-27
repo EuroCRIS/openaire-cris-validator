@@ -178,8 +178,19 @@ public class CRISValidator {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
 			final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );			
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );
 		}
+	}
+	
+	/**
+	 * Set up the test suite with a given endpoint base URL.
+	 * @param endpointBaseUrl the URL base of the endpoint to test
+	 * @throws SAXException when the parser schema cannot be created
+	 * @throws IOException on a problem accessing a schema
+	 * @throws ParserConfigurationException when an XML parser cannot be instantiated
+	 */
+	public CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
+		endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package org.eurocris.openaire.cris.validator.util;
 
 import java.io.IOException;
+import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -9,17 +10,13 @@ import org.eurocris.openaire.cris.validator.CRISValidator;
 import org.xml.sax.SAXException;
 
 /**
- * The test suite to test the OpenAIRE Guidelines 1.1 set of samples.
+ * The test suite to test the current OpenAIRE CRIS Guidelines set of examples.
  */
 public class SamplesTest extends CRISValidator {
 	
 	@SuppressWarnings("javadoc")
 	public SamplesTest() throws MissingArgumentException, SAXException, IOException, ParserConfigurationException {
-		super();
-	}
-
-	static {
-		System.setProperty( "endpoint.to.validate", "file:samples/" );
+		super( URI.create( "file:samples/" ).toURL() );
 	}
 
 }
