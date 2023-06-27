@@ -365,7 +365,7 @@ public class CRISValidator {
 						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
 						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
 						final String localSchemaUrl = schemaUrlsByNs.get( metadataNs );
-						assertNotNull( "This validator shall cover the metadata namespace " + metadataNs, localSchemaUrl );
+						assertNotNull( "This validator does not cover the metadata namespace " + metadataNs + " (2g)", localSchemaUrl );
 						if ( !localSchemaUrl.contains( "/current/" ) ) {
 							final Document doc = db.parse( localSchemaUrl );
 							final Element schemaRootEl = doc.getDocumentElement();

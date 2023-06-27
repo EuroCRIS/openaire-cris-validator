@@ -30,6 +30,7 @@ the list of supported metadata formats returned by the general `ListMetadataForm
 (d) The metadata prefixes SHALL be unique.
 (e) The XML namespace URIs SHALL be unique.
 (f) The XML Schema location URLs SHALL be unique.
+(g) If the XML namespace starts with <https://www.openaire.eu/cerif-profile/>, it shall be found in the *TSOACMS*.
 
 (3) The list of supported sets returned by the `ListSets` request SHALL include
 all of the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).

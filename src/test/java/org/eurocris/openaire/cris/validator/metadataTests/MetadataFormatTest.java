@@ -122,4 +122,22 @@ public class MetadataFormatTest {
 		}
 	}
 
+	/**
+	 * Test that {@link CRISValidator} reports an unsupported OpenAIRE CRIS XML namespace.
+	 * @see (2g) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2g() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2g/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2g) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "This validator does not cover the metadata namespace https://www.openaire.eu/cerif-profile/0.0/ (2g)", e.getMessage() );
+		}
+	}
+
 }
