@@ -352,7 +352,8 @@ public class CRISValidator {
 			}
 			return mft; 
 		} );
-		System.out.println( "Having " + metadataFormatsByPrefix.size() + " OpenAIRE CRIS metadata formats" );
+		final long nMetadataFormats = checker.run();
+		System.out.println( "Having " + metadataFormatsByPrefix.size() + " OpenAIRE CRIS metadata formats (out of the total " + nMetadataFormats + " metadata formats)" );
 	}
 	
 	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent ) {
