@@ -367,7 +367,7 @@ public class CRISValidator {
 					try {
 						final DocumentBuilder db = getDocumentBuilderFactory().newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
-						System.out.println( "Metadata namespace " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
+						System.out.println( "Metadata format prefix " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
 						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
 						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
 						final String localSchemaUrl = schemaUrlsByNs.get( metadataNs );
