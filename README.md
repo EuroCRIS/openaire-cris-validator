@@ -1,7 +1,7 @@
 # OpenAIRE CRIS validator
 
 A tool to assess whether an OAI-PMH endpoint can provide research information
-complying with the [OpenAIRE Guidelines for CRIS Managers](https://github.com/openaire/guidelines-cris-managers) version 1.1 or higher.
+complying with the [OpenAIRE Guidelines for CRIS Managers](https://github.com/openaire/guidelines-cris-managers) versions 1.1 and 1.2.
 It covers [these checks](CHECKS.md).
 
 This is a command-line Java tool that is organized as a [JUnit](https://junit.org/junit4/) test suite.
