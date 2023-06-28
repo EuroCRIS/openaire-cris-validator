@@ -140,4 +140,40 @@ public class MetadataFormatTest {
 		}
 	}
 
+	/**
+	 * Test that {@link CRISValidator} reports an unsupported OpenAIRE CRIS XML namespace.
+	 * @see (2h) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2h() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2h/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2h) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "Please reference the official XML Schema at https://www.openaire.eu/schema/cris/ (2h)", e.getMessage() );
+		}
+	}
+
+	/**
+	 * Test that {@link CRISValidator} reports an unsupported OpenAIRE CRIS XML namespace.
+	 * @see (2i) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2i() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2i/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2i) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "The schema file should be openaire-cerif-profile.xsd (2i)", e.getMessage() );
+		}
+	}
+
 }

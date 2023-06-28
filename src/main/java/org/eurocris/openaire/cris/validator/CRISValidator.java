@@ -362,15 +362,15 @@ public class CRISValidator {
 						final DocumentBuilder db = getDocumentBuilderFactory().newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
 						System.out.println( "Metadata format prefix " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
-						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
-						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
+						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2h)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
+						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2i)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
 						final String localSchemaUrl = schemaUrlsByNs.get( metadataNs );
 						assertNotNull( "This validator does not cover the metadata namespace " + metadataNs + " (2g)", localSchemaUrl );
 						if ( !localSchemaUrl.contains( "/current/" ) ) {
 							final Document doc = db.parse( localSchemaUrl );
 							final Element schemaRootEl = doc.getDocumentElement();
 							final String targetNsUri = schemaRootEl.getAttribute( "targetNamespace" );
-							assertEquals( "The schema does not have the advertised target namespace URI (2)", metadataNs, targetNsUri );
+							assertEquals( "The schema does not have the advertised target namespace URI (2j)", metadataNs, targetNsUri );
 						}
 					} catch ( final ParserConfigurationException | SAXException | IOException e ) {
 						throw new IllegalStateException( e ); 
