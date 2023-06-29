@@ -141,7 +141,7 @@ public class MetadataFormatTest {
 	}
 
 	/**
-	 * Test that {@link CRISValidator} reports an unsupported OpenAIRE CRIS XML namespace.
+	 * Test that {@link CRISValidator} reports an inofficial XML Schema location.
 	 * @see (2h) in CHECKS.md
 	 * @throws Exception in case of some error
 	 */
@@ -159,7 +159,7 @@ public class MetadataFormatTest {
 	}
 
 	/**
-	 * Test that {@link CRISValidator} reports an unsupported OpenAIRE CRIS XML namespace.
+	 * Test that {@link CRISValidator} reports an unsupported XML Schema filename.
 	 * @see (2i) in CHECKS.md
 	 * @throws Exception in case of some error
 	 */
@@ -173,6 +173,42 @@ public class MetadataFormatTest {
 			fail( "Problem: check (2i) undetected" );
 		} catch ( final AssertionError e ) {
 			assertEquals( "The schema file should be openaire-cerif-profile.xsd (2i)", e.getMessage() );
+		}
+	}
+
+	/**
+	 * Test that {@link CRISValidator} reports a declared, but unsupported 1.1 compatibility.
+	 * @see (2k) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2k1() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2k1/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2k) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "No metadata format specified for declared compatibility https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility#1.1 (2k)", e.getMessage() );
+		}
+	}
+
+	/**
+	 * Test that {@link CRISValidator} reports a declared, but unsupported 1.2 compatibility.
+	 * @see (2k) in CHECKS.md
+	 * @throws Exception in case of some error
+	 */
+	@Test
+	public void testCheck2k2() throws Exception {
+		final URL url = MetadataFormatTest.class.getResource( "check_2k2/" );
+		final CRISValidator validator = new CRISValidator( url );
+		validator.check000_Identify();
+		try {
+			validator.check010_MetadataFormats();
+			fail( "Problem: check (2l) undetected" );
+		} catch ( final AssertionError e ) {
+			assertEquals( "No metadata format specified for declared compatibility https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility#1.2 (2k)", e.getMessage() );
 		}
 	}
 

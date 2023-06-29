@@ -139,6 +139,11 @@ public class CRISValidator {
 	public static final String OPENAIRE_CERIF_SCHEMA_FILENAME = "openaire-cerif-profile.xsd";
 	
 	/**
+	 * The namespace URI of the namespace that hosts the declared compatibility statements.
+	 */
+	public static final String COMPATIBILITY_NSURI = "https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility";
+	
+	/**
 	 * The connection stream factory to use for getting the response stream from a connection.
 	 */
 	public static final ConnectionStreamFactory CONN_STREAM_FACTORY = new FileLoggingConnectionStreamFactory( "data" );
@@ -272,6 +277,8 @@ public class CRISValidator {
 
 	private static Optional<String> serviceAcronym = Optional.empty();
 	
+	private static Element serviceDescription = null;
+	
 	/**
 	 * Ask for ?verb=Identity and test it for consistence – checks (1).
 	 * @throws Exception on any unexpected circumstance
@@ -306,6 +313,7 @@ public class CRISValidator {
 				if ( obj instanceof Element ) {
 					final Element el = (Element) obj;
 					if ( "Service".equals( el.getLocalName() ) && el.getNamespaceURI() != null && el.getNamespaceURI().startsWith( OPENAIRE_CERIF_XMLNS_PREFIX ) ) {
+						serviceDescription = el;
 						serviceAcronym = XmlUtils.getTextContents( XmlUtils.getFirstMatchingChild( el, "Acronym", el.getNamespaceURI() ) );
 						validateMetadataPayload( el );
 						return true;
@@ -381,7 +389,25 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionError( "Metadata format for the OpenAIRE Guidelines for CRIS Managers not present (2a)" ) );
+		CheckingIterable<MetadataFormatType> checker = parent.checkContains( predicate, new AssertionError( "Metadata format for the OpenAIRE Guidelines for CRIS Managers not present (2a)" ) );
+		if ( serviceDescription != null ) {
+			for ( final Element el : XmlUtils.nodeListToIterableOfElements( serviceDescription.getElementsByTagNameNS( COMPATIBILITY_NSURI, "Compatibility" ) ) ) {
+				final String compatibilityUri = el.getTextContent();
+				final String compatibilityVersion = compatibilityUri.replaceFirst( ".*#", "" );
+				if ( !"1.0".equals( compatibilityVersion ) ) { // This validator does not support version 1.0 of the Guidelines
+					checker = checker.checkContains( new Predicate<MetadataFormatType>() {
+	
+						@Override
+						public boolean test( final MetadataFormatType t ) {
+							final String metadataFormatVersion = t.getMetadataNamespace().replace( OPENAIRE_CERIF_XMLNS_PREFIX, "" ).replaceFirst( "/$", "" );
+							return compatibilityVersion.equals( metadataFormatVersion );
+						} 
+						
+					}, "No metadata format specified for declared compatibility " + compatibilityUri + " (2k)" );
+				}
+			}
+		}
+		return checker;
 	}
 	
 	/**

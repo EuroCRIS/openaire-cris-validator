@@ -34,6 +34,7 @@ the list of supported metadata formats returned by the general `ListMetadataForm
 (h) If the XML namespace starts with <https://www.openaire.eu/cerif-profile/>, the XML Schema location shall be under <https://www.openaire.eu/schema/cris/>.
 (i) If the XML namespace starts with <https://www.openaire.eu/cerif-profile/>, the filename of the XML Schema shall be `openaire-cerif-profile.xsd`.
 (j) The targetNamespace of a referenced XML Schema SHALL be the same as the one advertised for the metadata format in the `ListMetadataFormats` response.
+(k) If the Identify response in (1) includes a Service/Compatibility of a certain version of these Guidelines, then the ListMetadataFormats response SHALL include the corresponding namespace.
 
 (3) The list of supported sets returned by the `ListSets` request SHALL include
 all of the sets as per the [specification](http://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/implementation.html#openaire-oai-pmh-sets).
