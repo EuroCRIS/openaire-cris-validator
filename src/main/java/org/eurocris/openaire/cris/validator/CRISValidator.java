@@ -197,8 +197,10 @@ public class CRISValidator {
 	 * @throws ParserConfigurationException when an XML parser cannot be instantiated
 	 */
 	public CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
-		endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
-		metadataFormatsByPrefix.clear();
+		if ( endpoint == null || ! endpointBaseUrl.toExternalForm().equals( endpoint.getBaseUrl() ) ) {
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
+			metadataFormatsByPrefix.clear();
+		}
 	}
 	
 	/**
