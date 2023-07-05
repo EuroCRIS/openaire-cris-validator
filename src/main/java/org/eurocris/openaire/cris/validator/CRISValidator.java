@@ -2,6 +2,7 @@ package org.eurocris.openaire.cris.validator;
 
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -486,6 +487,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check100_CheckPublications() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Publication" );
@@ -499,6 +501,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check200_CheckProducts() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Product" );
@@ -512,6 +515,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check300_CheckPatents() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Patent" );
@@ -525,6 +529,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check400_CheckPersons() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Person" );
@@ -538,6 +543,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check500_CheckOrgUnits() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "OrgUnit" );
@@ -551,6 +557,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check600_CheckProjects() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Project" );
@@ -564,6 +571,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check700_CheckFundings() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Funding" );
@@ -577,6 +585,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check800_CheckEquipment() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Equipment" );
@@ -590,6 +599,7 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check900_CheckEvents() throws Exception {
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
 		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
 			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
 			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Event" );
