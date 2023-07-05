@@ -239,8 +239,8 @@ public class CRISValidator {
 				schema( "/cached/oai_dc.xsd" ),
 				schema( "/cached/provenance.xsd", "http://www.openarchives.org/OAI/2.0/provenance.xsd" ),
 				schema( "/cached/OAI-PMH.xsd" ),
-				schema( "/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
-				schema( "/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
+				schema( "/relaxed/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
+				schema( "/relaxed/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
 			);
 		}
 		return parserSchema;
@@ -258,8 +258,8 @@ public class CRISValidator {
 			try {
 				validatorSchema = getSchema(
 					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
-					schema( "/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
-					schema( "/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
+					schema( "/original/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
+					schema( "/original/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
 				);
 			} catch ( final SAXException | IOException | ParserConfigurationException e ) {
 				throw new IllegalStateException( "While initializing validator schema", e );

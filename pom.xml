@@ -118,6 +118,10 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
                 <executions>
+					<execution>
+						<id>default-resources</id>
+						<phase>none</phase>
+					</execution>
                     <execution>
                         <id>copy-resources</id>
 						<phase>generate-sources</phase>
@@ -136,6 +140,21 @@
                                     <directory>${guidelines.project.dir}/schemas/cached</directory>
                                     <include>**/*.xsd</include>
                                     <targetPath>cached</targetPath>
+                                </resource>
+                                <resource>
+									<directory>src/main/resources/schemas</directory>
+									<include>**/openaire-cerif-profile.xsd</include>
+									<include>**/includes/**/*.xsd</include>
+									<include>**/vocabularies/**/*.xsd</include>
+									<exclude>cached</exclude>
+									<targetPath>original</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>${guidelines.project.dir}/schemas</directory>
+									<include>openaire-cerif-profile.xsd</include>
+									<include>includes/**/*.xsd</include>
+									<include>vocabularies/**/*.xsd</include>
+									<targetPath>original/current</targetPath>
                                 </resource>
         					</resources>
         				</configuration>
@@ -181,7 +200,7 @@
 								<include>**/includes/**/*.xsd</include>
 								<include>**/vocabularies/**/*.xsd</include>
 							</includes>
-							<outputDir>${basedir}/target/classes/schemas</outputDir>
+							<outputDir>${basedir}/target/classes/schemas/relaxed</outputDir>
 							<stylesheet>src/tools/xslt/relax-xml-schema-for-first-validation.xslt</stylesheet>
 						</transformationSet>
 						<transformationSet>
@@ -191,7 +210,7 @@
 								<include>includes/**/*.xsd</include>
 								<include>vocabularies/**/*.xsd</include>
 							</includes>
-							<outputDir>${basedir}/target/classes/schemas/current</outputDir>
+							<outputDir>${basedir}/target/classes/schemas/relaxed/current</outputDir>
 							<stylesheet>src/tools/xslt/relax-xml-schema-for-first-validation.xslt</stylesheet>
 						</transformationSet>
 					</transformationSets>
