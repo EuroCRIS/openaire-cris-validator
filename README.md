@@ -12,7 +12,7 @@ This is Open Source software, available under the terms of the [Apache 2.0 Licen
 
 
 ![CI workflow](https://github.com/euroCRIS/openaire-cris-validator/actions/workflows/maven.yml/badge.svg)
-← checking if the software builds and runs on the [example files from the standard](./samples).
+← checking if the software builds and runs on the [example files](./samples).
 
 ## Usage
 
