@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_persons 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_persons">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123451</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123451">
+					<PersonName>
+						<FamilyNames>Houssos</FamilyNames>
+						<FirstNames>Nikos</FirstNames>
+					</PersonName>
+					<ORCID>https://orcid.org/0000-0002-5277-285X</ORCID>
+					<ResearcherID>F-8684-2012</ResearcherID>
+					<ScopusAuthorID>6508266266</ScopusAuthorID>
+					<ElectronicAddress>mailto:email1@example.org</ElectronicAddress>
+					<ElectronicAddress>tel:+301234567890</ElectronicAddress>
+					<ElectronicAddress>fax:+301234567891</ElectronicAddress>
+					<Affiliation>
+						<OrgUnit id="312347">
+							<Acronym>EKT</Acronym>
+						</OrgUnit>
+					</Affiliation>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123452</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123452">
+					<PersonName>
+						<FamilyNames>Manghi</FamilyNames>
+						<FirstNames>Paolo</FirstNames>
+					</PersonName>
+					<ORCID>https://orcid.org/0000-0001-7291-3210</ORCID>
+					<ElectronicAddress>mailto:email@example2.org</ElectronicAddress>
+					<ElectronicAddress>tel:+391234567890</ElectronicAddress>
+					<ElectronicAddress>fax:+391234567891</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123453</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123453">
+					<PersonName>
+						<FamilyNames>Jörg</FamilyNames>
+						<FirstNames>Brigitte</FirstNames>
+					</PersonName>
+					<ORCID>https://orcid.org/0000-0001-7941-8108</ORCID>
+					<ElectronicAddress>mailto:email@example3.org</ElectronicAddress>
+					<ElectronicAddress>tel:+491234567890</ElectronicAddress>
+					<ElectronicAddress>fax:+491234567891</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123454</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123454">
+					<PersonName>
+						<FamilyNames>Mikulicic</FamilyNames>
+						<FirstNames>Marko</FirstNames>
+					</PersonName>
+					<ElectronicAddress>mailto:email@example4.org</ElectronicAddress>
+					<ElectronicAddress>tel:+390123456789</ElectronicAddress>
+					<ElectronicAddress>fax:+390123456781</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123455</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123455">
+					<PersonName>
+						<FamilyNames>Hoogerwerf</FamilyNames>
+						<FirstNames>Maarten</FirstNames>
+					</PersonName>
+					<!-- ISNI and DAI source: https://www.narcis.nl/person/RecordID/PRS1321378 -->
+					<ISNI>0000 0003 9448 2436</ISNI>
+					<DAI>info:eu-repo/dai/nl/30407618X</DAI>
+					<ElectronicAddress>tel:+390123456789</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123456</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123456">
+					<PersonName>
+						<FamilyNames>Lösch</FamilyNames>
+						<FirstNames>Mathias</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123457</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123457">
+					<PersonName>
+						<FamilyNames>Schirrwagen</FamilyNames>
+						<FirstNames>Jochen</FirstNames>
+					</PersonName>
+					<ORCID>https://orcid.org/0000-0002-0458-1004</ORCID>
+					<ElectronicAddress>mailto:email@example7.org</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123458</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123458">
+					<PersonName>
+						<FamilyNames>Callaghan</FamilyNames>
+						<FirstNames>Sarah</FirstNames>
+					</PersonName>
+					<ElectronicAddress>tel:+390123456789</ElectronicAddress>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/2123459</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2123459">
+					<PersonName>
+						<FamilyNames>Iatropoulou</FamilyNames>
+						<FirstNames>Katerina</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/21234510</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="21234510">
+					<PersonName>
+						<FamilyNames>Keramida</FamilyNames>
+						<FirstNames>Dimitra</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/21234511</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="21234511">
+					<PersonName>
+						<FamilyNames>Rettberg</FamilyNames>
+						<FirstNames>Najla</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/21234512</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="21234512">
+					<PersonName>
+						<FamilyNames>Singhal</FamilyNames>
+						<FirstNames>Sonal</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Persons/21234513</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_persons</setSpec>
+			</header>
+			<metadata>
+				<Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="21234513">
+					<PersonName>
+						<FamilyNames>Moritz</FamilyNames>
+						<FirstNames>Craig</FirstNames>
+					</PersonName>
+				</Person>
+			</metadata>
+		</record>
+        
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Persons/2018964</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_persons</setSpec>
+            </header>
+            <metadata>
+                <Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2018964">
+                    <PersonName>
+                        <FamilyNames>Mazzucco</FamilyNames>
+                        <FirstNames>Laura</FirstNames>
+                    </PersonName>
+                </Person>
+            </metadata>
+        </record>
+
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Persons/2018965</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_persons</setSpec>
+            </header>
+            <metadata>
+                <Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2018965">
+                    <PersonName>
+                        <FamilyNames>Bertoni</FamilyNames>
+                        <FirstNames>Marco</FirstNames>
+                    </PersonName>
+                </Person>
+            </metadata>
+        </record>
+
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Persons/2018966</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_persons</setSpec>
+            </header>
+            <metadata>
+                <Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2018966">
+                    <PersonName>
+                        <FamilyNames>Pizzi</FamilyNames>
+                        <FirstNames>Marco</FirstNames>
+                    </PersonName>
+                </Person>
+            </metadata>
+        </record>
+
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Persons/2018967</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_persons</setSpec>
+            </header>
+            <metadata>
+                <Person xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="2018967">
+                    <PersonName>
+                        <FamilyNames>Zanin</FamilyNames>
+                        <FirstNames>Massimo</FirstNames>
+                    </PersonName>
+                </Person>
+            </metadata>
+        </record>
+
+	</ListRecords>
+</OAI-PMH>

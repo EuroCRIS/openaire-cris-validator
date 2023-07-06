@@ -2,9 +2,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eurocris</groupId>
 	<artifactId>openaire-cris-validator</artifactId>
-	<version>1.4.1-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>OpenAIRE CRIS Prototype Validator</name>
-	<description>A basic prototype validator to assess whether an OAI-PMH endpoint complies with the requirements set by the OpenAIRE Guidelines for CRIS Manager 1.1.</description>
+	<description>A basic prototype validator to assess whether an OAI-PMH endpoint complies with the requirements set by the OpenAIRE Guidelines for CRIS Manager 1.1 or higher.</description>
 	<organization>
 		<name>euroCRIS</name>
 		<url>https://www.eurocris.org/</url>
@@ -50,7 +50,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jvnet.jaxb2.maven2</groupId>
 				<artifactId>maven-jaxb2-plugin</artifactId>
@@ -59,7 +58,7 @@
 					<dependency>
 						<groupId>org.glassfish.jaxb</groupId>
 						<artifactId>jaxb-runtime</artifactId>
-						<version>2.3.3</version>
+						<version>2.3.8</version>
 					</dependency>
 				</dependencies>
 				<executions>
@@ -72,11 +71,10 @@
 				</executions>
 				<configuration>
 					<extension>true</extension>
-					<schemaDirectory>${guidelines.project.dir}/schemas</schemaDirectory>
+					<schemaDirectory>src/main/xjc/schemas</schemaDirectory>
 					<schemaIncludes>
-						<schemaInclude>cached/oai-identifier.xsd</schemaInclude>
-						<schemaInclude>cached/OAI-PMH.xsd</schemaInclude>
-						<!-- schemaInclude>openaire-cerif-profile.xsd</schemaInclude -->
+						<include>cached/oai-identifier.xsd</include>
+						<include>cached/OAI-PMH.xsd</include>
 					</schemaIncludes>
 					<bindingDirectory>src/main/xjc</bindingDirectory>
 					<bindingIncludes>
@@ -120,6 +118,10 @@
 				<artifactId>maven-resources-plugin</artifactId>
 				<version>3.3.1</version>
                 <executions>
+					<execution>
+						<id>default-resources</id>
+						<phase>none</phase>
+					</execution>
                     <execution>
                         <id>copy-resources</id>
 						<phase>generate-sources</phase>
@@ -127,17 +129,49 @@
                             <goal>copy-resources</goal>
                         </goals>
         				<configuration>
-                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <outputDirectory>${basedir}/target/classes/schemas</outputDirectory>
         					<resources>
                                 <resource>
-                                    <directory>src/main/resources/schemas/</directory>
+                                    <directory>src/main/resources/schemas/cached</directory>
                                     <include>**/*.xsd</include>
-                                    <targetPath>schemas</targetPath>
+                                    <targetPath>cached</targetPath>
                                 </resource>
                                 <resource>
-                                    <directory>${guidelines.project.dir}/schemas/</directory>
+                                    <directory>${guidelines.project.dir}/schemas/cached</directory>
                                     <include>**/*.xsd</include>
-                                    <targetPath>schemas</targetPath>
+                                    <targetPath>cached</targetPath>
+                                </resource>
+                                <resource>
+									<directory>src/main/resources/schemas</directory>
+									<include>**/openaire-cerif-profile.xsd</include>
+									<include>**/includes/**/*.xsd</include>
+									<include>**/vocabularies/**/*.xsd</include>
+									<exclude>cached</exclude>
+									<targetPath>original</targetPath>
+                                </resource>
+                                <resource>
+                                    <directory>${guidelines.project.dir}/schemas</directory>
+									<include>openaire-cerif-profile.xsd</include>
+									<include>includes/**/*.xsd</include>
+									<include>vocabularies/**/*.xsd</include>
+									<targetPath>original/current</targetPath>
+                                </resource>
+        					</resources>
+        				</configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-test-resources</id>
+						<phase>generate-sources</phase>
+                        <goals>
+                            <goal>testResources</goal>
+                        </goals>
+        				<configuration>
+                            <outputDirectory>${basedir}/target</outputDirectory>
+        					<resources>
+                                <resource>
+                                    <directory>src/test/java</directory>
+                                    <include>**/_verb*.xml</include>
+                                    <targetPath>test-classes</targetPath>
                                 </resource>
         					</resources>
         				</configuration>
@@ -153,24 +187,35 @@
 						<goals>
 							<goal>transform</goal>
 						</goals>
+						<phase>process-resources</phase>
 					</execution>
 				</executions>
 				<configuration>
                     <forceCreation>true</forceCreation>
 					<transformationSets>
 						<transformationSet>
-							<dir>${basedir}/target/classes/schemas</dir>
+							<dir>src/main/resources/schemas</dir>
+							<includes>
+								<include>**/openaire-cerif-profile.xsd</include>
+								<include>**/includes/**/*.xsd</include>
+								<include>**/vocabularies/**/*.xsd</include>
+							</includes>
+							<outputDir>${basedir}/target/classes/schemas/relaxed</outputDir>
+							<stylesheet>src/tools/xslt/relax-xml-schema-for-first-validation.xslt</stylesheet>
+						</transformationSet>
+						<transformationSet>
+							<dir>${guidelines.project.dir}/schemas</dir>
 							<includes>
 								<include>openaire-cerif-profile.xsd</include>
 								<include>includes/**/*.xsd</include>
 								<include>vocabularies/**/*.xsd</include>
 							</includes>
-							<outputDir>${basedir}/target/classes/schemas/relaxed</outputDir>
+							<outputDir>${basedir}/target/classes/schemas/relaxed/current</outputDir>
 							<stylesheet>src/tools/xslt/relax-xml-schema-for-first-validation.xslt</stylesheet>
 						</transformationSet>
 					</transformationSets>
 					<catalogs>
-						<catalog>${guidelines.project.dir}/schemas/cached/catalog.xml</catalog>
+						<catalog>file:./schemas/cached/catalog.xml</catalog>
 						<catalog>${guidelines.project.dir}/schemas/catalog.xml</catalog>
 					</catalogs>
 				</configuration>

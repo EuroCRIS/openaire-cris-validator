@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_events 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_events">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Events/583475</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_events</setSpec>
+			</header>
+			<metadata>
+				<Event xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="583475">
+					<Type scheme="https://w3id.org/cerif/vocab/EventTypes">https://w3id.org/cerif/vocab/EventTypes#Conference</Type>
+					<Acronym>MTSR 2012</Acronym>
+					<Name xml:lang="en">6th Research Conference on Metadata and Semantics Research</Name>
+				</Event>
+			</metadata>
+		</record>
+
+	</ListRecords>
+</OAI-PMH>

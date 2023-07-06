@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_events 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1 
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+	<responseDate>2018-01-12T14:00:00Z</responseDate>
+	<request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_patents">http://cris.example.org/openaire/connector</request>
+	<ListRecords>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Patents/712178</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_patents</setSpec>
+			</header>
+			<metadata>
+				<Patent xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="712178"><!-- MEDICAL DEVICE, IN PARTICULAR FOR THE SEPARATION OF A FLUID -->
+					<!--https://worldwide.espacenet.com/publicationDetails/biblio?FT=D&date=20170808&DB=EPODOC&locale=en_EP&CC=BR&NR=112016010203A2&KC=A2&ND=4-->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Patent_Types">http://purl.org/coar/resource_type/c_15cd</Type>
+					<Title xml:lang="en">MEDICAL DEVICE, IN PARTICULAR FOR THE SEPARATION OF A FLUID</Title>
+					<RegistrationDate>2016-01-01</RegistrationDate>
+					<ApprovalDate>2014-11-13</ApprovalDate>
+					<CountryCode>BR</CountryCode>
+					<Issuer>
+						<OrgUnit id="330001">
+							<Name xml:lang="en">European Patent Office</Name>
+						</OrgUnit>
+					</Issuer>
+					<PatentNumber>BR20161110203</PatentNumber>
+					<Inventors>
+                        <Inventor>
+                            <Person id="2018967">
+                                <PersonName>
+                                    <FamilyNames>Zanin</FamilyNames>
+                                    <FirstNames>Massimo</FirstNames>
+                                </PersonName>
+                            </Person>
+                        </Inventor>
+                        <Inventor>
+                            <Person id="2018966">
+                                <PersonName>
+                                    <FamilyNames>Pizzi</FamilyNames>
+                                    <FirstNames>Marco</FirstNames>
+                                </PersonName>
+                            </Person>
+                        </Inventor>
+						<Inventor>
+							<Person id="2018964">
+								<PersonName>
+									<FamilyNames>Mazzucco</FamilyNames>
+									<FirstNames>Laura</FirstNames>
+								</PersonName>
+							</Person>
+						</Inventor>
+						<Inventor>
+							<Person id="2018965">
+								<PersonName>
+									<FamilyNames>Bertoni</FamilyNames>
+									<FirstNames>Marco</FirstNames>
+								</PersonName>
+							</Person>
+						</Inventor>
+					</Inventors>
+					<Holders>
+						<Holder>
+							<OrgUnit id="341234">
+								<Name xml:lang="en">Eltek S.P.A</Name>
+							</OrgUnit>
+						</Holder>
+					</Holders>
+					<Subject scheme="https://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61B5-150755</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0009</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0272</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-3693</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/B01D21-262</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0218</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0236</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M2202-0427</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/ipc/">http://data.epo.org/linked-data/def/ipc/A61M1-00</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/ipc/">http://data.epo.org/linked-data/def/ipc/A61M1-34</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/ipc/">http://data.epo.org/linked-data/def/ipc/A61M1-36</Subject>
+					<Predecessor>
+						<Patent id="712179"/><!-- WO2014IB66015 -->
+					</Predecessor>
+				</Patent>
+			</metadata>
+		</record>
+		<record>
+			<header>
+				<identifier>oai:cris.example.org:Patents/712179</identifier>
+				<datestamp>2018-01-07T14:00:00Z</datestamp>
+				<setSpec>openaire_cris_patents</setSpec>
+			</header>
+			<metadata>
+				<Patent xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="712179"><!-- MEDICAL DEVICE, IN PARTICULAR FOR THE SEPARATION OF A FLUID -->
+					<!--https://worldwide.espacenet.com/publicationDetails/biblio?FT=D&date=20150521&DB=EPODOC&locale=en_EP&CC=WO&NR=2015071852A2&KC=A2&ND=4-->
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Patent_Types">http://purl.org/coar/resource_type/c_15cd</Type>
+					<Title xml:lang="en">MEDICAL DEVICE, IN PARTICULAR FOR THE SEPARATION OF A FLUID</Title>
+					<ApprovalDate>2014-11-13</ApprovalDate>
+					<CountryCode>WO</CountryCode>
+					<Issuer>
+						<OrgUnit id="330001">
+							<Name xml:lang="en">European Patent Office</Name>
+						</OrgUnit>
+					</Issuer>
+					<PatentNumber>WO2014IB66015</PatentNumber>
+					<Inventors>
+                        <Inventor>
+                            <Person id="2018967">
+                                <PersonName>
+                                    <FamilyNames>Zanin</FamilyNames>
+                                    <FirstNames>Massimo</FirstNames>
+                                </PersonName>
+                            </Person>
+                        </Inventor>
+                        <Inventor>
+                            <Person id="2018966">
+                                <PersonName>
+                                    <FamilyNames>Pizzi</FamilyNames>
+                                    <FirstNames>Marco</FirstNames>
+                                </PersonName>
+                            </Person>
+                        </Inventor>
+						<Inventor>
+							<Person id="2018964">
+								<PersonName>
+									<FamilyNames>Mazzucco</FamilyNames>
+									<FirstNames>Laura</FirstNames>
+								</PersonName>
+							</Person>
+						</Inventor>
+						<Inventor>
+							<Person id="2018965">
+								<PersonName>
+									<FamilyNames>Bertoni</FamilyNames>
+									<FirstNames>Marco</FirstNames>
+								</PersonName>
+							</Person>
+						</Inventor>
+					</Inventors>
+					<Holders>
+						<Holder>
+							<OrgUnit id="341234">
+								<Name xml:lang="en">Eltek S.P.A</Name>
+							</OrgUnit>
+						</Holder>
+					</Holders>
+					<Abstract xml:lang="en">A medical device for separating a fluid, in particular for separating platelet-rich plasma from whole blood, comprises three containers (10, 20, 30) and at least one corresponding connection line (40) having an intermediate bifurcation (41). Provided on the connection line (40) are valve means (42, 45, 47a, 48a-48b) for enabling or preventing a flow of fluid. At least one container (10) comprises a hollow container body (11) and a plunger (12) associated in a movable way to the container body (11). The device (1) has a modular structure comprising a plurality of modules (A, B, C), which are connected together in a separable way, for enabling separation thereof according to the step of use of the device (1), and include at least one first module (A), which comprises at least the first container (10) and a corresponding portion (40a) of the first connection line (40), and a second module (B), which comprises at least one between the second and third containers (30, 20) with a corresponding portion (40b, 40c) of the first connection line (40). Provided at least at the interface between two modules (A, B, C) of the modular structure are releasable connectors (43, 44), in particular hydraulic connectors comprising at least two parts that can be coupled together, each of which belongs to a corresponding module (A, B, C).</Abstract>
+					<Subject scheme="https://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61B5-150755</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0009</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0272</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-3693</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/B01D21-262</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0218</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M1-0236</Subject>
+					<Subject scheme="http://data.epo.org/linked-data/def/cpc/scheme">https://data.epo.org/linked-data/def/cpc/A61M2202-0427</Subject>
+				</Patent>
+			</metadata>
+		</record>
+	</ListRecords>
+</OAI-PMH>

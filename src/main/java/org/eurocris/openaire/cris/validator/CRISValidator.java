@@ -2,13 +2,14 @@ package org.eurocris.openaire.cris.validator;
 
 import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -16,9 +17,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +31,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,12 +67,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 /**
- * Validating a given OAI-PMH endpoint for compliance with the OpenAIRE Guidelines for CRIS Managers 1.1.
+ * Validating a given OAI-PMH endpoint for compliance with the OpenAIRE Guidelines for CRIS Managers 1.1 or higher.
  * This is organized as a JUnit4 test suite that works over a given OAI-PMH endpoint. 
  * @author jdvorak001
  * @see <a href="https://openaire-guidelines-for-cris-managers.readthedocs.io/en/latest/">the text of the specification</a>
  * @see <a href="https://github.com/openaire/guidelines-cris-managers">the github project of the specification, XML Schema and examples</a>
- * @see <a href="https://github.com/jdvorak001/openaire-cris-validator">this project on GitHub</a>
+ * @see <a href="https://github.com/euroCRIS/openaire-cris-validator">this project on GitHub</a>
  */
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
@@ -120,7 +122,7 @@ public class CRISValidator {
 	/**
 	 * The URI of the XML namespace.
 	 */
-	public static final String OPENAIRE_CERIF_XMLNS = "https://www.openaire.eu/cerif-profile/1.1/";
+	public static final String OPENAIRE_CERIF_XMLNS_PREFIX = "https://www.openaire.eu/cerif-profile/";
 	
 	/**
 	 * The URL base for the XML Schema locations by version.
@@ -138,9 +140,19 @@ public class CRISValidator {
 	public static final String OPENAIRE_CERIF_SCHEMA_FILENAME = "openaire-cerif-profile.xsd";
 	
 	/**
+	 * The namespace URI of the namespace that hosts the declared compatibility statements.
+	 */
+	public static final String COMPATIBILITY_NSURI = "https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility";
+	
+	/**
 	 * The connection stream factory to use for getting the response stream from a connection.
 	 */
 	public static final ConnectionStreamFactory CONN_STREAM_FACTORY = new FileLoggingConnectionStreamFactory( "data" );
+	
+	private static final Map<String, MetadataFormatType> metadataFormatsByPrefix = new HashMap<>();
+	
+	private static final Map<String, String> schemaUrlsByNs = new HashMap<>();
+	private static final Map<String, String> nssBySchemaUrl = new HashMap<>();
 	
 	/**
 	 * The main method: used for running the JUnit4 test suite from the command line.
@@ -150,7 +162,7 @@ public class CRISValidator {
 	 */
 	public static void main( final String[] args ) throws Exception {
 		final String endpointUrl = ( args.length > 0 ) ? args[0] : null;
-		final URL endpointBaseUrl = new URL( endpointUrl );
+		final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
 		endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );
 		JUnitCore.main( CRISValidator.class.getName() );
 	}
@@ -159,19 +171,35 @@ public class CRISValidator {
 
 	/**
 	 * Set up the test suite.
-	 * @throws MalformedURLException on an invalid endpoint URL
 	 * @throws MissingArgumentException when the endpoint URL is not specified
 	 * @throws SAXException when the parser schema cannot be created
+	 * @throws IOException on a problem accessing a schema
+	 * @throws ParserConfigurationException when an XML parser cannot be instantiated
 	 */
-	public CRISValidator() throws MalformedURLException, MissingArgumentException, SAXException {
+	public CRISValidator() throws MissingArgumentException, SAXException, IOException, ParserConfigurationException {
 		if ( endpoint == null ) {
 			final String endpointPropertyKey = "endpoint.to.validate";
 			final String endpointUrl = System.getProperty( endpointPropertyKey );
 			if ( endpointUrl == null ) {
 				throw new MissingArgumentException( "Please specify the OAI-PMH endpoint URL as the value of the " + endpointPropertyKey + " system property or as the first argument on the command line" );
 			}
-			final URL endpointBaseUrl = new URL( endpointUrl );
-			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );			
+			final URL endpointBaseUrl = URI.create( endpointUrl ).toURL();
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );
+			metadataFormatsByPrefix.clear();
+		}
+	}
+	
+	/**
+	 * Set up the test suite with a given endpoint base URL.
+	 * @param endpointBaseUrl the URL base of the endpoint to test
+	 * @throws SAXException when the parser schema cannot be created
+	 * @throws IOException on a problem accessing a schema
+	 * @throws ParserConfigurationException when an XML parser cannot be instantiated
+	 */
+	public CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
+		if ( endpoint == null || ! endpointBaseUrl.toExternalForm().equals( endpoint.getBaseUrl() ) ) {
+			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
+			metadataFormatsByPrefix.clear();
 		}
 	}
 	
@@ -182,24 +210,41 @@ public class CRISValidator {
 		return endpoint.getBaseUrl();
 	}
 	
+	private static Schema getSchema( final StreamSource ... sources ) throws IOException, SAXException, ParserConfigurationException {
+		final List<Source> schemaList = new ArrayList<>();
+		for ( final StreamSource source : sources ) {
+			schemaList.add( source );
+			final String schemaUrl = source.getSystemId();
+			final Document doc = getDocumentBuilderFactory().newDocumentBuilder().parse( source.getInputStream() );
+			final String targetNamespace = doc.getDocumentElement().getAttribute( "targetNamespace" );
+			schemaUrlsByNs.put( targetNamespace, schemaUrl );
+			nssBySchemaUrl.put( schemaUrl, targetNamespace );
+			System.out.println( "Will use " + schemaUrl + " for namespace " + targetNamespace );
+		}
+		return getXmlSchemaFactory().newSchema( schemaList.toArray( new Source[0] ) );
+	}
+
 	private static Schema parserSchema = null;
 	
 	/**
 	 * Create the schema for the validating XML parser.
 	 * @return the compound schema
-	 * @throws SAXException when problem reading the schema
+	 * @throws SAXException on a problem reading the schema
+	 * @throws IOException on a problem accessing the schema
+	 * @throws ParserConfigurationException 
 	 */
-	protected static synchronized Schema getParserSchema() throws SAXException {
+	protected static synchronized Schema getParserSchema() throws SAXException, IOException, ParserConfigurationException {
 		if ( parserSchema == null ) {
-			parserSchema = getXmlSchemaFactory().newSchema( new Source[] { 
-					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
-					schema( "/cached/oai-identifier.xsd" ), 
-					schema( "/cached/simpledc20021212.xsd", "http://dublincore.org/schemas/xmls/simpledc20021212.xsd" ), 
-					schema( "/cached/oai_dc.xsd" ), 
-					schema( "/cached/provenance.xsd", "http://www.openarchives.org/OAI/2.0/provenance.xsd" ),
-					schema( "/cached/OAI-PMH.xsd" ), 
-					schema( "/relaxed/openaire-cerif-profile.xsd" ), 
-				} );
+			parserSchema = getSchema(
+				schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
+				schema( "/cached/oai-identifier.xsd" ),
+				schema( "/cached/simpledc20021212.xsd", "http://dublincore.org/schemas/xmls/simpledc20021212.xsd" ), 
+				schema( "/cached/oai_dc.xsd" ),
+				schema( "/cached/provenance.xsd", "http://www.openarchives.org/OAI/2.0/provenance.xsd" ),
+				schema( "/cached/OAI-PMH.xsd" ),
+				schema( "/relaxed/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
+				schema( "/relaxed/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
+			);
 		}
 		return parserSchema;
 	}
@@ -214,11 +259,12 @@ public class CRISValidator {
 	protected static synchronized Schema getValidatorSchema() {
 		if ( validatorSchema == null ) {
 			try {
-				validatorSchema = getXmlSchemaFactory().newSchema( new Source[] { 
-						schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ), 
-						schema( "/relaxed/openaire-cerif-profile.xsd" ), 
-					} );
-			} catch ( final SAXException e ) {
+				validatorSchema = getSchema(
+					schema( "/cached/xml.xsd", "http://www.w3.org/2001/xml.xsd" ),
+					schema( "/original/current/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd" ),
+					schema( "/original/cerif_profile_1_1/openaire-cerif-profile.xsd", "https://www.openaire.eu/schema/cris/1.1.1/openaire-cerif-profile.xsd" )
+				);
+			} catch ( final SAXException | IOException | ParserConfigurationException e ) {
 				throw new IllegalStateException( "While initializing validator schema", e );
 			}
 		}
@@ -234,26 +280,29 @@ public class CRISValidator {
 		return xmlSchemaFactory;
 	}
 	
-	private static Source schema( final String path ) {
+	private static StreamSource schema( final String path ) {
 		return schema( path, null );
 	}
 	
-	private static Source schema( final String path, final String externalUrl ) {
+	private static StreamSource schema( final String path, final String externalUrl ) {
 		final String path1 = "/schemas" + path;
 		final URL url = OAIPMHEndpoint.class.getResource( path1 );
 		if ( url == null ) {
 			throw new IllegalArgumentException( "Resource " + path1 + " not found" );
 		}
-		final StreamSource src = new StreamSource();
-		src.setInputStream( OAIPMHEndpoint.class.getResourceAsStream( path1 ) );
-		src.setSystemId( ( externalUrl != null ) ? externalUrl : url.toExternalForm() );
-		return src;
+		return new StreamSource( (InputStream) null, url.toExternalForm() ) {
+			public InputStream getInputStream() {
+				return OAIPMHEndpoint.class.getResourceAsStream( path1 );
+			}
+		};
 	}
 
 	@SuppressWarnings( "unused" )
 	private static Optional<String> sampleIdentifier = Optional.empty();
 
 	private static Optional<String> serviceAcronym = Optional.empty();
+	
+	private static Element serviceDescription = null;
 	
 	/**
 	 * Ask for ?verb=Identity and test it for consistence – checks (1).
@@ -288,7 +337,8 @@ public class CRISValidator {
 				final Object obj = description.getAny();
 				if ( obj instanceof Element ) {
 					final Element el = (Element) obj;
-					if ( "Service".equals( el.getLocalName() ) && OPENAIRE_CERIF_XMLNS.equals( el.getNamespaceURI() ) ) {
+					if ( "Service".equals( el.getLocalName() ) && el.getNamespaceURI() != null && el.getNamespaceURI().startsWith( OPENAIRE_CERIF_XMLNS_PREFIX ) ) {
+						serviceDescription = el;
 						serviceAcronym = XmlUtils.getTextContents( XmlUtils.getFirstMatchingChild( el, "Acronym", el.getNamespaceURI() ) );
 						validateMetadataPayload( el );
 						return true;
@@ -314,38 +364,47 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check010_MetadataFormats() throws Exception {
+		metadataFormatsByPrefix.clear();
 		CheckingIterable<MetadataFormatType> checker = CheckingIterable.over( endpoint.callListMetadataFormats().getMetadataFormat() );
-		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique" );
-		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique" );
-		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique" );
-		checker = wrapCheckMetadataFormatPresent( checker, OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CERIF_XMLNS );
-		checker.run();
+		checker = checker.checkUnique( MetadataFormatType::getMetadataPrefix, "Metadata prefix not unique (2d)" );
+		checker = checker.checkUnique( MetadataFormatType::getMetadataNamespace, "Metadata namespace not unique (2e)" );
+		checker = checker.checkUnique( MetadataFormatType::getSchema, "Metadata schema location not unique (2f)" );
+		checker = wrapCheckMetadataFormatPresent( checker );
+		checker = checker.map( (MetadataFormatType mft) -> { 
+			final String prefix = mft.getMetadataPrefix();
+			if ( prefix.startsWith(OAI_CERIF_OPENAIRE__METADATA_PREFIX) ) { 
+				metadataFormatsByPrefix.put( prefix, mft );
+				assertTrue( "The metadata NS for prefix " + prefix + " does not start with " + OPENAIRE_CERIF_XMLNS_PREFIX + " (2b)", mft.getMetadataNamespace().startsWith(OPENAIRE_CERIF_XMLNS_PREFIX) );
+			}
+			return mft; 
+		} );
+		final long nMetadataFormats = checker.run();
+		final int nOpenAireMetadataFormats = metadataFormatsByPrefix.size();
+		System.out.println( "Having " + nOpenAireMetadataFormats + " OpenAIRE CRIS metadata formats (out of the total " + nMetadataFormats + " metadata formats)" );
 	}
 	
-	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent, final String expectedMetadataFormatPrefix, final String expectedMetadataFormatNamespace ) {
+	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent ) {
 		final Predicate<MetadataFormatType> predicate = new Predicate<MetadataFormatType>() {
 
 			@Override
 			public boolean test( final MetadataFormatType mf ) {
-				if ( expectedMetadataFormatPrefix.equals( mf.getMetadataPrefix() ) ) {
-					assertEquals( "Non-matching set name for set '" + expectedMetadataFormatPrefix + "' (2)", expectedMetadataFormatNamespace, mf.getMetadataNamespace() );
-					final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-					dbf.setNamespaceAware( true );
-					dbf.setValidating( false );
-					dbf.setIgnoringComments( true );
+				final String metadataNs = mf.getMetadataNamespace();
+				if ( metadataNs.startsWith( OPENAIRE_CERIF_XMLNS_PREFIX ) ) {
+					assertTrue( "The metadata prefix for XML namespace " + metadataNs + " does not start with " + OAI_CERIF_OPENAIRE__METADATA_PREFIX + " (2c)", mf.getMetadataPrefix().startsWith(OAI_CERIF_OPENAIRE__METADATA_PREFIX) );
 					try {
-						final DocumentBuilder db = dbf.newDocumentBuilder();
+						final DocumentBuilder db = getDocumentBuilderFactory().newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
-						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
-						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
-						final String realSchemaUrl = ( schemaUrl.equals( CURRENT_XML_SCHEMA_URL_PREFIX + "openaire-cerif-profile.xsd" ) ) 
-									? this.getClass().getResource( "/schemas/openaire-cerif-profile.xsd" ).toExternalForm()
-									: schemaUrl;
-						System.out.println( "Fetching " + realSchemaUrl );
-						final Document doc = db.parse( realSchemaUrl );
-						final Element schemaRootEl = doc.getDocumentElement();
-						final String targetNsUri = schemaRootEl.getAttribute( "targetNamespace" );
-						assertEquals( "The schema does not have the advertised target namespace URI (2)", mf.getMetadataNamespace(), targetNsUri );
+						System.out.println( "Metadata format prefix " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
+						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2h)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
+						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2i)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
+						final String localSchemaUrl = schemaUrlsByNs.get( metadataNs );
+						assertNotNull( "This validator does not cover the metadata namespace " + metadataNs + " (2g)", localSchemaUrl );
+						if ( !localSchemaUrl.contains( "/current/" ) ) {
+							final Document doc = db.parse( localSchemaUrl );
+							final Element schemaRootEl = doc.getDocumentElement();
+							final String targetNsUri = schemaRootEl.getAttribute( "targetNamespace" );
+							assertEquals( "The schema does not have the advertised target namespace URI (2j)", metadataNs, targetNsUri );
+						}
 					} catch ( final ParserConfigurationException | SAXException | IOException e ) {
 						throw new IllegalStateException( e ); 
 					}
@@ -355,9 +414,39 @@ public class CRISValidator {
 			}
 
 		};
-		return parent.checkContains( predicate, new AssertionError( "MetadataFormat '" + expectedMetadataFormatPrefix + "' not present (2)" ) );
+		CheckingIterable<MetadataFormatType> checker = parent.checkContains( predicate, new AssertionError( "Metadata format for the OpenAIRE Guidelines for CRIS Managers not present (2a)" ) );
+		if ( serviceDescription != null ) {
+			for ( final Element el : XmlUtils.nodeListToIterableOfElements( serviceDescription.getElementsByTagNameNS( COMPATIBILITY_NSURI, "Compatibility" ) ) ) {
+				final String compatibilityUri = el.getTextContent();
+				final String compatibilityVersion = compatibilityUri.replaceFirst( ".*#", "" );
+				if ( !"1.0".equals( compatibilityVersion ) ) { // This validator does not support version 1.0 of the Guidelines
+					checker = checker.checkContains( new Predicate<MetadataFormatType>() {
+	
+						@Override
+						public boolean test( final MetadataFormatType t ) {
+							final String metadataFormatVersion = t.getMetadataNamespace().replace( OPENAIRE_CERIF_XMLNS_PREFIX, "" ).replaceFirst( "/$", "" );
+							return compatibilityVersion.equals( metadataFormatVersion );
+						} 
+						
+					}, "No metadata format specified for declared compatibility " + compatibilityUri + " (2k)" );
+				}
+			}
+		}
+		return checker;
 	}
 	
+	/**
+	 * Get a {@link DocumentBuilderFactory} for parsing.
+	 * @return
+	 */
+	protected static DocumentBuilderFactory getDocumentBuilderFactory() {
+		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		dbf.setNamespaceAware( true );
+		dbf.setValidating( false );
+		dbf.setIgnoringComments( true );
+		return dbf;
+	}
+
 	/**
 	 * Ask for ?verb=ListSets and test it for consistence – checks (3).
 	 * @throws Exception on any unexpected circumstance
@@ -400,9 +489,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check100_CheckPublications() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Publication" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PUBLICATIONS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Publication" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -411,9 +503,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check200_CheckProducts() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Product" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PRODUCTS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Product" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -422,9 +517,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check300_CheckPatents() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Patent" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PATENTS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Patent" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -433,9 +531,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check400_CheckPersons() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Person" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PERSONS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Person" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -444,9 +545,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check500_CheckOrgUnits() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "OrgUnit" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_ORGUNITS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "OrgUnit" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -455,9 +559,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check600_CheckProjects() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Project" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_PROJECTS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Project" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -466,9 +573,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check700_CheckFundings() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Funding" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_FUNDING__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Funding" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -477,9 +587,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check800_CheckEquipment() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Equipment" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_EQUIPMENTS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Equipment" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -488,9 +601,12 @@ public class CRISValidator {
 	 */
 	@Test
 	public void check900_CheckEvents() throws Exception {
-		final Iterable<RecordType> records = endpoint.callListRecords( OAI_CERIF_OPENAIRE__METADATA_PREFIX, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
-		final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Event" );
-		checker.run();
+		assertFalse( "No metadata prefix to fetch?", metadataFormatsByPrefix.isEmpty() );
+		for ( final String prefix : metadataFormatsByPrefix.keySet() ) {
+			final Iterable<RecordType> records = endpoint.callListRecords( prefix, OPENAIRE_CRIS_EVENTS__SET_SPEC, null, null );
+			final CheckingIterable<RecordType> checker = buildCommonCheckersChain( records, "Event" );
+			checker.run();
+		}
 	}
 
 	/**
@@ -500,8 +616,7 @@ public class CRISValidator {
 	 * @return a {@link CheckingIterable} that checks the namespace, the uniqueness of the OAI identifiers of the records and their consistence with the types and IDs of the objects
 	 */
 	protected CheckingIterable<RecordType> buildCommonCheckersChain( final Iterable<RecordType> records, final String expectedElementLocalName ) {
-		final QName expectedQName = new QName( OPENAIRE_CERIF_XMLNS, expectedElementLocalName );
-		return wrapCheckPayloadQNameAndAccummulate( expectedQName,
+		return wrapCheckPayloadQNameAndAccummulate( expectedElementLocalName,
 				wrapCheckUniqueness( 
 						wrapCheckOAIIdentifier( 
 								CheckingIterable.over( records ) 
@@ -546,7 +661,7 @@ public class CRISValidator {
 	private static Map<String, CERIFNode> recordsByName = new HashMap<>();
 	private static Map<String, CERIFNode> recordsByOaiIdentifier = new HashMap<>();
 	
-	private CheckingIterable<RecordType> wrapCheckPayloadQNameAndAccummulate( final QName expectedQName, final CheckingIterable<RecordType> checker ) {
+	private CheckingIterable<RecordType> wrapCheckPayloadQNameAndAccummulate( final String expectedElementLocalName, final CheckingIterable<RecordType> checker ) {
 		return checker.checkForAll( new Predicate<RecordType>() {
 
 			@Override
@@ -556,8 +671,8 @@ public class CRISValidator {
 					final Object obj = recordMetadata.getAny();
 					if ( obj instanceof Element ) {
 						final Element el = (Element) obj;
-						assertEquals( "The payload element not in the right namespace", expectedQName.getNamespaceURI(), el.getNamespaceURI() );
-						assertEquals( "The payload element does not have the right local name", expectedQName.getLocalPart(), el.getLocalName() );
+						assertTrue( "The payload element not in the right namespace", el.getNamespaceURI().startsWith(OPENAIRE_CERIF_XMLNS_PREFIX) );
+						assertEquals( "The payload element does not have the right local name", expectedElementLocalName, el.getLocalName() );
 						validateMetadataPayload( el );
 						final CERIFNode node = CERIFNode.buildTree( el );
 						recordsByName.put( node.getName(), node );

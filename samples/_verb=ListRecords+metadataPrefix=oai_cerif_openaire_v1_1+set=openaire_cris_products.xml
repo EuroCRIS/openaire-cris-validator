@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH Set: openaire_cris_datasets
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.1
+-->
+<!--
+	From release 1.1.1 of the OpenAIRE Guidelines for CRIS Managers, see https://doi.org/10.5281/zenodo.2316420
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd https://www.openaire.eu/cerif-profile/1.1/ https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd">
+    <responseDate>2018-01-12T14:00:00Z</responseDate>
+    <request metadataPrefix="cerif_openaire" verb="ListRecords" set="openaire_cris_datasets">http://cris.example.org/openaire/connector</request>
+    <ListRecords>
+        <record>
+            <header>
+                <identifier>oai:cris.example.org:Products/7123451</identifier>
+                <datestamp>2018-01-07T14:00:00Z</datestamp>
+                <setSpec>openaire_cris_datasets</setSpec>
+            </header>
+            <metadata>
+            	<Product xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="7123451">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+                    <Name xml:lang="en">Airborne In-situ Atmospheric Instruments and Hyperspectral Instruments Data from the Projects Funded Under The European Facility for Airborne Research in Environmental and Geo-sciences (EUFAR) Project</Name>
+					<URL>http://catalogue.ceda.ac.uk/uuid/d40e4067ae0121b31bb1ba57e04707de</URL>
+                    <Description xml:lang="en">The dataset combines data from the projects and training courses funded under the European Facility for Airborne Research in Environmental and Geo-sciences (EUFAR) project.
+EUFAR is an Integrating Activity of the 7th Framework Program of the European Commission.
+EUFAR brings together 32 European institutions and companies involved in airborne research, operating 21 instrumented aircraft and providing access to 6 hyperspectral instruments. Data include measurements by airborne in situ atmospheric instuments and hyperspectral instruments operated on board aircraft of the EUFAR fleet during projects funded under the transnational access part of EUFAR and during training events.</Description>
+					<OriginatesFrom>
+						<Project id="112347">
+							<Acronym>EUFAR</Acronym>
+						</Project>
+					</OriginatesFrom>
+					<GeneratedBy>
+						<Equipment id="82394874">
+							<Name xml:lang="en">SkyArrow 650 TCNS operated by IBIMET CNR</Name>
+							<Identifier type="Institution assigned unique equipment identifier">982340-29481/1999</Identifier>
+							<Description xml:lang="en">The SkyArrow 650 TCNS operated by IBIMET (CNR - Institute of Biometeorology) for the EUFAR project</Description>
+						</Equipment>
+					</GeneratedBy>
+					<GeneratedBy>
+						<Equipment id="82394875">
+							<Name xml:lang="en">Cessna T207A operated by Freie Universität Berlin</Name>
+							<Identifier type="Institution assigned unique equipment identifier">2005:192834/11A</Identifier>
+							<Description xml:lang="en">The Cessna T207A operated by Freie Universität Berlin, Institut für Weltraumwissenschaften, for the EUFAR project</Description>
+						</Equipment>
+					</GeneratedBy>
+                    <Access xmlns="http://purl.org/coar/access_right">http://purl.org/coar/access_right/c_16ec<!-- restricted access --></Access>
+            	</Product>
+            </metadata>
+        </record>
+        <record>
+        	<header>
+                <identifier>oai:cris.example.org:Products/729487</identifier>
+                <datestamp>2017-05-23T23:00:00Z</datestamp>
+                <setSpec>openaire_cris_datasets</setSpec>
+        	</header>
+        	<metadata>
+				<Product xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="729487">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+					<Name xml:lang="en">Data from: Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Name>
+					<VersionInfo xml:lang="en">1</VersionInfo>
+					<DOI>10.5061/DRYAD.4GH6HF5G</DOI>
+					<Creators>
+						<Creator>
+							<Person id="21234512">
+								<PersonName>
+									<FamilyNames>Singhal</FamilyNames>
+									<FirstNames>Sonal</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+						<Creator>
+							<Person id="21234513">
+								<PersonName>
+									<FamilyNames>Moritz</FamilyNames>
+									<FirstNames>Craig</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+					</Creators>
+<!-- 
+					<Contributors>
+						<HostingInstitution startDate="2011">
+							<OrgUnit>
+								<Name xml:lang="en">Dryad Digital Repository</Name>
+							</OrgUnit>
+						</HostingInstitution>
+					</Contributors>
+ -->
+ 					<Keyword xml:lang="en">Hybridization</Keyword>
+					<Keyword xml:lang="en">Speciation</Keyword>
+					<Keyword xml:lang="en">Phylogeography</Keyword>
+					<Keyword xml:lang="en">Reproductive Isolation</Keyword>
+					<Keyword xml:lang="en">Models/Simulations</Keyword>
+					<Keyword xml:lang="en">Australia</Keyword>
+					<Keyword xml:lang="en">Northeast Queensland</Keyword>
+					<Keyword xml:lang="en">Lampropholis coggeri</Keyword>
+				</Product>
+        	</metadata>
+        </record>
+        <record>
+        	<header>
+                <identifier>oai:cris.example.org:Products/729481</identifier>
+                <datestamp>2017-05-23T23:00:01Z</datestamp>
+                <setSpec>openaire_cris_datasets</setSpec>
+        	</header>
+        	<metadata>
+				<Product xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="729481">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+					<Name xml:lang="en">Genotypes for Lampropholis coggeri</Name>
+					<VersionInfo xml:lang="en">1</VersionInfo>
+					<DOI>10.5061/DRYAD.4GH6HF5G/1</DOI>
+					<Creators>
+						<Creator>
+							<Person id="21234512">
+								<PersonName>
+									<FamilyNames>Singhal</FamilyNames>
+									<FirstNames>Sonal</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+						<Creator>
+							<Person id="21234513">
+								<PersonName>
+									<FamilyNames>Moritz</FamilyNames>
+									<FirstNames>Craig</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+					</Creators>
+					<Keyword xml:lang="en">Hybridization</Keyword>
+					<Keyword xml:lang="en">Speciation</Keyword>
+					<Keyword xml:lang="en">Phylogeography</Keyword>
+					<Keyword xml:lang="en">Reproductive Isolation</Keyword>
+					<Keyword xml:lang="en">Models/Simulations</Keyword>
+					<Keyword xml:lang="en">Australia</Keyword>
+					<Keyword xml:lang="en">Northeast Queensland</Keyword>
+					<Keyword xml:lang="en">Lampropholis coggeri</Keyword>
+					<PartOf>
+						<Product id="729487">
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+							<Name xml:lang="en">Data from: Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Name>
+							<VersionInfo xml:lang="en">1</VersionInfo>
+							<DOI>10.5061/DRYAD.4GH6HF5G</DOI>
+						</Product>
+					</PartOf>
+				</Product>
+        	</metadata>
+        </record>
+        <record>
+        	<header>
+                <identifier>oai:cris.example.org:Products/729482</identifier>
+                <datestamp>2017-05-23T23:00:02Z</datestamp>
+                <setSpec>openaire_cris_datasets</setSpec>
+        	</header>
+        	<metadata>
+				<Product xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="729482">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_5ce6<!-- software --></Type>
+					<Name xml:lang="en">Base script used for simulations</Name>
+					<VersionInfo xml:lang="en">1</VersionInfo>
+					<DOI>10.5061/DRYAD.4GH6HF5G/2</DOI>
+					<Creators>
+						<Creator>
+							<Person id="21234512">
+								<PersonName>
+									<FamilyNames>Singhal</FamilyNames>
+									<FirstNames>Sonal</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+						<Creator>
+							<Person id="21234513">
+								<PersonName>
+									<FamilyNames>Moritz</FamilyNames>
+									<FirstNames>Craig</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+					</Creators>
+					<Keyword xml:lang="en">Hybridization</Keyword>
+					<Keyword xml:lang="en">Speciation</Keyword>
+					<Keyword xml:lang="en">Phylogeography</Keyword>
+					<Keyword xml:lang="en">Reproductive Isolation</Keyword>
+					<Keyword xml:lang="en">Models/Simulations</Keyword>
+					<Keyword xml:lang="en">Australia</Keyword>
+					<Keyword xml:lang="en">Northeast Queensland</Keyword>
+					<Keyword xml:lang="en">Lampropholis coggeri</Keyword>
+					<PartOf>
+						<Product id="729487">
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+							<Name xml:lang="en">Data from: Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Name>
+							<VersionInfo xml:lang="en">1</VersionInfo>
+							<DOI>10.5061/DRYAD.4GH6HF5G</DOI>
+						</Product>
+					</PartOf>
+				</Product>
+        	</metadata>
+        </record>
+        <record>
+        	<header>
+                <identifier>oai:cris.example.org:Products/729483</identifier>
+                <datestamp>2017-05-23T23:00:03Z</datestamp>
+                <setSpec>openaire_cris_datasets</setSpec>
+        	</header>
+        	<metadata>
+				<Product xmlns="https://www.openaire.eu/cerif-profile/1.1/" id="729483">
+					<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+					<Name xml:lang="en">Transcriptome for Lampropholis coggeri</Name>
+					<VersionInfo xml:lang="en">1</VersionInfo>
+					<DOI>10.5061/DRYAD.4GH6HF5G/3</DOI>
+					<Creators>
+						<Creator>
+							<Person id="21234512">
+								<PersonName>
+									<FamilyNames>Singhal</FamilyNames>
+									<FirstNames>Sonal</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+						<Creator>
+							<Person id="21234513">
+								<PersonName>
+									<FamilyNames>Moritz</FamilyNames>
+									<FirstNames>Craig</FirstNames>
+								</PersonName>
+							</Person>
+						</Creator>
+					</Creators>
+					<Keyword xml:lang="en">Hybridization</Keyword>
+					<Keyword xml:lang="en">Speciation</Keyword>
+					<Keyword xml:lang="en">Phylogeography</Keyword>
+					<Keyword xml:lang="en">Reproductive Isolation</Keyword>
+					<Keyword xml:lang="en">Models/Simulations</Keyword>
+					<Keyword xml:lang="en">Australia</Keyword>
+					<Keyword xml:lang="en">Northeast Queensland</Keyword>
+					<Keyword xml:lang="en">Lampropholis coggeri</Keyword>
+					<PartOf>
+						<Product id="729487">
+							<Type xmlns="https://www.openaire.eu/cerif-profile/vocab/COAR_Product_Types">http://purl.org/coar/resource_type/c_ddb1<!-- dataset --></Type>
+							<Name xml:lang="en">Data from: Strong selection against hybrids maintains a narrow contact zone between morphologically cryptic lineages in a rainforest lizard</Name>
+							<VersionInfo xml:lang="en">1</VersionInfo>
+							<DOI>10.5061/DRYAD.4GH6HF5G</DOI>
+						</Product>
+					</PartOf>
+				</Product>
+        	</metadata>
+        </record>
+    </ListRecords>
+</OAI-PMH>

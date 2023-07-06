@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	Examples of metadata records in OpenAIRE CERIF XML format as OAI-PMH payload. 
+	OAI-PMH response to the Identify request. 
+	Provided as accompanying material to the "OpenAIRE Guidelines for CRIS Managers" version 1.2 
+-->
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd http://www.openarchives.org/OAI/2.0/oai-identifier http://www.openarchives.org/OAI/2.0/oai-identifier.xsd https://www.openaire.eu/cerif-profile/1.2/ https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd">
+
+	<responseDate>2018-04-07T12:26:10Z</responseDate>
+	<request verb="Identify">http://cris.example.org/openaire/connector</request>
+
+	<Identify>
+		<repositoryName>cris.example.org</repositoryName>
+		<baseURL>https://cris.example.org/openaire/connector</baseURL>
+		<protocolVersion>2.0</protocolVersion>
+		<adminEmail>admin@cris.example.org</adminEmail>
+		<earliestDatestamp>2008-11-23T13:11:02Z</earliestDatestamp>
+		<deletedRecord>no</deletedRecord>
+		<granularity>YYYY-MM-DDThh:mm:ssZ</granularity>
+
+		<description>
+			<oai-identifier xmlns="http://www.openarchives.org/OAI/2.0/oai-identifier">
+				<scheme>oai</scheme>
+				<repositoryIdentifier>cris.example.org</repositoryIdentifier>
+				<delimiter>:</delimiter>
+				<sampleIdentifier>oai:cris.example.org:OrgUnits/312347</sampleIdentifier>
+			</oai-identifier>
+		</description>
+
+		<description>
+			<Service xmlns="https://www.openaire.eu/cerif-profile/1.2/" id="Services/8123451"><!-- cris.example.org -->
+				<Compatibility xmlns="https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility">https://www.openaire.eu/cerif-profile/vocab/OpenAIRE_Service_Compatibility#1.2</Compatibility>
+                <Acronym>cris.example.org</Acronym>
+				<Name xml:lang="en">The example CRIS</Name>
+				<Description xml:lang="en">An example CRIS that complies with the OpenAIRE Guidelines for CRIS Managers v.1.2.</Description>
+
+				<WebsiteURL>https://cris.example.org/</WebsiteURL>
+				<OAIPMHBaseURL>https://cris.example.org/openaire/connector</OAIPMHBaseURL>
+				<SubjectHeadingsURL>https://cris.example.org/openaire/resources/subject-headings.xml</SubjectHeadingsURL>
+
+				<Owner>
+					<OrgUnit id="OrgUnits/312347"><!-- EKT -->
+						<Acronym>EKT</Acronym>
+					</OrgUnit>
+				</Owner>
+			</Service>
+		</description>
+
+	</Identify>
+
+</OAI-PMH>

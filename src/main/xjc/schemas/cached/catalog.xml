@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+
+    <public publicId="http://www.openarchives.org/OAI/2.0/" uri="./OAI-PMH.xsd"/>
+    <system systemId="https://www.openarchives.org/OAI/2.0/OAI-PMH.xsd" uri="./OAI-PMH.xsd" />
+    <system systemId="http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd" uri="./OAI-PMH.xsd" />
+
+    <public publicId="http://www.openarchives.org/OAI/2.0/oai-identifier" uri="./oai-identifier.xsd" />
+    <system systemId="https://www.openarchives.org/OAI/2.0/oai-identifier.xsd" uri="./oai-identifier.xsd" />
+    <system systemId="http://www.openarchives.org/OAI/2.0/oai-identifier.xsd" uri="./oai-identifier.xsd" />
+
+	<system systemId="https://raw.githubusercontent.com/schematron-quickfix/sqf/master/schemas/iso-schematron.xsd" uri="./iso-schematron.xsd"/>
+	<system systemId="https://raw.githubusercontent.com/schematron-quickfix/sqf/master/schemas/schematron-quickFix.xsd" uri="./schematron-quickFix.xsd"/>
+	
+    <public publicId="http://www.w3.org/2001/XMLSchema" uri="./XMLSchema.xsd" />
+    <system systemId="https://www.w3.org/2012/04/XMLSchema.xsd" uri="./XMLSchema.xsd" />
+    <system systemId="http://www.w3.org/2012/04/XMLSchema.xsd" uri="./XMLSchema.xsd" />
+    <system systemId="https://www.w3.org/2001/XMLSchema.xsd" uri="./XMLSchema.xsd" />
+    <system systemId="http://www.w3.org/2001/XMLSchema.xsd" uri="./XMLSchema.xsd" />
+
+    <public publicId="http://www.w3.org/XML/1998/namespace" uri="./xml.xsd" />
+    <system systemId="https://www.w3.org/2001/xml.xsd" uri="./xml.xsd" />
+    <system systemId="http://www.w3.org/2001/xml.xsd" uri="./xml.xsd" />
+
+</catalog>

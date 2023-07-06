@@ -19,7 +19,7 @@
 
 		<metadataFormat>
 			<metadataPrefix>oai_cerif_openaire_v1_1</metadataPrefix>
-			<schema>https://www.openaire.eu/schema/cris/1.1/openaire-cerif-profile.xsd</schema>
+			<schema>https://www.openaire.eu/schema/cris/1.2/openaire-cerif-profile.xsd</schema>
 			<metadataNamespace>https://www.openaire.eu/cerif-profile/1.1/</metadataNamespace>
 		</metadataFormat>
 

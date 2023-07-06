@@ -1,7 +1,7 @@
 # OpenAIRE CRIS validator
 
 A tool to assess whether an OAI-PMH endpoint can provide research information
-complying with the [OpenAIRE Guidelines for CRIS Managers 1.1](https://github.com/openaire/guidelines-cris-managers).
+complying with the [OpenAIRE Guidelines for CRIS Managers](https://github.com/openaire/guidelines-cris-managers) versions 1.1 and 1.2.
 It covers [these checks](CHECKS.md).
 
 This is a command-line Java tool that is organized as a [JUnit](https://junit.org/junit4/) test suite.
@@ -12,7 +12,7 @@ This is Open Source software, available under the terms of the [Apache 2.0 Licen
 
 
 ![CI workflow](https://github.com/euroCRIS/openaire-cris-validator/actions/workflows/maven.yml/badge.svg)
-← checking if the software builds and runs on the [example files from the standard](https://github.com/openaire/guidelines-cris-managers/tree/master/samples).
+← checking if the software builds and runs on the [example files](./samples).
 
 ## Usage
 
@@ -23,7 +23,7 @@ Then do:
 
 	mvn clean package
 
-We compile for Java 17 by default, but you can switch to 11 or 1.8 [in the POM file](https://github.com/EuroCRIS/openaire-cris-validator/blob/master/pom.xml#L16).
+We compile for Java 17 by default, but you can switch to 11 or 1.8 [in the POM file](./pom.xml#L16).
 
 ### Run
 
@@ -51,17 +51,17 @@ The validator copies the responses to the requests it makes into files in the `d
 [CRISValidator](./src/main/java/org/eurocris/openaire/cris/validator/CRISValidator.java) is the main validator class.  It is the JUnit4 test suite. 
 As it reads the metadata records from the CRIS:
  * it does simple checks on the fly (using [CheckingIterable](./src/main/java/org/eurocris/openaire/cris/validator/util/CheckingIterable.java)); and
- * it builds an internal representation: a [HashMap](https://docs.oracle.com/javase/8/docs/api/java/util/HashMap.html) of trees that consist of [CERIFNode](./src/main/java/org/eurocris/openaire/cris/validator/tree/CERIFNode.java)s. The last test, `check990_CheckReferentialIntegrityAndFunctionalDependency`, works on this internal representation.
+ * it builds an internal representation: a [HashMap](https://devdocs.io/openjdk~17/java.base/java/util/hashmap) of trees that consist of [CERIFNode](./src/main/java/org/eurocris/openaire/cris/validator/tree/CERIFNode.java)s. The last test, `check990_CheckReferentialIntegrityAndFunctionalDependency`, works on this internal representation.
 
 [OAIPMHEndpoint](./src/main/java/org/eurocris/openaire/cris/validator/OAIPMHEndpoint.java) is an independent implementation
 of an [OAI-PMH 2.0](https://www.openarchives.org/OAI/openarchivesprotocol.html) client in Java.
 While it uses JAXB to map the OAI-PMH 2.0 markup to Java objects, any metadata payload is opaque to it.
-For requests that list objects (i.e., `ListIdentifiers`, `ListRecords` or `ListSets`) an [Iterable](https://docs.oracle.com/javase/8/docs/api/java/lang/Iterable.html) is returned
+For requests that list objects (i.e., `ListIdentifiers`, `ListRecords` or `ListSets`) an [Iterable](https://devdocs.io/openjdk~17/java.base/java/lang/iterable) is returned
 that uses the protocol's resumption token mechanism to fetch successive chunks of objects.
 This is entirely transparent to the class user. 
 
 If the OAI-PMH 2.0 data provider advertises support for a compression, the endpoint client object will use it.
-[CompressionHandlingHttpURLConnectionAdapter](./src/main/java/org/eurocris/openaire/cris/validator/http/CompressionHandlingHttpURLConnectionAdapter.java) is a transparent compression-handling wrapper around an [HttpURLConnection](https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html).
+[CompressionHandlingHttpURLConnectionAdapter](./src/main/java/org/eurocris/openaire/cris/validator/http/CompressionHandlingHttpURLConnectionAdapter.java) is a transparent compression-handling wrapper around an [HttpURLConnection](https://devdocs.io/openjdk~17/java.base/java/net/httpurlconnection).
 
 
 ## Feedback
@@ -72,7 +72,7 @@ Please submit a [github issue](https://github.com/euroCRIS/openaire-cris-validat
 
 ## License
 
-Copyright 2018–2022 Jan Dvořák <a href="https://orcid.org/0000-0001-8985-152X" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"> https://orcid.org/0000-0001-8985-152X</a> and other contributors
+Copyright 2018–2023 Jan Dvořák <a href="https://orcid.org/0000-0001-8985-152X" target="orcid.widget" rel="noopener noreferrer" style="vertical-align:top;"><img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" style="width:1em;margin-right:.5em;" alt="ORCID iD icon"> https://orcid.org/0000-0001-8985-152X</a> and other contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
