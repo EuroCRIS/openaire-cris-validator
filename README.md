@@ -3,6 +3,7 @@
 A tool to assess whether an OAI-PMH endpoint can provide research information
 complying with the [OpenAIRE Guidelines for CRIS Managers](https://github.com/openaire/guidelines-cris-managers) versions 1.1 and 1.2.
 It covers [these checks](CHECKS.md).
+Please note that releases before 2.0.0 only support version 1.1 of the Guidelines. 
 
 This is a command-line Java tool that is organized as a [JUnit](https://junit.org/junit4/) test suite.
 You can also run it in your IDE.
