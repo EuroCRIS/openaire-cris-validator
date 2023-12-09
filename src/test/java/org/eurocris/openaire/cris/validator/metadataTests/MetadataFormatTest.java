@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 
 import java.net.URL;
 
-import org.eurocris.openaire.cris.validator.CRISValidator;
 import org.junit.Test;
 
 /**
