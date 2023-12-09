@@ -191,6 +191,8 @@ public class CRISValidator {
 	
 	/**
 	 * Set up the test suite with a given endpoint base URL.
+	 * This constructor is made protected for this class to work as the main test class from the JUnit4 command-line runner.
+	 * If you wish to use it in your integrations, please make a subclass.
 	 * @param endpointBaseUrl the URL base of the endpoint to test
 	 * @throws SAXException when the parser schema cannot be created
 	 * @throws IOException on a problem accessing a schema
