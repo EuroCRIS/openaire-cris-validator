@@ -19,7 +19,7 @@ jobs:
     - name: Checkout the OpenAIRE Guidelines for CRIS Managers repo
       uses: actions/checkout@v4
       with:
-        repository: euroCRIS/guidelines-cris-managers
+        repository: openaire/guidelines-cris-managers
         path: guidelines-cris-managers
         ref: main
     - name: Set up JDK 17
