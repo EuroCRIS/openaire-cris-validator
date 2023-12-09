@@ -196,7 +196,7 @@ public class CRISValidator {
 	 * @throws IOException on a problem accessing a schema
 	 * @throws ParserConfigurationException when an XML parser cannot be instantiated
 	 */
-	public CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
+	protected CRISValidator( final URL endpointBaseUrl ) throws SAXException, IOException, ParserConfigurationException {
 		if ( endpoint == null || ! endpointBaseUrl.toExternalForm().equals( endpoint.getBaseUrl() ) ) {
 			endpoint = new OAIPMHEndpoint( endpointBaseUrl, getParserSchema(), CONN_STREAM_FACTORY );		
 			metadataFormatsByPrefix.clear();
