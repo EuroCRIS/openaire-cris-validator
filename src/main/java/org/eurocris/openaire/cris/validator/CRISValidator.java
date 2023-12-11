@@ -776,7 +776,6 @@ public class CRISValidator {
 			fail( "While validating element " + elString + ": " + e );
 		}
 	}
-	
 }
 
 /**
@@ -801,6 +800,7 @@ class FileLoggingConnectionStreamFactory implements OAIPMHEndpoint.ConnectionStr
 	@Override
 	public InputStream makeInputStream( final URLConnection conn ) throws IOException {
 		InputStream inputStream = conn.getInputStream();
+		String baseURLhostname = conn.getURL().getHost();
 		if ( logDir != null ) {
 			final Path logDirPath = Paths.get( logDir );
 			Files.createDirectories( logDirPath );
@@ -816,10 +816,9 @@ class FileLoggingConnectionStreamFactory implements OAIPMHEndpoint.ConnectionStr
  				sb.append( m2.group( 1 ) );
  			}
 			final DateTimeFormatter dtf = DateTimeFormatter.ofPattern( "yyyyMMdd'T'HHmmss.SSS" );
-			final String logFilename = "oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
+			final String logFilename = baseURLhostname + "_oai-pmh--" + dtf.format( LocalDateTime.now() ) + "--" + sb.toString() + ".xml";
 			inputStream = new FileSavingInputStream( inputStream, logDirPath.resolve( logFilename ) );
 		}
 		return inputStream;
 	}
-	
 }
