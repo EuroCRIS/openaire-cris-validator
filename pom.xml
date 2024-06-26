@@ -12,6 +12,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<guidelines.project.dir>../guidelines-cris-managers</guidelines.project.dir>
+		<logger.version>2.23.1</logger.version>
 		<fully.qualified.main.class.name>org.eurocris.openaire.cris.validator.CRISValidator</fully.qualified.main.class.name>
 		<maven.compiler.version>17</maven.compiler.version>
 	</properties>
@@ -36,6 +37,27 @@
 			<artifactId>jaxb-runtime</artifactId>
 			<version>2.3.8</version>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${logger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${logger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>${logger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lmax</groupId>
+			<artifactId>disruptor</artifactId>
+			<version>4.0.0</version>
 		</dependency>
 	</dependencies>
 	<build>
