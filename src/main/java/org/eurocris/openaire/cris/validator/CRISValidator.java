@@ -60,6 +60,8 @@ import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2.StatusType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.ErrorHandler;
@@ -76,6 +78,8 @@ import org.xml.sax.SAXParseException;
  */
 @FixMethodOrder( value=MethodSorters.NAME_ASCENDING )
 public class CRISValidator {
+
+	private static final Logger logger = LoggerFactory.getLogger(CRISValidator.class);
 
 	/**
 	 * The spec of the set of equipments.
@@ -221,7 +225,7 @@ public class CRISValidator {
 			final String targetNamespace = doc.getDocumentElement().getAttribute( "targetNamespace" );
 			schemaUrlsByNs.put( targetNamespace, schemaUrl );
 			nssBySchemaUrl.put( schemaUrl, targetNamespace );
-			System.out.println( "Will use " + schemaUrl + " for namespace " + targetNamespace );
+			logger.info( "Will use " + schemaUrl + " for namespace " + targetNamespace );
 		}
 		return getXmlSchemaFactory().newSchema( schemaList.toArray( new Source[0] ) );
 	}
@@ -382,7 +386,7 @@ public class CRISValidator {
 		} );
 		final long nMetadataFormats = checker.run();
 		final int nOpenAireMetadataFormats = metadataFormatsByPrefix.size();
-		System.out.println( "Having " + nOpenAireMetadataFormats + " OpenAIRE CRIS metadata formats (out of the total " + nMetadataFormats + " metadata formats)" );
+		logger.info( "Having " + nOpenAireMetadataFormats + " OpenAIRE CRIS metadata formats (out of the total " + nMetadataFormats + " metadata formats)" );
 	}
 
 	private CheckingIterable<MetadataFormatType> wrapCheckMetadataFormatPresent( final CheckingIterable<MetadataFormatType> parent ) {
@@ -396,7 +400,7 @@ public class CRISValidator {
 					try {
 						final DocumentBuilder db = getDocumentBuilderFactory().newDocumentBuilder();
 						final String schemaUrl = mf.getSchema();
-						System.out.println( "Metadata format prefix " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
+						logger.info( "Metadata format prefix " + mf.getMetadataPrefix() + " with ns " + mf.getMetadataNamespace() );
 						assertTrue( "Please reference the official XML Schema at " + OPENAIRE_CERIF_SCHEMAS_ROOT + " (2h)", schemaUrl.startsWith( OPENAIRE_CERIF_SCHEMAS_ROOT ) );
 						assertTrue( "The schema file should be " + OPENAIRE_CERIF_SCHEMA_FILENAME + " (2i)", schemaUrl.endsWith( "/" + OPENAIRE_CERIF_SCHEMA_FILENAME ) );
 						final String localSchemaUrl = schemaUrlsByNs.get( metadataNs );
@@ -729,7 +733,7 @@ public class CRISValidator {
 					final String msg = exception.getMessage();
 					if ( msg.startsWith( "cvc-pattern-valid: " ) ) {
 						patternValidErrorSignalled = true;
-						System.err.println( "In " + elString + ": " + msg );
+						logger.error( "In " + elString + ": " + msg );
 					} else {
 						if (!( patternValidErrorSignalled && msg.startsWith( "cvc-complex-type.2.2: " ) )) {
 							throw exception;

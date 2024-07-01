@@ -40,6 +40,8 @@ import org.openarchives.oai._2.RecordType;
 import org.openarchives.oai._2.ResumptionTokenType;
 import org.openarchives.oai._2.SetType;
 import org.openarchives.oai._2_0.oai_identifier.OaiIdentifierType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 /**
@@ -48,6 +50,8 @@ import org.xml.sax.SAXException;
  * @author jdvorak
  */
 public class OAIPMHEndpoint {
+
+	private static final Logger logger = LoggerFactory.getLogger(OAIPMHEndpoint.class);
 	
 	private final String baseUrl;
 
@@ -200,7 +204,7 @@ public class OAIPMHEndpoint {
 	@SuppressWarnings( "unchecked")
 	private OAIPMHtype makeConnection( final boolean repoWideRequest, final String verb, final String... params ) throws IOException, SAXException, JAXBException {
 		final URL url = makeUrl( verb, params );
-		System.out.println( "Fetching and validating " + url.toExternalForm() );
+		logger.info( "Fetching and validating " + url.toExternalForm() );
 		final URLConnection conn = handleCompression( url.openConnection() );
 		conn.setRequestProperty( "User-Agent", userAgent );
 		conn.setRequestProperty( "Accept", "text/xml, application/xml" );
@@ -239,7 +243,7 @@ public class OAIPMHEndpoint {
 		// in the light of RFC7303 section 9.2 we accept "application/xml" as equivalent
 		final String contentType = conn.getContentType();
 		if (!( contentType.startsWith( "text/xml" ) || contentType.startsWith( "application/xml" ) )) {
-			System.err.println( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
+			logger.error( "The Content-Type doesn't start with 'text/xml' or 'application/xml': " + contentType );
 		}
 	}
 
