@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.eurocris</groupId>
 	<artifactId>openaire-cris-validator</artifactId>
-	<version>2.1.0</version>
+	<version>2.1.1-SNAPSHOT</version>
 	<name>OpenAIRE CRIS Prototype Validator</name>
 	<description>A basic prototype validator to assess whether an OAI-PMH endpoint complies with the requirements set by the OpenAIRE Guidelines for CRIS Manager 1.1 or higher.</description>
 	<organization>
