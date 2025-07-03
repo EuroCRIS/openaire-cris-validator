@@ -443,8 +443,13 @@ public class CRISValidator {
 
 	/**
 	 * Get a {@link DocumentBuilderFactory} for parsing.
-           https://community.veracode.com/s/article/Java-Remediation-Guidance-for-XXE This snippet tries to avoid XXE by disabling DTD. If it can't be disabled check the link for Documentbuilderfactory 
-	 * @return
+	 * @return a DocumentBuilderFactory that will produce parsers with the following features:
+	 * - namespace-aware
+	 * - validating
+	 * - ignores comments
+	 * - does not allow doctype declaration
+	 * - does not process XInclude instructions
+	 * - does not expand external entities
 	 */
 	protected static DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
