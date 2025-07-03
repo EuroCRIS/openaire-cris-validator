@@ -451,9 +451,10 @@ public class CRISValidator {
 		dbf.setNamespaceAware( true );
 		dbf.setValidating( false );
 		dbf.setIgnoringComments( true );
-                dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-                dbf.setXIncludeAware(false);
-                dbf.setExpandEntityReferences(false);
+		// following 3 lines suggested by superpegaso2703 on 2025-07-01 with reference to https://community.veracode.com/s/article/Java-Remediation-Guidance-for-XXE
+		dbf.setFeature( "http://apache.org/xml/features/disallow-doctype-decl", true );
+		dbf.setXIncludeAware( false );
+		dbf.setExpandEntityReferences( false );
 		return dbf;
 	}
 
