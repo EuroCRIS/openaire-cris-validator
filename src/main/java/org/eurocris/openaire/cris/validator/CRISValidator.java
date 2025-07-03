@@ -446,7 +446,7 @@ public class CRISValidator {
            https://community.veracode.com/s/article/Java-Remediation-Guidance-for-XXE This snippet tries to avoid XXE by disabling DTD. If it can't be disabled check the link for Documentbuilderfactory 
 	 * @return
 	 */
-	protected static DocumentBuilderFactory getDocumentBuilderFactory() {
+	protected static DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware( true );
 		dbf.setValidating( false );
