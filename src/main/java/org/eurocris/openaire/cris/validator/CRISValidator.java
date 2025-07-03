@@ -443,13 +443,23 @@ public class CRISValidator {
 
 	/**
 	 * Get a {@link DocumentBuilderFactory} for parsing.
-	 * @return
+	 * @return a DocumentBuilderFactory that will produce parsers with the following features:
+	 * - namespace-aware
+	 * - validating
+	 * - ignores comments
+	 * - does not allow doctype declaration
+	 * - does not process XInclude instructions
+	 * - does not expand external entities
 	 */
-	protected static DocumentBuilderFactory getDocumentBuilderFactory() {
+	protected static DocumentBuilderFactory getDocumentBuilderFactory() throws ParserConfigurationException {
 		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setNamespaceAware( true );
 		dbf.setValidating( false );
 		dbf.setIgnoringComments( true );
+		// following 3 lines suggested by superpegaso2703 on 2025-07-01 with reference to https://community.veracode.com/s/article/Java-Remediation-Guidance-for-XXE
+		dbf.setFeature( "http://apache.org/xml/features/disallow-doctype-decl", true );
+		dbf.setXIncludeAware( false );
+		dbf.setExpandEntityReferences( false );
 		return dbf;
 	}
 
