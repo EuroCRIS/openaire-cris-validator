@@ -1,0 +1,17 @@
+Third-party content bundled in the executable JAR
+=================================================
+
+The -jar-with-dependencies assembly produced by this project embeds XML
+Schema files taken from the OpenAIRE Guidelines for CRIS Managers:
+
+    https://github.com/openaire/guidelines-cris-managers
+
+They appear inside the JAR under schemas/original/ and are required for the
+validator to operate without network access to the schema locations.
+
+Those schemas are licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0):
+
+    http://creativecommons.org/licenses/by/4.0/
+
+Attribution: OpenAIRE and euroCRIS. The schemas are included unmodified.
