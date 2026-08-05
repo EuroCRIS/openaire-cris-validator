@@ -1,0 +1,177 @@
+# Attaches a ready-to-run JAR to every GitHub release, and publishes the same
+# JAR as a container image on GitHub Container Registry.
+#
+# Motivation: building the validator currently requires a JDK, Maven, a warm
+# ~/.m2 cache and a second checkout of guidelines-cris-managers - on the order
+# of half a gigabyte of tooling - to produce a 4.7 MB self-contained JAR. For
+# people who only want to check their endpoint, that is the whole cost of
+# entry. Publishing the artifact once removes it.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build and release (e.g. v2.1.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # Pinned on purpose. maven.yml tracks `main` of the guidelines repo so that
+  # guideline changes surface early; a release build wants the opposite - the
+  # same schemas every time it runs.
+  GUIDELINES_REF: v1.2.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # The tag reaches the shell via env rather than direct ${{ }}
+      # interpolation into `run:`, so a crafted workflow_dispatch input cannot
+      # be executed as shell. The regex is a second check: this value is later
+      # passed to actions/checkout as `ref:`.
+      - name: Resolve tag
+        id: tag
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="$REF_NAME"
+          fi
+          if ! printf '%s' "$TAG" \
+              | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-[A-Za-z0-9][A-Za-z0-9.]*)?$'; then
+            echo "::error::Refusing to build '$TAG' - expected vMAJOR.MINOR.PATCH[-suffix]." >&2
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
+
+      # pom.xml resolves dependency version ranges (e.g. junit [4.13.1,)) at
+      # build time, so re-running a tag can produce a different artifact than
+      # the one already published under it. Refusing to overwrite keeps the
+      # published asset meaningful.
+      - name: Refuse to overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists; refusing to replace its assets." >&2
+            exit 1
+          fi
+
+      - name: Check out the validator at the release tag
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+
+      - name: Check out the OpenAIRE Guidelines for CRIS Managers
+        uses: actions/checkout@v4
+        with:
+          repository: openaire/guidelines-cris-managers
+          ref: ${{ env.GUIDELINES_REF }}
+          path: guidelines-cris-managers
+
+      # Same arrangement maven.yml uses. It is load-bearing beyond pom.xml's
+      # <guidelines.project.dir>: the files in samples/ are symlinks to
+      # ../../guidelines-cris-managers/samples/*, so the smoke test below only
+      # works when the guidelines repo sits next to the checkout under exactly
+      # that name.
+      - name: Move the guidelines to the expected location
+        run: mv guidelines-cris-managers ..
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Build
+        run: mvn -B -V clean package -Dmaven.javadoc.skip=true
+
+      - name: Run the validator on the example files
+        run: java -jar target/openaire-cris-validator-*-jar-with-dependencies.jar file:samples/
+
+      # Two copies of one build: a stable name for the Dockerfile to COPY, and
+      # a versioned name for the release asset. Building twice is avoided
+      # deliberately - see the note about version ranges above.
+      - name: Stage the artifact
+        id: stage
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          JAR=$(ls target/openaire-cris-validator-*-jar-with-dependencies.jar)
+          ASSET="openaire-cris-validator-${{ steps.tag.outputs.tag }}-jar-with-dependencies.jar"
+          cp "$JAR" dist/validator.jar
+          cp "$JAR" "dist/$ASSET"
+          ( cd dist && sha256sum "$ASSET" > "$ASSET.sha256" )
+          echo "asset=dist/$ASSET" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(cut -d' ' -f1 < "dist/$ASSET.sha256")" >> "$GITHUB_OUTPUT"
+
+      # Published before the image, so that a registry problem cannot cost the
+      # JAR that most users actually want.
+      - name: Publish the release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: |
+            ${{ steps.stage.outputs.asset }}
+            ${{ steps.stage.outputs.asset }}.sha256
+          body: |
+            Run it with any JRE 17 or newer:
+
+            ```
+            java -jar openaire-cris-validator-${{ steps.tag.outputs.tag }}-jar-with-dependencies.jar https://your-cris/endpoint/
+            ```
+
+            or without installing Java:
+
+            ```
+            docker run --rm ghcr.io/${{ github.repository_owner }}/openaire-cris-validator:${{ steps.tag.outputs.version }} https://your-cris/endpoint/
+            ```
+
+            Built with Temurin JDK 17 against OpenAIRE Guidelines for CRIS
+            Managers `${{ env.GUIDELINES_REF }}`, with the test suite enabled
+            and verified against the bundled `samples/`.
+
+            `sha256: ${{ steps.stage.outputs.sha256 }}`
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # GITHUB_TOKEN is enough for GHCR, so this needs no repository secrets.
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      # Multi-arch costs almost nothing here because the image compiles
+      # nothing: it is a JRE base plus one COPY.
+      - name: Build and push the image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/openaire-cris-validator:${{ steps.tag.outputs.version }}
+            ghcr.io/${{ github.repository_owner }}/openaire-cris-validator:latest

@@ -1,0 +1,5 @@
+# The build context is just the staged JAR and the licence files.
+*
+!dist/validator.jar
+!LICENSE
+!NOTICE-schemas
